@@ -4,15 +4,19 @@ WelcomeBlock - Portfolio Version
 
 import { ParallaxLayer } from "@react-spring/parallax";
 
-interface Props {}
+interface Props {
+  offset: number;
+  speed: number;
+  factor: number;
+}
 
-export const WelcomeBlock = ({}: Props) => {
+export const WelcomeBlock = ({ offset, speed, factor }: Props) => {
   return (
     <ParallaxLayer
-      aria-description="Welcome to Yarden! This is the #1 design tool for DIY garden enthusiasts. In this section, you can login."
-      offset={0}
-      speed={1}
-      factor={0.99}
+      aria-description="Welcome Block"
+      offset={offset}
+      speed={speed}
+      factor={factor}
       style={{
         // backgroundColor: 'rgba(255, 255, 255, 0.2)',
         backgroundSize: "cover",

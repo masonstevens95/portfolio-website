@@ -10,6 +10,7 @@ import { useParallaxScroll } from "../utils/hooks/useParallaxScroll";
 import { WelcomeBlock } from "./WelcomeBlock";
 import { useAppSelector } from "../utils/hooks/reduxHooks";
 import { HeaderSelected } from "../redux/slices/globalData";
+import { FeaturedWorkBlock } from "./FeaturedWorkBlock";
 // import { LoginButton } from "../Login/LoginButton";
 // import { useRouter } from "next/navigation";
 
@@ -214,11 +215,6 @@ export const InfiniteScrollContainer = ({}: Props) => {
 
   //todo - add some ambient noise
 
-  const handleRedirectToPlantCatalog = () => {
-    console.log("redirecting to plant catalog");
-    // router.push("/plantCatalog");
-  };
-
   return (
     // <div className="bg-slate-100 h-full w-full space-x-0.5 space-y-1 p-1 flex flex-col overflow-y-auto">
     <div className="left-0 top-0 fixed w-full h-full items-right">
@@ -231,27 +227,9 @@ export const InfiniteScrollContainer = ({}: Props) => {
 
       <div className="left-0 top-0 fixed z-1 w-full h-full">
         <Parallax pages={4} ref={parallaxRef}>
-          <WelcomeBlock />
+          <WelcomeBlock offset={0} speed={1} factor={0.99} />
 
-          <ParallaxLayer
-            aria-description="some background info about Yarden"
-            offset={1.25}
-            speed={1.25}
-            factor={1}
-          >
-            <div className="w-3/4 h-full float-right flex flex-col items-center justify-around">
-              <div>
-                <h1 className="w-full text-neutral-100 text-6xl font-bold text-right space-x-14 space-y-4 p-4">
-                  {" "}
-                  Description of What we do
-                </h1>
-                <h2 className="w-full text-neutral-200 text-4xl font-bold text-right space-x-14 space-y-4 p-4">
-                  {" "}
-                  Keep Scrolling to see the design tool in action{" "}
-                </h2>
-              </div>
-            </div>
-          </ParallaxLayer>
+          <FeaturedWorkBlock offset={1.25} speed={1.25} factor={1} />
 
           <ParallaxLayer
             aria-description="The design tool"
