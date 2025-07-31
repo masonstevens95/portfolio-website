@@ -30,20 +30,22 @@ export const Header = ({}: Props) => {
   };
 
   return (
-    <div className="fixed top-0 left-0 h-16 w-full z-50 bg-black/60 backdrop-blur-sm px-8 py-4 flex justify-end gap-8 text-neutral-100">
-      {HEADER_LABELS.map((item) => (
-        <button
-          key={item.id}
-          onClick={() => handleClick(item.id)}
-          className={`transition-colors duration-300 text-lg ${
-            selected === item.id
-              ? "text-white font-bold underline underline-offset-4"
-              : "text-neutral-400 hover:text-white"
-          }`}
-        >
-          {item.label}
-        </button>
-      ))}
+    <div className="fixed top-0 left-0 w-full z-50 bg-black/60 backdrop-blur-sm px-8 py-4">
+      <div className="flex justify-center items-center gap-6 text-neutral-100">
+        {HEADER_LABELS.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => handleClick(item.id)}
+            className={`transition-colors duration-300 text-base md:text-lg ${
+              selected === item.id
+                ? "text-white font-bold underline underline-offset-4"
+                : "text-neutral-400 hover:text-white"
+            }`}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
