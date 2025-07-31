@@ -26,11 +26,10 @@ interface ParallaxProps {
 interface Props {}
 
 export const InfiniteScrollContainer = ({}: Props) => {
-  //   return <></>;
-
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const parallaxRef = useRef(null);
   const dispatch = useAppDispatch();
+  const [pageScrolledTime, setPageScrolledToTime] = useState<Date>(new Date());
   // const parallaxRef = useRef<RefObject<IParallax>>();
 
   // Get selected header from Redux
@@ -72,6 +71,7 @@ export const InfiniteScrollContainer = ({}: Props) => {
     if (parallaxRef.current) {
       const page = headerToPageMap[headerSelected].offset;
       parallaxRef.current.scrollTo(page);
+      setPageScrolledToTime(new Date());
     }
   }, [headerSelected]);
 
@@ -197,6 +197,13 @@ export const InfiniteScrollContainer = ({}: Props) => {
   useEffect(() => {
     console.log("scroll in page", scroll);
 
+    const rightNow = new Date();
+
+    console.log(
+      "rightNow.getTime() - pageScrolledTime.getTime()",
+      rightNow.getTime() - pageScrolledTime.getTime()
+    );
+
     const rotateToZero = () => {
       let fps = 60; // fps/seconds
       let tau = 1.5; // 2 seconds
@@ -233,7 +240,10 @@ export const InfiniteScrollContainer = ({}: Props) => {
         scroll > headerToPageMap[HeaderSelected.WELCOME].offset &&
         scroll < headerToPageMap[HeaderSelected.FEATURED_WORK].offset
       ) {
-        dispatch(setHeaderSelected(HeaderSelected.WELCOME));
+        if (rightNow.getTime() - pageScrolledTime.getTime() > 2000) {
+          dispatch(setHeaderSelected(HeaderSelected.WELCOME));
+        }
+
         const newScroll = scroll * 1;
         // earth.rotation.x += 0.005 * newScroll;
         earth.rotation.y += 0.03 * newScroll;
@@ -244,7 +254,31 @@ export const InfiniteScrollContainer = ({}: Props) => {
         // camera.position.z = 50 + -250 * newScroll;
         // camera.position.x = 100 * newScroll;
         // camera.position.y = -0.0002 * newScroll;
-      } else {
+      } else if (
+        scroll > headerToPageMap[HeaderSelected.FEATURED_WORK].offset &&
+        scroll < headerToPageMap[HeaderSelected.ABOUT_ME].offset
+      ) {
+        if (rightNow.getTime() - pageScrolledTime.getTime() > 2000) {
+          dispatch(setHeaderSelected(HeaderSelected.FEATURED_WORK));
+        }
+      } else if (
+        scroll > headerToPageMap[HeaderSelected.ABOUT_ME].offset &&
+        scroll < headerToPageMap[HeaderSelected.PROFESSIONAL_GOALS].offset
+      ) {
+        if (rightNow.getTime() - pageScrolledTime.getTime() > 2000) {
+          dispatch(setHeaderSelected(HeaderSelected.ABOUT_ME));
+        }
+      } else if (
+        scroll > headerToPageMap[HeaderSelected.PROFESSIONAL_GOALS].offset &&
+        scroll < headerToPageMap[HeaderSelected.CONTACT].offset
+      ) {
+        if (rightNow.getTime() - pageScrolledTime.getTime() > 2000) {
+          dispatch(setHeaderSelected(HeaderSelected.PROFESSIONAL_GOALS));
+        }
+      } else if (scroll > headerToPageMap[HeaderSelected.CONTACT].offset) {
+        if (rightNow.getTime() - pageScrolledTime.getTime() > 2000) {
+          dispatch(setHeaderSelected(HeaderSelected.CONTACT));
+        }
       }
     }
     moveCamera(scroll);
