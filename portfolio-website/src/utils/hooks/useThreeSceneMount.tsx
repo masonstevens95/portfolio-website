@@ -69,7 +69,6 @@ export const useThreeSceneMount = (canvasRef, earth) => {
 
     // Animation loop or initial render
     const animate = () => {
-      // console.log('animating...')
       requestAnimationFrame(animate);
       // Update objects' states here
       earth.rotation.y += 0.0005;

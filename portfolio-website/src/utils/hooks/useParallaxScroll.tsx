@@ -7,8 +7,6 @@ export const parallaxScrollToOffset = (scrollY: number): number => {
 export const useParallaxScroll = (): number => {
   const [scroll, setScroll] = React.useState(0);
 
-  console.log("scroll", scroll);
-
   React.useEffect(() => {
     document
       .querySelector(".parallax")

@@ -7,7 +7,6 @@ export const useAmbientSound = (src: string, volume = 0.3) => {
   const [audio, setAudio] = useState(new Audio(src));
 
   useEffect(() => {
-    console.log("audio", audio);
     audio.loop = true;
     audio.volume = volume;
     audioRef.current = audio;
@@ -16,7 +15,7 @@ export const useAmbientSound = (src: string, volume = 0.3) => {
       audio.pause();
     } else {
       audio.play().catch((e) => {
-        console.log("Autoplay blocked, ", e);
+        console.error("Autoplay blocked, ", e);
       });
     }
   }, [src, volume, paused]);

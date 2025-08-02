@@ -32,14 +32,7 @@ export const useScrollListen = (scroll, pageScrolledTime) => {
   );
 
   useEffect(() => {
-    console.log("scroll in page", scroll);
-
     const rightNow = new Date();
-
-    console.log(
-      "rightNow.getTime() - pageScrolledTime.getTime()",
-      rightNow.getTime() - pageScrolledTime.getTime()
-    );
 
     const rotateToZero = () => {
       let fps = 60; // fps/seconds
@@ -65,11 +58,8 @@ export const useScrollListen = (scroll, pageScrolledTime) => {
     };
 
     function moveCamera(scroll: number) {
-      // console.log('scrollPos', scrollPos)
       const t = document.body.getBoundingClientRect().top;
-      // console.log("rerender");
       if (scroll == 0) {
-        // console.log("scroll zeroed");
         rotateToZero();
         earth.rotation.y += 0.0005;
       }
