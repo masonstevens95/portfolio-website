@@ -17,6 +17,7 @@ import { useScrollListen } from "../../utils/hooks/useScrollListen";
 import { headerToPageMap } from "../../utils/headerToPageMap";
 import { useHeaderSelectionListener } from "../../utils/hooks/useHeaderSelectionListener";
 import { useThreeSceneMount } from "../../utils/hooks/useThreeSceneMount";
+import { useAmbientSound } from "../../utils/hooks/useAmbientSound";
 // import { LoginButton } from "../Login/LoginButton";
 // import { useRouter } from "next/navigation";
 
