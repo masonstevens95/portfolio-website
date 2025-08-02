@@ -3,27 +3,29 @@ import { useEffect, useRef, useState } from "react";
 
 export const useAmbientSound = (src: string, volume = 0.3) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [paused, setPaused] = useState(false);
+  const [paused, setPaused] = useState(true);
 
   useEffect(() => {
     const audio = new Audio(src);
+    console.log("audio", audio);
     audio.loop = true;
     audio.volume = volume;
     audioRef.current = audio;
 
     const startAudio = () => {
-      audio.play().catch(() => {
-        console.log("Autoplay blocked");
+      audio.play().catch((e) => {
+        console.log("Autoplay blocked, ", e);
       });
       document.removeEventListener("click", startAudio);
     };
 
-    document.addEventListener("click", startAudio);
-
-    return () => {
+    if (paused) {
       audio.pause();
-      audioRef.current = null;
-    };
+    } else {
+      audio.play();
+
+      document.addEventListener("click", startAudio);
+    }
   }, [src, volume, paused]);
 
   const toggleMute = () => {

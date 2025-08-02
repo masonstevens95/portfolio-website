@@ -7,7 +7,6 @@ import {
   setHeaderSelected,
 } from "../../redux/slices/globalData";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks/reduxHooks";
-import { useAmbientSound } from "../../utils/hooks/useAmbientSound";
 
 interface Props {
   toggleMute: () => void;
@@ -23,8 +22,6 @@ const HEADER_LABELS = [
 ];
 
 export const Header = ({ toggleMute, paused }: Props) => {
-  useAmbientSound("/assets/ambient.wav", 0.25);
-
   const dispatch = useAppDispatch();
   const selected = useAppSelector(
     (state) => state.globalDataSlice.headerSelected

@@ -9,7 +9,10 @@ import { useAmbientSound } from "../utils/hooks/useAmbientSound";
 interface Props {}
 
 export const HomePage = ({}: Props) => {
-  const { toggleMute, paused } = useAmbientSound("/assets/ambient.mp3", 0.2);
+  const { toggleMute, paused } = useAmbientSound(
+    "/assets/space-arp-f-chords.wav",
+    0.2
+  );
 
   return (
     <>
