@@ -7,11 +7,9 @@ import {
   setHeaderSelected,
 } from "../../redux/slices/globalData";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks/reduxHooks";
+import { useAmbientSound } from "../../utils/hooks/useAmbientSound";
 
-interface Props {
-  toggleMute: () => void;
-  paused: boolean;
-}
+interface Props {}
 
 const HEADER_LABELS = [
   { id: HeaderSelected.WELCOME, label: "Welcome" },
@@ -21,10 +19,15 @@ const HEADER_LABELS = [
   { id: HeaderSelected.CONTACT, label: "Contact" },
 ];
 
-export const Header = ({ toggleMute, paused }: Props) => {
+export const Header = ({}: Props) => {
   const dispatch = useAppDispatch();
   const selected = useAppSelector(
     (state) => state.globalDataSlice.headerSelected
+  );
+
+  const { toggleMute, paused } = useAmbientSound(
+    "/assets/space-arp-f-chords.wav",
+    0.1
   );
 
   const handleClick = (id: HeaderSelected) => {
@@ -63,12 +66,7 @@ export const Header = ({ toggleMute, paused }: Props) => {
             </button>
           ))}
         </div>
-        <button
-          onClick={toggleMute}
-          className="text-sm text-neutral-400 hover:text-white transition"
-        >
-          {paused ? "🔇" : "🔊"}
-        </button>
+        <button onClick={toggleMute}>{paused ? "🔇" : "🔊"}</button>
       </div>
     </div>
   );

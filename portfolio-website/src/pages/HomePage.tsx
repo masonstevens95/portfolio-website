@@ -9,14 +9,9 @@ import { useAmbientSound } from "../utils/hooks/useAmbientSound";
 interface Props {}
 
 export const HomePage = ({}: Props) => {
-  const { toggleMute, paused } = useAmbientSound(
-    "/assets/space-arp-f-chords.wav",
-    0.2
-  );
-
   return (
     <>
-      <Header toggleMute={toggleMute} paused={paused} />
+      <Header />
       <InfiniteScrollContainer />
     </>
   );
