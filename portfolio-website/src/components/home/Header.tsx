@@ -2,8 +2,11 @@
   Header
 */
 
-import { HeaderSelected, setHeaderSelected } from "../redux/slices/globalData";
-import { useAppDispatch, useAppSelector } from "../utils/hooks/reduxHooks";
+import {
+  HeaderSelected,
+  setHeaderSelected,
+} from "../../redux/slices/globalData";
+import { useAppDispatch, useAppSelector } from "../../utils/hooks/reduxHooks";
 
 interface Props {}
 
@@ -22,11 +25,21 @@ export const Header = ({}: Props) => {
   );
 
   const handleClick = (id: HeaderSelected) => {
-    dispatch(setHeaderSelected(id));
-    // optionally scroll to section
-    document
-      .getElementById(HeaderSelected[id])
-      ?.scrollIntoView({ behavior: "smooth" });
+    console.log("clicked");
+    // Always scroll
+    const element = document.getElementById(HeaderSelected[id]);
+
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start", // Align element's top with container's top
+        inline: "nearest", // Not relevant here but avoids lateral jump
+      });
+    }
+    // Only dispatch if selection has changed
+    if (selected !== id) {
+      dispatch(setHeaderSelected(id));
+    }
   };
 
   return (

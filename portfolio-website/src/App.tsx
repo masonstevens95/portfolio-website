@@ -1,8 +1,14 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import { Header } from "./components/Header";
-import { InfiniteScrollContainer } from "./components/InfiniteScrollContainer";
+import { Header } from "./components/home/Header";
+import { InfiniteScrollContainer } from "./components/home/InfiniteScrollContainer";
 import { PageWrapper } from "./components/PageWrapper";
+import { HomePage } from "./pages/HomePage";
+import { YardenPage } from "./pages/YardenPage";
+import { GaribaldiPage } from "./pages/GaribaldiPage";
+import { VoiceGardenPage } from "./pages/VoiceGardenPage";
+import { VicSavePage } from "./pages/VicSavePage";
+import { HortibasePage } from "./pages/HortibasePage";
 
 const GardenPlanner = () => (
   <PageWrapper>
@@ -26,18 +32,12 @@ function App() {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        <Route
-          path="/"
-          element={
-            <>
-              <Header />
-              <InfiniteScrollContainer />
-            </>
-          }
-        />
-        <Route path="/projects/garden-planner" element={<GardenPlanner />} />
-        <Route path="/projects/plant-library" element={<PlantLibrary />} />
-        <Route path="/projects/water-tracker" element={<WaterTracker />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/projects/yarden-diy" element={<YardenPage />} />
+        <Route path="/projects/garibaldi" element={<GaribaldiPage />} />
+        <Route path="/projects/voice-garden" element={<VoiceGardenPage />} />
+        <Route path="/projects/vicsave-compiler" element={<VicSavePage />} />
+        <Route path="/projects/hortibase" element={<HortibasePage />} />
       </Routes>
     </AnimatePresence>
   );

@@ -14,23 +14,39 @@ interface Props {
 
 const featuredProjects = [
   {
-    title: "Garden Planner",
-    description: "A 3D interactive tool to plan your backyard garden layout.",
-    image: "/assets/project-garden.jpg",
-    link: "/projects/garden-planner",
-  },
-  {
-    title: "Plant Library",
+    title: "Yarden.diy",
     description:
-      "Browse hundreds of plants with care instructions and climate data.",
-    image: "/assets/project-library.jpg",
-    link: "/projects/plant-library",
+      "A garden design tool for DIYers and nurseries. Includes layout tools, plant library, and visual builder. Still evolving.",
+    image: "/assets/Yarden_Logo.svg",
+    link: "/projects/yarden-diy",
   },
   {
-    title: "Water Usage Tracker",
-    description: "Monitor and reduce water usage in your garden over time.",
-    image: "/assets/project-water.jpg",
-    link: "/projects/water-tracker",
+    title: "Garibaldi",
+    description:
+      "A Victoria 3 data visualization platform. Parses binary save files and renders charts for pops, economies, and more.",
+    image: "/assets/garibaldi.jpg",
+    link: "/projects/garibaldi",
+  },
+  {
+    title: "Voice Garden",
+    description:
+      "A creative voice-powered garden builder using Fourier transforms. Merges math, DSP, and spatial audio concepts.",
+    image: "/assets/project-voice.jpg",
+    link: "/projects/voice-garden",
+  },
+  {
+    title: "VicSave Compiler",
+    description:
+      "Backend service that parses Victoria 3 save files into JSON and serves them via a REST API. Built for data exploration tools.",
+    image: "/assets/project-vicsave.jpg",
+    link: "/projects/vicsave-compiler",
+  },
+  {
+    title: "Hortibase",
+    description:
+      "A plant data backend that scrapes, caches, and serves structured plant information through a public API.",
+    image: "/assets/project-hortibase.jpg",
+    link: "/projects/hortibase",
   },
 ];
 
@@ -67,7 +83,7 @@ export const FeaturedWorkBlock = ({ offset, speed, factor }: Props) => {
                 <img
                   src={project.image}
                   alt={project.title}
-                  className="object-cover w-full h-full absolute inset-0 z-0 opacity-50 group-hover:opacity-70 transition-opacity"
+                  className="object-cover w-full h-full absolute inset-0 z-0 opacity-75 group-hover:opacity-95 transition-opacity"
                 />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-transparent to-transparent p-4 z-10">
                   <h3 className="text-xl text-white font-semibold">

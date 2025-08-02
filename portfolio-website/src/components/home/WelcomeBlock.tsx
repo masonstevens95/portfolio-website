@@ -23,7 +23,7 @@ export const WelcomeBlock = ({ offset, speed, factor }: Props) => {
         // justifyItems: 'end',
       }}
     >
-      <div className="w-3/4 h-full float-right flex flex-col items-center justify-around">
+      <div className="w-auto pr-16 h-full float-right flex flex-col items-center justify-around">
         <section className="w-full bg-neutral-900 text-neutral-100 py-12 px-6">
           <div className="max-w-5xl mx-auto text-right">
             <h1 className="text-5xl md:text-6xl font-bold mb-4">
@@ -33,9 +33,8 @@ export const WelcomeBlock = ({ offset, speed, factor }: Props) => {
               Showcasing UI/UX, Web Projects & Creative Tools
             </h2>
             <p className="text-lg text-neutral-400 max-w-xl ml-auto">
-              I’m Yarden – a designer and developer focused on crafting
-              intuitive digital experiences. Scroll down to explore selected
-              work.
+              I’m Mason – a designer and developer focused on crafting intuitive
+              digital experiences. Scroll down to explore selected work.
             </p>
           </div>
         </section>
