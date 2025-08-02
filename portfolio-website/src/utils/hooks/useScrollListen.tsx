@@ -75,10 +75,10 @@ export const useScrollListen = (scroll, pageScrolledTime) => {
       }
 
       if (
-        scroll > headerToPageMap[HeaderSelected.WELCOME].offset &&
+        scroll >= headerToPageMap[HeaderSelected.WELCOME].offset &&
         scroll < headerToPageMap[HeaderSelected.FEATURED_WORK].offset
       ) {
-        if (rightNow.getTime() - pageScrolledTime.getTime() > 2000) {
+        if (rightNow.getTime() - pageScrolledTime.getTime() > 1400) {
           dispatch(setHeaderSelected(HeaderSelected.WELCOME));
         }
 
@@ -93,28 +93,28 @@ export const useScrollListen = (scroll, pageScrolledTime) => {
         // camera.position.x = 100 * newScroll;
         // camera.position.y = -0.0002 * newScroll;
       } else if (
-        scroll > headerToPageMap[HeaderSelected.FEATURED_WORK].offset &&
+        scroll >= headerToPageMap[HeaderSelected.FEATURED_WORK].offset &&
         scroll < headerToPageMap[HeaderSelected.ABOUT_ME].offset
       ) {
-        if (rightNow.getTime() - pageScrolledTime.getTime() > 2000) {
+        if (rightNow.getTime() - pageScrolledTime.getTime() > 1400) {
           dispatch(setHeaderSelected(HeaderSelected.FEATURED_WORK));
         }
       } else if (
-        scroll > headerToPageMap[HeaderSelected.ABOUT_ME].offset &&
+        scroll >= headerToPageMap[HeaderSelected.ABOUT_ME].offset &&
         scroll < headerToPageMap[HeaderSelected.PROFESSIONAL_GOALS].offset
       ) {
-        if (rightNow.getTime() - pageScrolledTime.getTime() > 2000) {
+        if (rightNow.getTime() - pageScrolledTime.getTime() > 1400) {
           dispatch(setHeaderSelected(HeaderSelected.ABOUT_ME));
         }
       } else if (
-        scroll > headerToPageMap[HeaderSelected.PROFESSIONAL_GOALS].offset &&
+        scroll >= headerToPageMap[HeaderSelected.PROFESSIONAL_GOALS].offset &&
         scroll < headerToPageMap[HeaderSelected.CONTACT].offset
       ) {
-        if (rightNow.getTime() - pageScrolledTime.getTime() > 2000) {
+        if (rightNow.getTime() - pageScrolledTime.getTime() > 1400) {
           dispatch(setHeaderSelected(HeaderSelected.PROFESSIONAL_GOALS));
         }
       } else if (scroll > headerToPageMap[HeaderSelected.CONTACT].offset) {
-        if (rightNow.getTime() - pageScrolledTime.getTime() > 2000) {
+        if (rightNow.getTime() - pageScrolledTime.getTime() > 1400) {
           dispatch(setHeaderSelected(HeaderSelected.CONTACT));
         }
       }
