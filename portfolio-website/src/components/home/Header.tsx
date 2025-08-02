@@ -31,18 +31,16 @@ export const Header = ({}: Props) => {
   );
 
   const handleClick = (id: HeaderSelected) => {
-    console.log("clicked");
-    // Always scroll
     const element = document.getElementById(HeaderSelected[id]);
 
     if (element) {
       element.scrollIntoView({
         behavior: "smooth",
-        block: "start", // Align element's top with container's top
-        inline: "nearest", // Not relevant here but avoids lateral jump
+        block: "start",
+        inline: "nearest",
       });
     }
-    // Only dispatch if selection has changed
+
     if (selected !== id) {
       dispatch(setHeaderSelected(id));
     }
@@ -50,7 +48,8 @@ export const Header = ({}: Props) => {
 
   return (
     <div className="fixed top-0 left-0 w-full z-50 bg-black/60 backdrop-blur-sm px-8 py-4">
-      <div className="flex justify-between items-center text-neutral-100 max-w-7xl mx-auto">
+      <div className="relative max-w-7xl mx-auto flex items-center justify-center text-neutral-100">
+        {/* Centered nav */}
         <div className="flex gap-6">
           {HEADER_LABELS.map((item) => (
             <button
@@ -66,7 +65,17 @@ export const Header = ({}: Props) => {
             </button>
           ))}
         </div>
-        <button onClick={toggleMute}>{paused ? "🔇" : "🔊"}</button>
+
+        {/* Audio toggle in the top-right corner */}
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 pr-2">
+          <button
+            onClick={toggleMute}
+            className="text-white hover:text-neutral-300 text-xl"
+            title="Toggle ambient audio"
+          >
+            {paused ? "🔇" : "🔊"}
+          </button>
+        </div>
       </div>
     </div>
   );

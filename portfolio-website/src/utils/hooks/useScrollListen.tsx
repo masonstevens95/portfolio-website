@@ -67,9 +67,9 @@ export const useScrollListen = (scroll, pageScrolledTime) => {
     function moveCamera(scroll: number) {
       // console.log('scrollPos', scrollPos)
       const t = document.body.getBoundingClientRect().top;
-      console.log("rerender");
+      // console.log("rerender");
       if (scroll == 0) {
-        console.log("scroll zeroed");
+        // console.log("scroll zeroed");
         rotateToZero();
         earth.rotation.y += 0.0005;
       }
