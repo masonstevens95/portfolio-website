@@ -1,14 +1,40 @@
-/*
-  ProfessionalGoalsBlock.tsx
-*/
-
 import { ParallaxLayer } from "@react-spring/parallax";
+import { Chrono } from "react-chrono";
 
 interface Props {
   offset: number;
   speed: number;
   factor: number;
 }
+
+const goalsTimeline = [
+  {
+    title: "🌱 Spatial Tools",
+    cardTitle: "Design for Nature",
+    cardSubtitle: "2024–present",
+    cardDetailedText:
+      "Building intelligent, interactive tools for gardens and outdoor environments.",
+  },
+  {
+    title: "🧠 AI-Assisted Design",
+    cardTitle: "Climate-Aware Systems",
+    cardSubtitle: "Future Focus",
+    cardDetailedText:
+      "Leveraging AI/ML to create more sustainable, climate-conscious design processes.",
+  },
+  {
+    title: "🛠 Visual Interfaces",
+    cardTitle: "Accessible Design",
+    cardDetailedText:
+      "Developing intuitive, visual tools for non-technical users to engage with spatial data.",
+  },
+  {
+    title: "🤝 Collaboration",
+    cardTitle: "Mission-Driven Projects",
+    cardDetailedText:
+      "Joining forces with others working at the intersection of environment and tech.",
+  },
+];
 
 export const ProfessionalGoalsBlock = ({ offset, speed, factor }: Props) => {
   return (
@@ -18,35 +44,25 @@ export const ProfessionalGoalsBlock = ({ offset, speed, factor }: Props) => {
       speed={speed}
       factor={factor}
     >
-      <div className="w-full h-full flex items-center justify-center p-8">
-        <div className="bg-black/30 rounded-3xl shadow-xl backdrop-blur-md p-10 max-w-4xl w-full text-center">
-          <h1 className="text-5xl font-bold text-neutral-100 mb-6">
+      <div className="w-full h-full flex items-center justify-center px-6">
+        <div className="max-w-6xl w-full bg-black/30 backdrop-blur-md rounded-xl p-6 shadow-xl">
+          <h1 className="text-4xl text-center font-bold text-neutral-100 mb-8">
             Where I'm Headed
           </h1>
-          <p className="text-lg text-neutral-300 leading-relaxed">
-            My long-term goal is to bridge the gap between technology and the
-            natural world through spatial tools, intuitive design, and
-            sustainable systems. I'm particularly interested in:
-          </p>
-
-          <ul className="mt-6 text-left text-neutral-200 space-y-3 list-disc list-inside">
-            <li>
-              🌱 Building intelligent, interactive tools for outdoor spaces
-            </li>
-            <li>🧠 Leveraging AI/ML to assist with climate-conscious design</li>
-            <li>
-              🛠 Developing accessible, visual interfaces for non-technical users
-            </li>
-            <li>
-              🤝 Collaborating on mission-driven projects with environmental
-              impact
-            </li>
-          </ul>
-
-          <p className="text-neutral-400 text-md mt-6">
-            I’m always open to connecting with folks building tools for the real
-            world.
-          </p>
+          <Chrono
+            items={goalsTimeline}
+            mode="HORIZONTAL"
+            timelinePointShape="diamond"
+            theme={{
+              primary: "#3b82f6", // Tailwind blue-500
+              secondary: "#111827", // Tailwind gray-900
+              cardBgColor: "#1f2937", // Tailwind gray-800
+              cardForeColor: "#f9fafb", // Tailwind gray-50
+            }}
+            cardHeight={400}
+            slideShow={false}
+            disableToolbar={true}
+          />
         </div>
       </div>
     </ParallaxLayer>

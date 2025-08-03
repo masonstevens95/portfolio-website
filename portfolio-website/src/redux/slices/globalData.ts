@@ -2,8 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export enum HeaderSelected {
   WELCOME,
-  FEATURED_WORK,
   ABOUT_ME,
+  FEATURED_WORK,
   PROFESSIONAL_GOALS,
   CONTACT,
 }

@@ -19,7 +19,7 @@ export const AboutMeBlock = ({ offset, speed, factor }: Props) => {
       factor={factor}
     >
       <div className="w-full h-full flex items-center justify-center p-8">
-        <div className="bg-black/30 rounded-3xl shadow-lg backdrop-blur-md p-10 max-w-5xl w-full flex flex-col md:flex-row items-center gap-8">
+        <div className="bg-black/30 rounded-3xl shadow-lg backdrop-blur-lg p-10 max-w-5xl w-full flex flex-col md:flex-row items-center gap-8">
           <img
             src="/assets/profile.jpg" // replace with your actual profile path
             alt="Profile photo"
