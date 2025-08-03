@@ -6,10 +6,10 @@ export const headerToPageMap: Record<HeaderSelected, ParallaxProps> = {
   [HeaderSelected.WELCOME]: {
     offset: 0,
     speed: 2,
-    factor: 0.99,
+    factor: 0.6,
   },
   [HeaderSelected.ABOUT_ME]: {
-    offset: 0.99,
+    offset: 0.375,
     speed: 4,
     factor: 0.75,
   },

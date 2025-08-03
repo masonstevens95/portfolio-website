@@ -62,7 +62,7 @@ export const InfiniteScrollContainer = ({}: Props) => {
       {/* <canvas ref={canvasRef} id="bg" className="" /> */}
 
       <div className="left-0 top-0 fixed z-1 w-full h-full">
-        <Parallax className="parallax" pages={5} ref={parallaxRef}>
+        <Parallax className="parallax" pages={4} ref={parallaxRef}>
           <WelcomeBlock {...headerToPageMap[HeaderSelected.WELCOME]} />
 
           <AboutMeBlock {...headerToPageMap[HeaderSelected.ABOUT_ME]} />
