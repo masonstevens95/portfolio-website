@@ -26,10 +26,10 @@ export const WelcomeBlock = ({ offset, speed, factor }: Props) => {
           <h2 className="text-3xl md:text-4xl font-semibold text-neutral-300">
             Showcasing UI/UX, Web Projects & Creative Tools
           </h2>
-          <p className="text-lg max-w-xl text-neutral-400">
+          {/* <p className="text-lg max-w-xl text-neutral-400">
             I’m Mason – a designer and developer focused on building intuitive
             tools for spatial interaction, digital design, and the outdoors.
-          </p>
+          </p> */}
         </div>
       </div>
     </ParallaxLayer>

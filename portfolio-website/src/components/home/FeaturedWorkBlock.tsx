@@ -61,7 +61,8 @@ export const FeaturedWorkBlock = ({ offset, speed, factor }: Props) => {
       speed={speed}
       factor={factor}
     >
-      <div className="w-full h-full flex items-center justify-center px-10">
+      <div className="w-full h-full flex items-center justify-center px-10 flex flex-col">
+        <h1 className="text-5xl font-bold mb-12">Featured Work</h1>
         <div className="flex w-full max-w-7xl h-3/4 overflow-hidden rounded-2xl shadow-lg">
           {featuredProjects.map((project, index) => {
             const isHovered = hoveredIndex === index;

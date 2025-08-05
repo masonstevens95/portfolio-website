@@ -1,11 +1,11 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { HomePage } from "./pages/HomePage";
-import { YardenPage } from "./pages/YardenPage";
-import { GaribaldiPage } from "./pages/GaribaldiPage";
-import { VoiceGardenPage } from "./pages/VoiceGardenPage";
-import { VicSavePage } from "./pages/VicSavePage";
-import { HortibasePage } from "./pages/HortibasePage";
+import { YardenPage } from "./pages/projectPages/YardenPage";
+import { GaribaldiPage } from "./pages/projectPages/GaribaldiPage";
+import { VoiceGardenPage } from "./pages/projectPages/VoiceGardenPage";
+import { VicSavePage } from "./pages/projectPages/VicSavePage";
+import { HortibasePage } from "./pages/projectPages/HortibasePage";
 function App() {
   const location = useLocation();
 

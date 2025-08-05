@@ -14,17 +14,17 @@ export const headerToPageMap: Record<HeaderSelected, ParallaxProps> = {
     factor: 0.75,
   },
   [HeaderSelected.FEATURED_WORK]: {
-    offset: 1,
-    speed: 2,
+    offset: 0.99,
+    speed: 1.25,
     factor: 0.99,
   },
   [HeaderSelected.PROFESSIONAL_GOALS]: {
-    offset: 2,
+    offset: 1.5,
     speed: 1,
     factor: 0.99,
   },
   [HeaderSelected.CONTACT]: {
-    offset: 3,
+    offset: 2,
     speed: 1,
     factor: 0.99,
   },
