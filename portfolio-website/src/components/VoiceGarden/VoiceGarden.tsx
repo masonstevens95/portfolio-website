@@ -1,34 +1,36 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSpeechRecognition } from "../../utils/hooks/useSpeechRecognition";
 import { useAudioFrequency } from "../../utils/hooks/useAudioFrequency";
+import { drawPlant } from "../../utils/drawPlant";
+import { useUpdateCanvasFromFrequency } from "../../utils/hooks/useUpdateCanvasFromFrequency";
+import { useInitializeCanvasBackground } from "../../utils/hooks/useInitializeCanvasBackground";
+import { useAnimateGardenFromFrequency } from "../../utils/hooks/useAnimateGardenFromFrequency";
+import { useUpdateGardenFromFrequency } from "../../utils/hooks/useUpdateGardenFromFrequency";
+
+export type Plant = {
+  x: number;
+  y: number;
+  size: number;
+  type: "leaf" | "bush" | "flower";
+  color: string;
+  growth: number; // 0–1 (animated grow-in)
+  dx?: number; // animation offset X
+  dy?: number; // animation offset Y
+};
 
 interface Props {}
 
 export const VoiceGarden = ({}: Props) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
   const { transcript, listening, startListening, stopListening } =
     useSpeechRecognition();
 
-  const frequencyData = useAudioFrequency();
+  const { frequencyData, freqRef } = useAudioFrequency(listening);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+  useInitializeCanvasBackground(canvasRef);
 
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    ctx.fillStyle = "#111827";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = "#34d399";
-    ctx.beginPath();
-    ctx.arc(canvas.width / 2, canvas.height / 2, 50, 0, Math.PI * 2);
-    ctx.fill();
-  }, []);
+  useUpdateGardenFromFrequency(canvasRef, frequencyData, freqRef);
 
   return (
     <div className="w-full h-screen relative bg-neutral-900 text-white overflow-hidden">

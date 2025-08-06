@@ -6,6 +6,7 @@ import { GaribaldiPage } from "./pages/projectPages/GaribaldiPage";
 import { VoiceGardenPage } from "./pages/projectPages/VoiceGardenPage";
 import { VicSavePage } from "./pages/projectPages/VicSavePage";
 import { HortibasePage } from "./pages/projectPages/HortibasePage";
+import { SingleLineDrawerPage } from "./pages/projectPages/SingleLineDrawerPage";
 function App() {
   const location = useLocation();
 
@@ -18,6 +19,10 @@ function App() {
         <Route path="/projects/voice-garden" element={<VoiceGardenPage />} />
         <Route path="/projects/vicsave-compiler" element={<VicSavePage />} />
         <Route path="/projects/hortibase" element={<HortibasePage />} />
+        <Route
+          path="/projects/single-line-drawer"
+          element={<SingleLineDrawerPage />}
+        />
       </Routes>
     </AnimatePresence>
   );

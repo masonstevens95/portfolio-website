@@ -41,12 +41,19 @@ const featuredProjects = [
     image: "/assets/project-vicsave.jpg",
     link: "/projects/vicsave-compiler",
   },
+  // {
+  //   title: "Hortibase",
+  //   description:
+  //     "A plant data backend that scrapes, caches, and serves structured plant information through a public API.",
+  //   image: "/assets/project-hortibase.jpg",
+  //   link: "/projects/hortibase",
+  // },
   {
-    title: "Hortibase",
+    title: "Single Line Drawer",
     description:
-      "A plant data backend that scrapes, caches, and serves structured plant information through a public API.",
+      "Drag and drop .jpegs to turn them into black and white single line drawings.",
     image: "/assets/project-hortibase.jpg",
-    link: "/projects/hortibase",
+    link: "/projects/single-line-drawer",
   },
 ];
 

@@ -21,9 +21,12 @@ export const useSpeechRecognition = () => {
     recognition.lang = "en-US";
     recognition.interimResults = false;
 
+    console.log("recogniton");
+
     recognition.onresult = (event) => {
       const lastResult = event.results[event.results.length - 1];
       const spokenText = lastResult[0].transcript.trim();
+      console.log("recognition result", lastResult, spokenText);
       setTranscript((prev) => `${prev}\n${spokenText}`);
     };
 
@@ -35,11 +38,17 @@ export const useSpeechRecognition = () => {
   }, []);
 
   const startListening = () => {
+    if (!recognitionRef.current) {
+      console.warn("SpeechRecognition not initialized yet.");
+      return;
+    }
+    console.log("startListening called");
     recognitionRef.current?.start();
     setListening(true);
   };
 
   const stopListening = () => {
+    console.log("stopListening called");
     recognitionRef.current?.stop();
     setListening(false);
   };
