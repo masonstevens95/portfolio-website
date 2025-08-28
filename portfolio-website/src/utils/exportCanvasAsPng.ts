@@ -1,4 +1,5 @@
-export const exportCanvasAsPNG = (canvas: HTMLCanvasElement) => {
+export const exportCanvasAsPNG = (canvas: HTMLCanvasElement | null) => {
+  if (!canvas) return;
   const dataUrl = canvas.toDataURL("image/png");
   const a = document.createElement("a");
   a.href = dataUrl;

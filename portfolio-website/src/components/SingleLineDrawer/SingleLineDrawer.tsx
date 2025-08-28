@@ -304,7 +304,7 @@ export const SingleLineDrawer = () => {
           Animate
         </button>
         <button
-          onClick={() => exportCanvasAsPNG(canvasRef)}
+          onClick={() => exportCanvasAsPNG(canvasRef.current)}
           disabled={!originalImageData}
           className="bg-gray-700 px-3 py-1 rounded"
         >
