@@ -15,9 +15,34 @@ import { marchingSquaresLinked, toBinary } from "../../utils/outline";
 export const SingleLineDrawer = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const naturalSize = useRef({ w: 0, h: 0 });
+
+  function fitCanvasToContainer() {
+    const canvas = canvasRef.current;
+    const container = containerRef.current;
+    if (!canvas || !container || !naturalSize.current.w) return;
+
+    const { w, h } = naturalSize.current;
+    const { width: cw, height: ch } = container.getBoundingClientRect();
+
+    const scale = Math.min(cw / w, ch / h); // contain
+    const cssW = Math.max(1, Math.floor(w * scale));
+    const cssH = Math.max(1, Math.floor(h * scale));
+
+    // Only CSS size (visual). Keeps aspect ratio, no distortion.
+    canvas.style.width = `${cssW}px`;
+    canvas.style.height = `${cssH}px`;
+  }
+
+  useEffect(() => {
+    const ro = new ResizeObserver(() => fitCanvasToContainer());
+    if (containerRef.current) ro.observe(containerRef.current);
+    return () => ro.disconnect();
+  }, []);
+
   const [message, setMessage] = useState("Drop an image here...");
   const [loading, setLoading] = useState(false);
-  const [cvReady, setCvReady] = useState(false);
   const [step, setStep] = useState(0);
   const [edgeThreshold, setEdgeThreshold] = useState(85);
   const [edgeThresholdChanged, setEdgeThresholdChanged] = useState(false);
@@ -71,6 +96,10 @@ export const SingleLineDrawer = () => {
       canvas.width = width;
       canvas.height = height;
       ctx.drawImage(img, 0, 0, width, height);
+
+      naturalSize.current = { w: width, h: height };
+      fitCanvasToContainer(); // <- ensure it fits visibly
+
       const id = ctx.getImageData(0, 0, width, height);
       setOriginalImageData(id);
       setMessage("Image loaded. Click 'Remove Background'.");
@@ -254,13 +283,16 @@ export const SingleLineDrawer = () => {
         </button>
       </div>
 
-      <div className="flex-1 relative">
+      <div
+        ref={containerRef}
+        className="flex-1 relative flex items-center justify-center bg-black overflow-hidden"
+      >
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-20">
             <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-white" />
           </div>
         )}
-        <canvas ref={canvasRef} className="w-full h-full block" />
+        <canvas ref={canvasRef} className="block" />
       </div>
     </div>
   );
