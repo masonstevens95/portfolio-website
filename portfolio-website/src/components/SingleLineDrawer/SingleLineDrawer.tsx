@@ -23,35 +23,6 @@ export const SingleLineDrawer = ({}: Props) => {
 
   const [bgRemovedData, setBgRemovedData] = useState<ImageData | null>(null);
 
-  const removeBgStep = async () => {
-    if (!originalImageData) return;
-
-    setLoading(true);
-    setMessage("Removing background...");
-
-    // Convert current canvas data back into a Blob so we can feed it to imgly
-    const canvas = canvasRef.current;
-    const blob = await new Promise<Blob>((resolve, reject) =>
-      canvas?.toBlob((b) => (b ? resolve(b) : reject()), "image/png")
-    );
-
-    const cleanedImg = await removeBackgroundFromFile(blob);
-
-    // Draw result back to canvas
-    const ctx = canvas?.getContext("2d");
-    if (ctx) {
-      canvas.width = cleanedImg.width;
-      canvas.height = cleanedImg.height;
-      ctx.drawImage(cleanedImg, 0, 0);
-      const id = ctx.getImageData(0, 0, cleanedImg.width, cleanedImg.height);
-      setBgRemovedData(id);
-      setOriginalImageData(id);
-      setStep(1);
-      setMessage("Background removed. Click 'Grayscale'.");
-    }
-    setLoading(false);
-  };
-
   const MAX_FILE_SIZE_MB = 1;
   const MAX_DIMENSION = 2000;
 
@@ -112,6 +83,35 @@ export const SingleLineDrawer = ({}: Props) => {
     }
   };
 
+  const removeBgStep = async () => {
+    if (!originalImageData) return;
+
+    setLoading(true);
+    setMessage("Removing background...");
+
+    // Convert current canvas data back into a Blob so we can feed it to imgly
+    const canvas = canvasRef.current;
+    const blob = await new Promise<Blob>((resolve, reject) =>
+      canvas?.toBlob((b) => (b ? resolve(b) : reject()), "image/png")
+    );
+
+    const cleanedImg = await removeBackgroundFromFile(blob);
+
+    // Draw result back to canvas
+    const ctx = canvas?.getContext("2d");
+    if (ctx) {
+      canvas.width = cleanedImg.width;
+      canvas.height = cleanedImg.height;
+      ctx.drawImage(cleanedImg, 0, 0);
+      const id = ctx.getImageData(0, 0, cleanedImg.width, cleanedImg.height);
+      setBgRemovedData(id);
+      setOriginalImageData(id);
+      setStep(0.75);
+      setMessage("Background removed. Click 'Grayscale'.");
+    }
+    setLoading(false);
+  };
+
   const convertToGrayscale = () => {
     if (!originalImageData) return;
     const gray = new ImageData(
@@ -155,13 +155,14 @@ export const SingleLineDrawer = ({}: Props) => {
 
     ctx.clearRect(0, 0, canvasRef.current!.width, canvasRef.current!.height);
     setLoading(true);
-    animatePath(ctx, path, 20);
+    animatePath(ctx, path, 0, 50);
   };
 
   const animatePath = (
     ctx: CanvasRenderingContext2D,
     path: { x: number; y: number }[],
-    index = 0
+    index = 0,
+    speed = 1
   ) => {
     if (index >= path.length - 1) {
       setLoading(false);
@@ -169,17 +170,19 @@ export const SingleLineDrawer = ({}: Props) => {
       return;
     }
 
-    const from = path[index];
-    const to = path[index + 1];
-
     ctx.strokeStyle = "#00ff88";
     ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(from.x, from.y);
-    ctx.lineTo(to.x, to.y);
-    ctx.stroke();
 
-    requestAnimationFrame(() => animatePath(ctx, path, index + 1));
+    for (let i = 0; i < speed && index + i < path.length - 1; i++) {
+      const from = path[index + i];
+      const to = path[index + i + 1];
+      ctx.beginPath();
+      ctx.moveTo(from.x, from.y);
+      ctx.lineTo(to.x, to.y);
+      ctx.stroke();
+    }
+
+    requestAnimationFrame(() => animatePath(ctx, path, index + speed, speed));
   };
 
   return (
@@ -200,7 +203,7 @@ export const SingleLineDrawer = ({}: Props) => {
         </button>
         <button
           onClick={convertToGrayscale}
-          disabled={!originalImageData || step >= 1}
+          disabled={step < 0.5 || step >= 1}
           className="px-3 py-1 rounded bg-blue-600 disabled:bg-neutral-400"
         >
           Grayscale
