@@ -34,13 +34,13 @@ const featuredProjects = [
     image: "/assets/project-voice.jpg",
     link: "/projects/voice-garden",
   },
-  {
-    title: "VicSave Compiler",
-    description:
-      "Backend service that parses Victoria 3 save files into JSON and serves them via a REST API. Built for data exploration tools.",
-    image: "/assets/project-vicsave.jpg",
-    link: "/projects/vicsave-compiler",
-  },
+  // {
+  //   title: "VicSave Compiler",
+  //   description:
+  //     "Backend service that parses Victoria 3 save files into JSON and serves them via a REST API. Built for data exploration tools.",
+  //   image: "/assets/project-vicsave.jpg",
+  //   link: "/projects/vicsave-compiler",
+  // },
   // {
   //   title: "Hortibase",
   //   description:
