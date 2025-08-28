@@ -52,7 +52,7 @@ const featuredProjects = [
     title: "Single Line Drawer",
     description:
       "Drag and drop .jpegs to turn them into black and white single line drawings.",
-    image: "/assets/project-hortibase.jpg",
+    image: "/assets/single_line.png",
     link: "/projects/single-line-drawer",
   },
 ];

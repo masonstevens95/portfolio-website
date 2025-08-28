@@ -132,7 +132,7 @@ export const SingleLineDrawer = () => {
     setStep(1);
     setLoading(false);
 
-    setEdgeThresholdChanged(false);
+    // setEdgeThresholdChanged(false);
   };
 
   // ---- Step: Detect + Extract Outline ----
@@ -221,12 +221,34 @@ export const SingleLineDrawer = () => {
     requestAnimationFrame(() => animatePath(ctx, path, index + speed, speed));
   };
 
+  const resetImage = () => {
+    setLoading(false);
+    setMessage("Drop an image here...");
+    setStep(0);
+    setOriginalImageData(null);
+    setBgRemovedData(null);
+    setOutlinePath(null);
+
+    // Clear the canvas pixels
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      canvas.width = 0; // optionally reset dimensions
+      canvas.height = 0;
+      canvas.style.width = "0px";
+      canvas.style.height = "0px";
+    }
+
+    naturalSize.current = { w: 0, h: 0 };
+  };
+
   useEffect(() => {
-    if (!setEdgeThresholdChanged) {
-      setMessage("edge detection sensitivity changed");
+    if (step != 0) {
       setStep(1);
     }
-    setEdgeThresholdChanged(true);
   }, [edgeThreshold]);
 
   return (
@@ -253,6 +275,13 @@ export const SingleLineDrawer = () => {
         </div>
       </div>
       <div className="flex items-center gap-4 p-2 bg-neutral-800 text-neutral-200">
+        <button
+          onClick={resetImage}
+          disabled={!originalImageData}
+          className="bg-sky-800 px-3 py-1 rounded disabled:bg-neutral-500"
+        >
+          Reset Image
+        </button>
         <button
           onClick={removeBgStep}
           disabled={!originalImageData || step >= 1}
