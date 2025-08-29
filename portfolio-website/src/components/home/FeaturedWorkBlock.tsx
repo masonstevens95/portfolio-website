@@ -49,9 +49,9 @@ const featuredProjects = [
   //   link: "/projects/hortibase",
   // },
   {
-    title: "Single Line Drawer",
+    title: "Photos into Fourier Series Drawings",
     description:
-      "Drag and drop .jpegs to turn them into black and white single line drawings.",
+      "Drag and drop .jpegs to turn them into single line drawings, expressable with Fourier Series.",
     image: "/assets/single_line.png",
     link: "/projects/single-line-drawer",
   },
