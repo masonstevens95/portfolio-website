@@ -8,7 +8,7 @@ export const useThreeSceneMount = (canvasRef, earth) => {
   useEffect(() => {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
-      100,
+      50,
       window.innerWidth / window.innerHeight,
       0.1,
       1000
@@ -70,11 +70,25 @@ export const useThreeSceneMount = (canvasRef, earth) => {
     // Animation loop or initial render
     const animate = () => {
       requestAnimationFrame(animate);
-      // Update objects' states here
+
+      // spin
       earth.rotation.y += 0.0005;
 
-      controls.update();
+      // scroll-based movement
+      const scrollTop = window.scrollY || window.pageYOffset;
+      const maxScroll = Math.max(
+      1,
+        document.documentElement.scrollHeight - window.innerHeight
+      );
+      const progress = scrollTop / maxScroll;
+      const startMove = 0.9;  
+      let t = (progress - startMove) / (1 - startMove);
+      t = THREE.MathUtils.clamp(t, 0, 1);
+      const startX = -75;  
+      const endX = 400; // adjust if planet doesn’t fully leave screen
+      earth.position.x = THREE.MathUtils.lerp(startX, endX, t);
 
+      controls.update();
       renderer.render(scene, camera);
     };
     animate();
