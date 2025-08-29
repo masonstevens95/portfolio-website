@@ -42,7 +42,7 @@ export const InfiniteScrollContainer = ({}: Props) => {
   //endregion
   const [camera, setCamera] = useState<THREE.PerspectiveCamera>(
     new THREE.PerspectiveCamera(
-      100,
+      50,
       window.innerWidth / window.innerHeight,
       0.1,
       1000
