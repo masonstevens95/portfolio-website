@@ -27,13 +27,13 @@ const featuredProjects = [
     image: "/assets/garibaldi.jpg",
     link: "/projects/garibaldi",
   },
-  {
-    title: "Voice Garden",
-    description:
-      "A creative voice-powered garden builder using Fourier transforms. Merges math, DSP, and spatial audio concepts.",
-    image: "/assets/project-voice.jpg",
-    link: "/projects/voice-garden",
-  },
+  // {
+  //   title: "Voice Garden",
+  //   description:
+  //     "A creative voice-powered garden builder using Fourier transforms. Merges math, DSP, and spatial audio concepts.",
+  //   image: "/assets/project-voice.jpg",
+  //   link: "/projects/voice-garden",
+  // },
   // {
   //   title: "VicSave Compiler",
   //   description:
