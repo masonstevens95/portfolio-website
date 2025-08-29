@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { exportCanvasAsPNG } from "../../utils/exportCanvasAsPng";
 import { removeBackgroundFromFile } from "../../utils/removeBackground";
 import { detectEdgesWithTF } from "../../utils/detectEdgesWithTF";
-import { traceContour } from "../../utils/marchingSquares";
 import {
   marchingSquares,
   pickLargestContour,
