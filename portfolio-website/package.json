@@ -24,7 +24,7 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.7.1",
     "react-scroll-parallax": "^3.4.5",
-    "rembg-node": "^2.0.2",
+    "rembg-node": "2.0.2",
     "tailwindcss": "^4.1.11",
     "three": "^0.178.0",
     "vite": "^7.0.4",
