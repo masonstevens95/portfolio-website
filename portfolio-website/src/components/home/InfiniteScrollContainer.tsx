@@ -40,14 +40,14 @@ export const InfiniteScrollContainer = ({}: Props) => {
   useThreeSceneMount(canvasRef, earth);
 
   //endregion
-  const [camera, setCamera] = useState<THREE.PerspectiveCamera>(
-    new THREE.PerspectiveCamera(
-      100,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
-    )
-  );
+  // const [camera, setCamera] = useState<THREE.PerspectiveCamera>(
+  //   new THREE.PerspectiveCamera(
+  //     100,
+  //     window.innerWidth / window.innerHeight,
+  //     0.1,
+  //     1000
+  //   )
+  // );
 
   //todo - add some ambient noise
 
@@ -62,7 +62,7 @@ export const InfiniteScrollContainer = ({}: Props) => {
       {/* <canvas ref={canvasRef} id="bg" className="" /> */}
 
       <div className="left-0 top-0 fixed z-1 w-full h-full">
-        <Parallax className="parallax" pages={3} ref={parallaxRef}>
+        <Parallax className="parallax" pages={4} ref={parallaxRef}>
           <WelcomeBlock {...headerToPageMap[HeaderSelected.WELCOME]} />
 
           <AboutMeBlock {...headerToPageMap[HeaderSelected.ABOUT_ME]} />

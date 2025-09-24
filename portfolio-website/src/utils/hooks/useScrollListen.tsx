@@ -32,6 +32,7 @@ export const useScrollListen = (scroll, pageScrolledTime) => {
   );
 
   useEffect(() => {
+    // console.log("scroll", scroll);
     const rightNow = new Date();
 
     const rotateToZero = () => {
