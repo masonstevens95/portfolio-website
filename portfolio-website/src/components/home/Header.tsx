@@ -15,7 +15,7 @@ const HEADER_LABELS = [
   { id: HeaderSelected.WELCOME, label: "Welcome" },
   { id: HeaderSelected.ABOUT_ME, label: "About Me" },
   { id: HeaderSelected.FEATURED_WORK, label: "Featured Work" },
-  { id: HeaderSelected.PROFESSIONAL_GOALS, label: "Professional Goals" },
+  // { id: HeaderSelected.PROFESSIONAL_GOALS, label: "Professional Goals" },
   { id: HeaderSelected.CONTACT, label: "Contact" },
 ];
 

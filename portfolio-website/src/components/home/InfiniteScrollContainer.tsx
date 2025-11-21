@@ -71,9 +71,9 @@ export const InfiniteScrollContainer = ({}: Props) => {
             {...headerToPageMap[HeaderSelected.FEATURED_WORK]}
           />
 
-          <ProfessionalGoalsBlock
+          {/* <ProfessionalGoalsBlock
             {...headerToPageMap[HeaderSelected.PROFESSIONAL_GOALS]}
-          />
+          /> */}
 
           <ContactBlock {...headerToPageMap[HeaderSelected.CONTACT]} />
         </Parallax>
