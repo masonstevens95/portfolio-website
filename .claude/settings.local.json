@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Read(//Users/masonstevens/Developer/calculators/**)",
+      "Bash(chmod +x /Users/masonstevens/Developer/portfolio-website/docker-run.sh)",
+      "Bash(chmod +x /Users/masonstevens/Developer/portfolio-website/.devcontainer/init-firewall.sh)"
+    ]
+  }
+}
