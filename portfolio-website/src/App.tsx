@@ -15,9 +15,10 @@ function App() {
   const location = useLocation();
   // Keep CalculatorsPage mounted across tab switches under its base path
   // so React.lazy/Suspense state isn't reset on every tab click.
-  const routeKey = location.pathname.startsWith(CALCULATORS_BASE)
-    ? CALCULATORS_BASE
-    : location.pathname;
+  const isCalculatorsSubtree =
+    location.pathname === CALCULATORS_BASE ||
+    location.pathname.startsWith(CALCULATORS_BASE + "/");
+  const routeKey = isCalculatorsSubtree ? CALCULATORS_BASE : location.pathname;
 
   return (
     <AnimatePresence mode="wait">
