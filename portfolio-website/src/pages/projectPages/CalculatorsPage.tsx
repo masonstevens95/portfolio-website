@@ -1,7 +1,9 @@
-import { NavLink, Routes, Route } from "react-router-dom";
+import { NavLink, Navigate, Routes, Route } from "react-router-dom";
 import { ProjectPageTemplate } from "../ProjectPageTemplate";
 import { RemoteTab } from "./calculators/RemoteTab";
 import { calculatorTabs } from "./calculators/tabs";
+
+const defaultTabSlug = calculatorTabs[0].slug;
 
 export const CalculatorsPage = () => (
   <ProjectPageTemplate
@@ -15,9 +17,8 @@ export const CalculatorsPage = () => (
       >
         {calculatorTabs.map((tab) => (
           <NavLink
-            key={tab.slug || "overview"}
+            key={tab.slug}
             to={tab.slug}
-            end={tab.slug === ""}
             className={({ isActive }) =>
               `px-3 py-2 rounded-t text-sm transition-colors ${
                 isActive
@@ -33,21 +34,14 @@ export const CalculatorsPage = () => (
 
       <div className="w-full max-w-6xl mx-auto px-4 pt-6">
         <Routes>
-          {calculatorTabs.map((tab) =>
-            tab.slug === "" ? (
-              <Route
-                key="overview"
-                index
-                element={<RemoteTab importer={tab.importer} />}
-              />
-            ) : (
-              <Route
-                key={tab.slug}
-                path={tab.slug}
-                element={<RemoteTab importer={tab.importer} />}
-              />
-            )
-          )}
+          <Route index element={<Navigate to={defaultTabSlug} replace />} />
+          {calculatorTabs.map((tab) => (
+            <Route
+              key={tab.slug}
+              path={tab.slug}
+              element={<RemoteTab importer={tab.importer} />}
+            />
+          ))}
         </Routes>
       </div>
     </div>
