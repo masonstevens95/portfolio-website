@@ -1,4 +1,4 @@
-import { Component, type ReactNode } from "react";
+import { Component, type ErrorInfo, type ReactNode } from "react";
 
 interface Props {
   children: ReactNode;
@@ -21,8 +21,8 @@ export class RemoteBoundary extends Component<Props, State> {
     return { hasError: true };
   }
 
-  componentDidCatch(error: Error) {
-    console.error("Calculators remote failed to load:", error);
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error("Calculators remote failed to load:", error, errorInfo);
   }
 
   render() {
