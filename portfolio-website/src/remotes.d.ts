@@ -1,51 +1,54 @@
 /**
  * Type declarations for Module Federation remotes consumed by this host.
  * Updated whenever a new remote is added to vite.config.ts.
+ *
+ * NOTE: this file is intentionally an ambient declaration script (no
+ * top-level import/export). React's ComponentType is referenced inline
+ * via import("react") so the `declare module` blocks remain globally
+ * visible to bare specifiers like import("calculators/...").
  */
 
-import type { ComponentType } from "react";
-
 declare module "calculators/CalculatorsApp" {
-  const Component: ComponentType;
+  const Component: import("react").ComponentType;
   export default Component;
 }
 
 declare module "calculators/CalculatorsRoutes" {
-  const Component: ComponentType;
+  const Component: import("react").ComponentType;
   export default Component;
 }
 
 declare module "calculators/CalculatorsLoadError" {
-  const Component: ComponentType<{ error?: Error }>;
+  const Component: import("react").ComponentType<{ error?: Error }>;
   export default Component;
 }
 
 declare module "calculators/calc/surry-county-offer" {
-  const Component: ComponentType;
+  const Component: import("react").ComponentType;
   export default Component;
 }
 
 declare module "calculators/calc/lgs-dscr" {
-  const Component: ComponentType;
+  const Component: import("react").ComponentType;
   export default Component;
 }
 
 declare module "calculators/calc/olamina-dscr" {
-  const Component: ComponentType;
+  const Component: import("react").ComponentType;
   export default Component;
 }
 
 declare module "calculators/calc/eu5-loan" {
-  const Component: ComponentType;
+  const Component: import("react").ComponentType;
   export default Component;
 }
 
 declare module "calculators/calc/winston-salem-lvt" {
-  const Component: ComponentType;
+  const Component: import("react").ComponentType;
   export default Component;
 }
 
 declare module "calculators/calc/birchwood-rent-sell" {
-  const Component: ComponentType;
+  const Component: import("react").ComponentType;
   export default Component;
 }
