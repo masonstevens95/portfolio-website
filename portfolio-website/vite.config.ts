@@ -1,9 +1,8 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-// import crossOriginIsolation from "vite-plugin-cross-origin-isolation";
+import { federation } from "@module-federation/vite";
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
@@ -18,5 +17,24 @@ export default defineConfig({
         });
       },
     },
+    federation({
+      name: "portfolio-shell",
+      remotes: {
+        calculators: {
+          type: "module",
+          name: "calculators",
+          entry: "https://calculators-two-alpha.vercel.app/remoteEntry.js",
+        },
+      },
+      shared: {
+        react: { singleton: true, requiredVersion: "^19.0.0" },
+        "react/": { singleton: true, requiredVersion: "^19.0.0" },
+        "react-dom": { singleton: true, requiredVersion: "^19.0.0" },
+        "react-dom/": { singleton: true, requiredVersion: "^19.0.0" },
+      },
+    }),
   ],
+  build: {
+    target: "esnext",
+  },
 });
