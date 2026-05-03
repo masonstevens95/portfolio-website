@@ -27,6 +27,13 @@ class ErrorComponentBoundary extends Component<
   static getDerivedStateFromError() {
     return { hasError: true };
   }
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.warn(
+      "Calculators error component failed to load:",
+      error,
+      errorInfo
+    );
+  }
   render() {
     if (this.state.hasError) {
       return (
@@ -62,7 +69,7 @@ export class RemoteCrashBoundary extends Component<Props, State> {
           <Suspense
             fallback={
               <div className="text-neutral-400 text-center py-8">
-                Something went wrong.
+                Showing error details…
               </div>
             }
           >
