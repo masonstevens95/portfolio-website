@@ -27,6 +27,13 @@ const featuredProjects = [
     image: "/assets/garibaldi.jpg",
     link: "/projects/garibaldi",
   },
+  {
+    title: "Calculators (Microfrontend)",
+    description:
+      "A standalone calculators app composed into this portfolio at runtime via Module Federation. Each tab is a separately deployed module.",
+    image: "/assets/calculator_placeholder.jpg",
+    link: "/projects/calculators",
+  },
   // {
   //   title: "Voice Garden",
   //   description:
