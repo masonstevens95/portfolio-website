@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import { OfflineFallback } from "./OfflineFallback";
 
 interface Props {
   children: ReactNode;
@@ -9,10 +10,11 @@ interface State {
 }
 
 /**
- * Outer boundary for federated remote modules. Catches load failures
- * (network errors, ChunkLoadError) — i.e. the case where the remote's
- * code never reaches the host. Cannot rely on remote-provided error
- * components here; they haven't loaded.
+ * Defensive outer boundary for federated remote modules. In the
+ * normal layered design, RemoteCrashBoundary catches and discriminates
+ * load vs runtime failures itself; this boundary exists as a safety
+ * net for anything that escapes it (e.g. errors thrown while rendering
+ * the inner fallback). On catch it logs and renders OfflineFallback.
  */
 export class RemoteBoundary extends Component<Props, State> {
   state: State = { hasError: false };
@@ -27,25 +29,7 @@ export class RemoteBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      return (
-        <div className="w-full mx-auto px-4 py-12 text-center text-neutral-300">
-          <h2 className="text-2xl font-bold text-neutral-100 mb-2">
-            This demo is offline
-          </h2>
-          <p>
-            The calculators microfrontend couldn't be loaded. View it live at{" "}
-            <a
-              href="https://calculators-two-alpha.vercel.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:text-white"
-            >
-              calculators-two-alpha.vercel.app
-            </a>
-            .
-          </p>
-        </div>
-      );
+      return <OfflineFallback />;
     }
     return this.props.children;
   }

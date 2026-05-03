@@ -1,4 +1,5 @@
 import { Component, lazy, Suspense, type ErrorInfo, type ReactNode } from "react";
+import { OfflineFallback } from "./OfflineFallback";
 
 const CalculatorsLoadError = lazy(
   () => import("calculators/CalculatorsLoadError")
@@ -14,10 +15,27 @@ interface State {
 }
 
 /**
+ * Returns true for errors that mean the remote chunk never loaded
+ * (network failure, Vercel cold start, missing remoteEntry, etc.) —
+ * the case where the remote's own error UI is unreachable.
+ */
+function isRemoteLoadFailure(error: Error | undefined): boolean {
+  if (!error) return false;
+  if (error.name === "ChunkLoadError") return true;
+  const message = error.message ?? "";
+  return (
+    message.includes("Failed to fetch dynamically imported module") ||
+    message.includes("error loading dynamically imported module") ||
+    message.includes("Loading chunk") ||
+    message.includes("Loading CSS chunk") ||
+    message.includes("Importing a module script failed")
+  );
+}
+
+/**
  * Sub-boundary used when even the remote's CalculatorsLoadError fails
- * to load (network blip mid-session). Renders a minimal host-side
- * fallback so that doesn't bubble up to the outer RemoteBoundary
- * (whose "offline" message would be misleading at that point).
+ * to load. Renders a minimal host-side fallback so that doesn't bubble
+ * up unhandled.
  */
 class ErrorComponentBoundary extends Component<
   { children: ReactNode },
@@ -47,9 +65,18 @@ class ErrorComponentBoundary extends Component<
 }
 
 /**
- * Inner boundary for federated remote modules. Catches errors thrown
- * by the remote AFTER it has loaded (calc threw at runtime). Falls
- * back to the remote's own CalculatorsLoadError component.
+ * Inner boundary for federated remote modules. Two distinct fallback
+ * paths based on the captured error:
+ *   - Remote-load failure (ChunkLoadError, dynamic-import rejection):
+ *     render OfflineFallback. The remote's own error UI is unreachable
+ *     in this case, so we never try to load it.
+ *   - Runtime error from an already-loaded remote: lazy-load the
+ *     remote's CalculatorsLoadError, with a sub-boundary in case the
+ *     error UI itself fails to load mid-session.
+ *
+ * This single boundary handles both cases because two stacked
+ * boundaries cannot route by error type — the inner one always
+ * catches first regardless of nesting.
  */
 export class RemoteCrashBoundary extends Component<Props, State> {
   state: State = { hasError: false };
@@ -59,11 +86,18 @@ export class RemoteCrashBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("Calculators remote runtime error:", error, errorInfo);
+    if (isRemoteLoadFailure(error)) {
+      console.error("Calculators remote failed to load:", error, errorInfo);
+    } else {
+      console.error("Calculators remote runtime error:", error, errorInfo);
+    }
   }
 
   render() {
     if (this.state.hasError) {
+      if (isRemoteLoadFailure(this.state.error)) {
+        return <OfflineFallback />;
+      }
       return (
         <ErrorComponentBoundary>
           <Suspense
