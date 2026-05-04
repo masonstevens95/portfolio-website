@@ -1,5 +1,6 @@
 import { NavLink, Navigate, Routes, Route } from "react-router-dom";
 import { ProjectPageTemplate } from "../ProjectPageTemplate";
+import { IframeTab } from "./calculators/IframeTab";
 import { RemoteTab } from "./calculators/RemoteTab";
 import { calculatorTabs } from "./calculators/tabs";
 
@@ -43,7 +44,13 @@ export const CalculatorsPage = () => (
             <Route
               key={tab.slug}
               path={tab.slug}
-              element={<RemoteTab importer={tab.importer} />}
+              element={
+                tab.kind === "iframe" ? (
+                  <IframeTab src={tab.src} />
+                ) : (
+                  <RemoteTab importer={tab.importer} />
+                )
+              }
             />
           ))}
         </Routes>
