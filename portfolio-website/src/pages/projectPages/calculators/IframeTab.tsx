@@ -10,6 +10,7 @@ export function IframeTab({ src }: Props) {
           href={src}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="Open Calculators live demo in a new tab"
           className="text-sm text-neutral-400 hover:text-white transition-colors"
         >
           Open in new tab ↗
