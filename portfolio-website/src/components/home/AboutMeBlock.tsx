@@ -34,8 +34,8 @@ export const AboutMeBlock = ({ offset, speed, factor }: Props) => {
               experiences that feel natural, intuitive, and beautiful.
             </p>
             <p className="text-lg mt-4 text-neutral-400">
-              Outside of work, you’ll find me in the garden, sketching
-              interfaces, or hiking trails around the Winston-Salem.
+              Outside of work, you’ll find me in my orchard, sketching
+              interfaces, or mountain biking trails around Winston-Salem.
             </p>
           </div>
         </div>
