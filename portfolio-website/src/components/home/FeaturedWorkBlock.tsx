@@ -14,11 +14,11 @@ interface Props {
 
 const featuredProjects = [
   {
-    title: "Yarden.diy",
+    title: "Vespucci",
     description:
-      "A garden design tool for DIYers and nurseries. Includes layout tools, plant library, and visual builder. Still evolving.",
-    image: "/assets/Yarden_Logo.svg",
-    link: "/projects/yarden-diy",
+      "A save-file visualizer and explorer for Europa Universalis V.",
+    image: "/assets/vespucci.jpg",
+    link: "https://vespucci-eu5.vercel.app",
   },
   {
     title: "Garibaldi",
@@ -34,27 +34,6 @@ const featuredProjects = [
     image: "/assets/calculator_placeholder.jpg",
     link: "/projects/calculators",
   },
-  // {
-  //   title: "Voice Garden",
-  //   description:
-  //     "A creative voice-powered garden builder using Fourier transforms. Merges math, DSP, and spatial audio concepts.",
-  //   image: "/assets/project-voice.jpg",
-  //   link: "/projects/voice-garden",
-  // },
-  // {
-  //   title: "VicSave Compiler",
-  //   description:
-  //     "Backend service that parses Victoria 3 save files into JSON and serves them via a REST API. Built for data exploration tools.",
-  //   image: "/assets/project-vicsave.jpg",
-  //   link: "/projects/vicsave-compiler",
-  // },
-  // {
-  //   title: "Hortibase",
-  //   description:
-  //     "A plant data backend that scrapes, caches, and serves structured plant information through a public API.",
-  //   image: "/assets/project-hortibase.jpg",
-  //   link: "/projects/hortibase",
-  // },
   {
     title: "Photos into Fourier Series Drawings",
     description:
@@ -62,11 +41,46 @@ const featuredProjects = [
     image: "/assets/single_line.png",
     link: "/projects/single-line-drawer",
   },
+  {
+    title: "Guadalcanal Project",
+    description:
+      "An RTS game built in Godot to test the BMAD development method.",
+    image: "/assets/guadalcanal_placeholder.jpeg",
+    link: "#",
+  },
+  {
+    title: "PR Reader VSCode Extension",
+    description:
+      "A VS Code extension that visualizes pull requests for fast SDD code review.",
+    image: "/assets/vscode_placeholder.png",
+    link: "#",
+  },
 ];
+
+const COLS = 3;
+const ROWS = 2;
+
+const buildTracks = (count: number, hoveredTrack: number | null): string =>
+  Array.from({ length: count }, (_, i) =>
+    hoveredTrack === null ? "1fr" : i === hoveredTrack ? "2.5fr" : "0.75fr"
+  ).join(" ");
 
 export const FeaturedWorkBlock = ({ offset, speed, factor }: Props) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const navigate = useNavigate();
+
+  const hoveredCol = hoveredIndex !== null ? hoveredIndex % COLS : null;
+  const hoveredRow =
+    hoveredIndex !== null ? Math.floor(hoveredIndex / COLS) : null;
+
+  const onCardClick = (link: string) => {
+    if (!link || link === "#") return;
+    if (/^https?:\/\//.test(link)) {
+      window.open(link, "_blank", "noopener,noreferrer");
+    } else {
+      navigate(link);
+    }
+  };
 
   return (
     <ParallaxLayer
@@ -77,7 +91,13 @@ export const FeaturedWorkBlock = ({ offset, speed, factor }: Props) => {
     >
       <div className="w-full h-full flex items-center justify-center px-10 flex flex-col">
         <h1 className="text-5xl font-bold mb-12">Featured Work</h1>
-        <div className="flex w-full max-w-7xl h-3/4 overflow-hidden rounded-2xl shadow-lg">
+        <div
+          className="grid w-full max-w-7xl h-3/4 overflow-hidden rounded-2xl shadow-lg transition-all duration-500 ease-in-out"
+          style={{
+            gridTemplateColumns: buildTracks(COLS, hoveredCol),
+            gridTemplateRows: buildTracks(ROWS, hoveredRow),
+          }}
+        >
           {featuredProjects.map((project, index) => {
             const isHovered = hoveredIndex === index;
 
@@ -86,14 +106,8 @@ export const FeaturedWorkBlock = ({ offset, speed, factor }: Props) => {
                 key={index}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
-                onClick={() => navigate(project.link)}
-                className={`transition-all duration-500 ease-in-out cursor-pointer relative group overflow-hidden ${
-                  isHovered
-                    ? "flex-[3]"
-                    : hoveredIndex === null
-                    ? "flex-[1]"
-                    : "flex-[0.5]"
-                } h-full bg-black/30`}
+                onClick={() => onCardClick(project.link)}
+                className="transition-all duration-500 ease-in-out cursor-pointer relative group overflow-hidden bg-black/30"
               >
                 <img
                   src={project.image}
