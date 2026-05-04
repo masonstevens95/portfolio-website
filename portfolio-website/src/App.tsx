@@ -9,20 +9,12 @@ import { VicSavePage } from "./pages/projectPages/VicSavePage";
 import { HortibasePage } from "./pages/projectPages/HortibasePage";
 import { SingleLineDrawerPage } from "./pages/projectPages/SingleLineDrawerPage";
 
-const CALCULATORS_BASE = "/projects/calculators";
-
 function App() {
   const location = useLocation();
-  // Keep CalculatorsPage mounted across tab switches under its base path
-  // so React.lazy/Suspense state isn't reset on every tab click.
-  const isCalculatorsSubtree =
-    location.pathname === CALCULATORS_BASE ||
-    location.pathname.startsWith(CALCULATORS_BASE + "/");
-  const routeKey = isCalculatorsSubtree ? CALCULATORS_BASE : location.pathname;
 
   return (
     <AnimatePresence mode="wait">
-      <Routes location={location} key={routeKey}>
+      <Routes location={location} key={location.pathname}>
         <Route path="/" element={<HomePage />} />
         <Route path="/projects/yarden-diy" element={<YardenPage />} />
         <Route path="/projects/garibaldi" element={<GaribaldiPage />} />
