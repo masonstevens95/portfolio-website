@@ -3,6 +3,7 @@ import { ProjectPageTemplate } from "../ProjectPageTemplate";
 import { RemoteTab } from "./calculators/RemoteTab";
 import { calculatorTabs } from "./calculators/tabs";
 
+const BASE_PATH = "/projects/calculators";
 const defaultTabSlug = calculatorTabs[0].slug;
 
 export const CalculatorsPage = () => (
@@ -18,7 +19,7 @@ export const CalculatorsPage = () => (
         {calculatorTabs.map((tab) => (
           <NavLink
             key={tab.slug}
-            to={tab.slug}
+            to={`${BASE_PATH}/${tab.slug}`}
             className={({ isActive }) =>
               `px-3 py-2 rounded-t text-sm transition-colors ${
                 isActive
@@ -34,7 +35,10 @@ export const CalculatorsPage = () => (
 
       <div className="w-full max-w-6xl mx-auto px-4 pt-6">
         <Routes>
-          <Route index element={<Navigate to={defaultTabSlug} replace />} />
+          <Route
+            index
+            element={<Navigate to={`${BASE_PATH}/${defaultTabSlug}`} replace />}
+          />
           {calculatorTabs.map((tab) => (
             <Route
               key={tab.slug}
