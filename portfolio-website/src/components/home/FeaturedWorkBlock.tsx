@@ -100,12 +100,12 @@ export const FeaturedWorkBlock = ({ offset, speed, factor }: Props) => {
                   alt={project.title}
                   className="object-cover w-full h-full absolute inset-0 z-0 opacity-75 group-hover:opacity-95 transition-opacity"
                 />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-transparent to-transparent p-4 z-10">
-                  <h3 className="text-xl text-white font-semibold">
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/70 to-transparent p-4 z-10">
+                  <h3 className="text-xl text-white font-semibold [text-shadow:_0_2px_8px_rgba(0,0,0,0.9)]">
                     {project.title}
                   </h3>
                   {isHovered && (
-                    <p className="text-sm text-neutral-300 mt-2 transition-opacity duration-300">
+                    <p className="text-sm text-neutral-200 mt-2 transition-opacity duration-300 [text-shadow:_0_1px_4px_rgba(0,0,0,0.9)]">
                       {project.description}
                     </p>
                   )}
