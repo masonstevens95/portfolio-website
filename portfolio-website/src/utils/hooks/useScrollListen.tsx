@@ -58,57 +58,46 @@ export const useScrollListen = (scroll, pageScrolledTime) => {
       animateGroup(t);
     };
 
+    // Scroll-spy thresholds (start of each section as the user scrolls
+    // down). Hand-tuned to feel natural with the parallax sections that
+    // overlap visually — adjust constants by eye if the highlight changes
+    // too early or too late at any boundary.
+    const SPY_THRESHOLDS = {
+      aboutMe: 0.5,
+      featuredWork: 1.5,
+      contact: 2.1,
+    };
+
     function moveCamera(scroll: number) {
-      const t = document.body.getBoundingClientRect().top;
       if (scroll == 0) {
         rotateToZero();
         earth.rotation.y += 0.0005;
       }
 
-      if (
-        scroll >= headerToPageMap[HeaderSelected.WELCOME].offset &&
-        scroll < headerToPageMap[HeaderSelected.FEATURED_WORK].offset
-      ) {
-        if (rightNow.getTime() - pageScrolledTime.getTime() > 1400) {
-          dispatch(setHeaderSelected(HeaderSelected.WELCOME));
-        }
-
-        const newScroll = scroll * 1;
-        // earth.rotation.x += 0.005 * newScroll;
-        earth.rotation.y += 0.03 * newScroll;
-        // earth.rotation.z += 0.005 * newScroll;
-
-        earth.position.x = -75 + 148 * newScroll;
-
-        // camera.position.z = 50 + -250 * newScroll;
-        // camera.position.x = 100 * newScroll;
-        // camera.position.y = -0.0002 * newScroll;
-      } else if (
-        scroll >= headerToPageMap[HeaderSelected.ABOUT_ME].offset &&
-        scroll < headerToPageMap[HeaderSelected.FEATURED_WORK].offset
-      ) {
-        if (rightNow.getTime() - pageScrolledTime.getTime() > 1400) {
-          dispatch(setHeaderSelected(HeaderSelected.ABOUT_ME));
-        }
-      } else if (
-        scroll >= headerToPageMap[HeaderSelected.FEATURED_WORK].offset &&
-        scroll < headerToPageMap[HeaderSelected.PROFESSIONAL_GOALS].offset
-      ) {
-        if (rightNow.getTime() - pageScrolledTime.getTime() > 1400) {
-          dispatch(setHeaderSelected(HeaderSelected.ABOUT_ME));
-        }
-      } else if (
-        scroll >= headerToPageMap[HeaderSelected.PROFESSIONAL_GOALS].offset &&
-        scroll < headerToPageMap[HeaderSelected.CONTACT].offset
-      ) {
-        if (rightNow.getTime() - pageScrolledTime.getTime() > 1400) {
-          dispatch(setHeaderSelected(HeaderSelected.PROFESSIONAL_GOALS));
-        }
-      } else if (scroll > headerToPageMap[HeaderSelected.CONTACT].offset) {
-        if (rightNow.getTime() - pageScrolledTime.getTime() > 1400) {
-          dispatch(setHeaderSelected(HeaderSelected.CONTACT));
-        }
+      // Earth motion was originally tied to the WELCOME range; keep it
+      // bound to scroll < featuredWork so the earth stops moving once
+      // the Featured Work section takes over.
+      if (scroll > 0 && scroll < SPY_THRESHOLDS.featuredWork) {
+        earth.rotation.y += 0.03 * scroll;
+        earth.position.x = -75 + 148 * scroll;
       }
+
+      // Skip header updates while the parallax animation is still
+      // mid-flight after a click-driven scrollTo (otherwise the
+      // highlight flickers through the passing sections).
+      if (rightNow.getTime() - pageScrolledTime.getTime() <= 1400) return;
+
+      let activeSection: HeaderSelected;
+      if (scroll < SPY_THRESHOLDS.aboutMe) {
+        activeSection = HeaderSelected.WELCOME;
+      } else if (scroll < SPY_THRESHOLDS.featuredWork) {
+        activeSection = HeaderSelected.ABOUT_ME;
+      } else if (scroll < SPY_THRESHOLDS.contact) {
+        activeSection = HeaderSelected.FEATURED_WORK;
+      } else {
+        activeSection = HeaderSelected.CONTACT;
+      }
+      dispatch(setHeaderSelected(activeSection));
     }
     moveCamera(scroll);
   }, [scroll]);
