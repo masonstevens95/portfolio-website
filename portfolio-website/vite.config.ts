@@ -45,6 +45,25 @@ export default defineConfig({
     // virtual modules for these subpaths. Excluding them lets the
     // federation runtime handle them at module-evaluation time instead.
     exclude: ["react/jsx-runtime", "react/jsx-dev-runtime"],
+    esbuildOptions: {
+      // The MF plugin generates `mf-shared:*` virtual modules whose
+      // bodies import `node_modules/__mf__virtual/*.mjs` files. Those
+      // .mjs files aren't on disk during dep optimization (they're
+      // served by the dev-server middleware at request time), so
+      // esbuild can't resolve them and crashes the optimizer. Marking
+      // them external skips resolution; resolution happens at runtime.
+      plugins: [
+        {
+          name: "mf-virtual-external",
+          setup(build) {
+            build.onResolve({ filter: /__mf__virtual/ }, (args) => ({
+              path: args.path,
+              external: true,
+            }));
+          },
+        },
+      ],
+    },
   },
   build: {
     target: "esnext",
