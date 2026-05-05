@@ -32,8 +32,20 @@ export default defineConfig({
         "react-dom": { singleton: true, requiredVersion: "^19.0.0" },
         "react-dom/": { singleton: true, requiredVersion: "^19.0.0" },
       },
+      // The @module-federation/dts-plugin spawns a child process that
+      // crashes intermittently on Node 23 with "Channel closed" / EPIPE.
+      // We don't need live remote-type extraction at dev time —
+      // src/remotes.d.ts already declares the consumed module shapes.
+      dts: false,
     }),
   ],
+  optimizeDeps: {
+    // Workaround for an esbuild "could not resolve" error during dep
+    // optimization when @module-federation/vite generates load-share
+    // virtual modules for these subpaths. Excluding them lets the
+    // federation runtime handle them at module-evaluation time instead.
+    exclude: ["react/jsx-runtime", "react/jsx-dev-runtime"],
+  },
   build: {
     target: "esnext",
   },
