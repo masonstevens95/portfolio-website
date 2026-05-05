@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
+import { AppErrorBoundary } from "./components/AppErrorBoundary";
 import { HomePage } from "./pages/HomePage";
 import { ProjectsIndexPage } from "./pages/ProjectsIndexPage";
 import { YardenPage } from "./pages/projectPages/YardenPage";
@@ -17,8 +18,9 @@ function App() {
   const location = useLocation();
 
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
+    <AppErrorBoundary>
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
         <Route path="/" element={<HomePage />} />
         <Route path="/projects" element={<ProjectsIndexPage />} />
         <Route path="/projects/yarden-diy" element={<YardenPage />} />
@@ -40,8 +42,9 @@ function App() {
           path="/projects/single-line-drawer"
           element={<SingleLineDrawerPage />}
         />
-      </Routes>
-    </AnimatePresence>
+        </Routes>
+      </AnimatePresence>
+    </AppErrorBoundary>
   );
 }
 

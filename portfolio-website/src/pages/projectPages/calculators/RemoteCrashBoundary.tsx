@@ -1,5 +1,6 @@
 import { Component, lazy, Suspense, type ErrorInfo, type ReactNode } from "react";
 import { OfflineFallback } from "./OfflineFallback";
+import { isRemoteLoadFailure } from "./errors";
 
 const CalculatorsLoadError = lazy(
   () => import("calculators/CalculatorsLoadError")
@@ -12,24 +13,6 @@ interface Props {
 interface State {
   hasError: boolean;
   error?: Error;
-}
-
-/**
- * Returns true for errors that mean the remote chunk never loaded
- * (network failure, Vercel cold start, missing remoteEntry, etc.) —
- * the case where the remote's own error UI is unreachable.
- */
-function isRemoteLoadFailure(error: Error | undefined): boolean {
-  if (!error) return false;
-  if (error.name === "ChunkLoadError") return true;
-  const message = error.message ?? "";
-  return (
-    message.includes("Failed to fetch dynamically imported module") ||
-    message.includes("error loading dynamically imported module") ||
-    message.includes("Loading chunk") ||
-    message.includes("Loading CSS chunk") ||
-    message.includes("Importing a module script failed")
-  );
 }
 
 /**
