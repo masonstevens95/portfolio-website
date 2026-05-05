@@ -16,9 +16,9 @@ export type CalculatorTab =
     };
 
 // Overview embeds the live calculators app via iframe instead of a federated
-// mount. Federation-based Overview is blocked by the remote bundling its
-// own copy of react-router-dom (host's Router context isn't visible to it).
-// Sharing react-router-dom on both sides is the proper future fix.
+// mount. Federation-based Overview is now technically possible (the remote
+// shares react-router-dom as of the latest deploy), but the iframe path is
+// kept for now because it sandboxes routing/state from the host cleanly.
 export const calculatorTabs: CalculatorTab[] = [
   {
     kind: "iframe",
@@ -28,21 +28,15 @@ export const calculatorTabs: CalculatorTab[] = [
   },
   {
     kind: "remote",
-    slug: "surry-county-offer",
-    label: "Surry County Offer",
-    importer: () => import("calculators/calc/surry-county-offer"),
+    slug: "rural-land-offer",
+    label: "Rural Land Offer",
+    importer: () => import("calculators/calc/rural-land-offer"),
   },
   {
     kind: "remote",
-    slug: "lgs-dscr",
-    label: "LGS DSCR",
-    importer: () => import("calculators/calc/lgs-dscr"),
-  },
-  {
-    kind: "remote",
-    slug: "olamina-dscr",
-    label: "Olamina DSCR",
-    importer: () => import("calculators/calc/olamina-dscr"),
+    slug: "modular-home-dscr",
+    label: "Modular Home DSCR",
+    importer: () => import("calculators/calc/modular-home-dscr"),
   },
   {
     kind: "remote",
@@ -58,8 +52,8 @@ export const calculatorTabs: CalculatorTab[] = [
   },
   {
     kind: "remote",
-    slug: "birchwood-rent-sell",
-    label: "Birchwood Rent vs Sell",
-    importer: () => import("calculators/calc/birchwood-rent-sell"),
+    slug: "rent-sell",
+    label: "Rent vs Sell",
+    importer: () => import("calculators/calc/rent-sell"),
   },
 ];

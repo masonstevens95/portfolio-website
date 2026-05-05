@@ -23,17 +23,12 @@ declare module "calculators/CalculatorsLoadError" {
   export default Component;
 }
 
-declare module "calculators/calc/surry-county-offer" {
+declare module "calculators/calc/rural-land-offer" {
   const Component: import("react").ComponentType;
   export default Component;
 }
 
-declare module "calculators/calc/lgs-dscr" {
-  const Component: import("react").ComponentType;
-  export default Component;
-}
-
-declare module "calculators/calc/olamina-dscr" {
+declare module "calculators/calc/modular-home-dscr" {
   const Component: import("react").ComponentType;
   export default Component;
 }
@@ -48,7 +43,7 @@ declare module "calculators/calc/winston-salem-lvt" {
   export default Component;
 }
 
-declare module "calculators/calc/birchwood-rent-sell" {
+declare module "calculators/calc/rent-sell" {
   const Component: import("react").ComponentType;
   export default Component;
 }
