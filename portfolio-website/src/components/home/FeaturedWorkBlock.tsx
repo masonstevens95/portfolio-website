@@ -18,7 +18,7 @@ const featuredProjects = [
     description:
       "A save-file visualizer and explorer for Europa Universalis V.",
     image: "/assets/vespucci.jpg",
-    link: "https://vespucci-eu5.vercel.app",
+    link: "/projects/vespucci",
   },
   {
     title: "Garibaldi",
@@ -46,14 +46,14 @@ const featuredProjects = [
     description:
       "An RTS game built in Godot to test the BMAD development method.",
     image: "/assets/guadalcanal_placeholder.jpeg",
-    link: "#",
+    link: "/projects/guadalcanal",
   },
   {
     title: "PR Reader VSCode Extension",
     description:
       "A VS Code extension that visualizes pull requests for fast SDD code review.",
     image: "/assets/vscode_placeholder.png",
-    link: "#",
+    link: "/projects/pr-reader-vscode",
   },
 ];
 
