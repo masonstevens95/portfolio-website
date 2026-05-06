@@ -31,6 +31,13 @@ const projects: ProjectEntry[] = [
     image: "/assets/calculator_placeholder.jpg",
   },
   {
+    slug: "picture-to-pixel-art",
+    title: "Picture to Pixel Art (Microfrontend)",
+    description:
+      "A microfrontend that turns photos into pixel art. Composed into this portfolio at runtime via Module Federation.",
+    image: "/assets/pixel_art_placeholder.png",
+  },
+  {
     slug: "single-line-drawer",
     title: "Photos into Fourier Series Drawings",
     description:

@@ -4,7 +4,7 @@
 
 import { ParallaxLayer } from "@react-spring/parallax";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface Props {
   offset: number;
@@ -35,11 +35,11 @@ const featuredProjects = [
     link: "/projects/calculators",
   },
   {
-    title: "Photos into Fourier Series Drawings",
+    title: "Picture to Pixel Art (Microfrontend)",
     description:
-      "Drag and drop .jpegs to turn them into single line drawings, expressable with Fourier Series.",
-    image: "/assets/single_line.png",
-    link: "/projects/single-line-drawer",
+      "A microfrontend that turns photos into pixel art. Composed into this portfolio at runtime via Module Federation.",
+    image: "/assets/pixel_art_placeholder.png",
+    link: "/projects/picture-to-pixel-art",
   },
   {
     title: "Guadalcanal Project",
@@ -128,6 +128,12 @@ export const FeaturedWorkBlock = ({ offset, speed, factor }: Props) => {
             );
           })}
         </div>
+        <Link
+          to="/projects"
+          className="mt-6 text-neutral-300 hover:text-white text-base md:text-lg underline-offset-4 hover:underline transition-colors"
+        >
+          View all projects →
+        </Link>
       </div>
     </ParallaxLayer>
   );

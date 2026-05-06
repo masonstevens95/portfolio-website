@@ -9,6 +9,7 @@ import { CalculatorsPage } from "./pages/projectPages/CalculatorsPage";
 import { VespucciPage } from "./pages/projectPages/VespucciPage";
 import { GuadalcanalPage } from "./pages/projectPages/GuadalcanalPage";
 import { PrReaderPage } from "./pages/projectPages/PrReaderPage";
+import { PicturePixelArtPage } from "./pages/projectPages/PicturePixelArtPage";
 import { VoiceGardenPage } from "./pages/projectPages/VoiceGardenPage";
 import { VicSavePage } from "./pages/projectPages/VicSavePage";
 import { HortibasePage } from "./pages/projectPages/HortibasePage";
@@ -34,6 +35,10 @@ function App() {
         <Route
           path="/projects/pr-reader-vscode"
           element={<PrReaderPage />}
+        />
+        <Route
+          path="/projects/picture-to-pixel-art"
+          element={<PicturePixelArtPage />}
         />
         <Route path="/projects/voice-garden" element={<VoiceGardenPage />} />
         <Route path="/projects/vicsave-compiler" element={<VicSavePage />} />
