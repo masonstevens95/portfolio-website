@@ -1,6 +1,6 @@
 import { NavLink, Navigate, Routes, Route } from "react-router-dom";
+import { EmbeddedIframe } from "../../components/EmbeddedIframe";
 import { ProjectPageTemplate } from "../ProjectPageTemplate";
-import { IframeTab } from "./calculators/IframeTab";
 import { RemoteTab } from "./calculators/RemoteTab";
 import { calculatorTabs } from "./calculators/tabs";
 
@@ -46,7 +46,10 @@ export const CalculatorsPage = () => (
               path={tab.slug}
               element={
                 tab.kind === "iframe" ? (
-                  <IframeTab src={tab.src} />
+                  <EmbeddedIframe
+                    src={tab.src}
+                    title="Calculators (live demo)"
+                  />
                 ) : (
                   <RemoteTab importer={tab.importer} />
                 )
