@@ -26,7 +26,7 @@ export const Header = ({}: Props) => {
   );
 
   const { toggleMute, paused } = useAmbientSound(
-    "/assets/space-arp-f-chords.wav",
+    "/assets/crickets.wav",
     0.1
   );
 
@@ -70,10 +70,10 @@ export const Header = ({}: Props) => {
         <div className="absolute right-0 top-1/2 -translate-y-1/2 pr-2">
           <button
             onClick={toggleMute}
-            className="text-white hover:text-neutral-300 text-xl"
+            className="text-[var(--orchard-cream)] hover:text-[var(--orchard-honey)] text-xl"
             title="Toggle ambient audio"
           >
-            {paused ? "🔇" : "🔊"}
+            {paused ? "🔇" : "🦗"}
           </button>
         </div>
       </div>
