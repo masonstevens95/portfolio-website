@@ -21,7 +21,7 @@ const HEADER_LABELS = [
   { id: HeaderSelected.CONTACT, label: "Contact" },
 ];
 
-const AUDIO_HINT_KEY = "orchard-audio-hint-dismissed-v2";
+const AUDIO_HINT_KEY = "orchard-audio-hint-dismissed-v3";
 
 export const Header = ({}: Props) => {
   const dispatch = useAppDispatch();
