@@ -19,21 +19,21 @@ export const AboutMeBlock = ({ offset, speed, factor }: Props) => {
       factor={factor}
     >
       <div className="w-full h-full flex items-center justify-center p-8">
-        <div className="bg-black/30 rounded-3xl shadow-lg backdrop-blur-lg p-10 max-w-5xl w-full flex flex-col md:flex-row items-center gap-8">
+        <div className="bg-[var(--orchard-bark)]/45 rounded-3xl shadow-lg backdrop-blur-lg border border-[var(--orchard-honey)]/15 p-10 max-w-5xl w-full flex flex-col md:flex-row items-center gap-8">
           <img
-            src="/assets/profile.jpg" // replace with your actual profile path
+            src="/assets/profile.jpg"
             alt="Profile photo"
-            className="w-48 h-48 rounded-full object-cover border-4 border-neutral-100 shadow-md"
+            className="w-48 h-48 rounded-full object-cover border-4 border-[var(--orchard-cream)]/30 shadow-md"
           />
-          <div className="text-left text-neutral-100">
-            <h1 className="text-5xl font-bold mb-4">Hi, I'm Mason</h1>
-            <p className="text-lg leading-relaxed text-neutral-300">
-              I'm a designer, developer, and nature enthusiast building tools
+          <div className="text-left text-[var(--orchard-cream)]">
+            <h1 className="text-5xl font-bold mb-4">Hi, I’m Mason</h1>
+            <p className="text-lg leading-relaxed text-[var(--orchard-cream)]/85">
+              I’m a designer, developer, and nature enthusiast building tools
               that connect people to plants. With a background in UX, spatial
               computing, and frontend systems, I focus on crafting interactive
               experiences that feel natural, intuitive, and beautiful.
             </p>
-            <p className="text-lg mt-4 text-neutral-400">
+            <p className="text-lg mt-4 text-[var(--orchard-cream)]/65">
               Outside of work, you’ll find me in my orchard, sketching
               interfaces, or mountain biking trails around Winston-Salem.
             </p>
