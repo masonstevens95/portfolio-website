@@ -96,28 +96,28 @@ export const ProjectsIndexPage = () => (
           <li key={project.slug}>
             <Link
               to={`/projects/${project.slug}`}
-              className="flex gap-4 items-start p-4 rounded-lg border border-neutral-800 hover:border-neutral-600 hover:bg-neutral-900/50 transition-colors"
+              className="flex gap-4 items-start p-4 rounded-lg border border-[var(--orchard-moss)]/70 hover:border-[var(--orchard-honey)]/50 hover:bg-[var(--orchard-moss)]/40 transition-colors"
             >
               {project.image ? (
                 <img
                   src={project.image}
                   alt={project.title}
-                  className="w-32 h-32 object-cover rounded flex-shrink-0 bg-neutral-900"
+                  className="w-32 h-32 object-cover rounded flex-shrink-0 bg-[var(--orchard-moss)]"
                 />
               ) : (
                 <div
                   aria-hidden="true"
-                  className="w-32 h-32 rounded flex-shrink-0 bg-neutral-900 border border-neutral-800 flex items-center justify-center text-3xl text-neutral-600 font-semibold"
+                  className="w-32 h-32 rounded flex-shrink-0 bg-[var(--orchard-moss)] border border-[var(--orchard-moss)]/70 flex items-center justify-center text-3xl text-[var(--orchard-cream)]/40 font-semibold"
                 >
                   {project.title.charAt(0)}
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <h3 className="text-xl text-neutral-100 font-semibold mb-1">
+                <h3 className="text-xl text-[var(--orchard-cream)] font-semibold mb-1">
                   {project.title}
                 </h3>
-                <p className="text-neutral-400 mb-2">{project.description}</p>
-                <span className="text-sm text-blue-400">View project →</span>
+                <p className="text-[var(--orchard-cream)]/65 mb-2">{project.description}</p>
+                <span className="text-sm text-[var(--orchard-honey)]">View project →</span>
               </div>
             </Link>
           </li>
