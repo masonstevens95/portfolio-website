@@ -2,6 +2,19 @@ import { type RefObject, useEffect } from "react";
 import * as THREE from "three";
 import type { MouseParallaxOffset } from "./useMouseParallax";
 
+// Release the renderer's GPU resources without forcing context loss on the
+// underlying canvas. Under React 19 StrictMode dev, useEffect runs as
+// mount → cleanup → mount, with the canvas DOM element persisting across the
+// cycle. forceContextLoss() at cleanup leaves the second mount with a dead
+// WebGL context, so three.js's getShaderPrecisionFormat() returns null inside
+// the WebGLRenderer constructor and crashes ("Cannot read properties of null
+// (reading 'precision')"). dispose() alone is the StrictMode-safe path.
+export const disposeRendererForStrictModeSafety = (
+  renderer: THREE.WebGLRenderer
+): void => {
+  renderer.dispose();
+};
+
 const FAR_COUNT = 80;
 const MID_COUNT = 50;
 const NEAR_COUNT = 25;
@@ -260,8 +273,7 @@ export const useThreeSceneMount = (
         (p.mesh.material as THREE.Material).dispose();
       }
       (scene.background as THREE.CanvasTexture).dispose();
-      renderer.dispose();
-      renderer.forceContextLoss();
+      disposeRendererForStrictModeSafety(renderer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
