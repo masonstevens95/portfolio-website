@@ -1,35 +1,31 @@
 // utils/hooks/useAmbientSound.ts
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 export const useAmbientSound = (src: string, volume = 0.3) => {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const [paused, setPaused] = useState(false);
-  const [audio, setAudio] = useState(new Audio(src));
+  const [audio] = useState(() => new Audio(src));
 
   useEffect(() => {
     audio.loop = true;
     audio.volume = volume;
-    audioRef.current = audio;
 
     if (paused) {
       audio.pause();
     } else {
       audio.play().catch((e) => {
         // Browser blocked autoplay (typical until the user interacts with
-        // the page). Sync UI state to "muted" so the toggle button is honest;
-        // a click on the toggle counts as a user gesture and will succeed.
+        // the page). Sync UI state so the toggle button is honest; a click
+        // on the toggle counts as a user gesture and will then succeed.
         console.error("Autoplay blocked, ", e);
         setPaused(true);
       });
     }
-  }, [src, volume, paused]);
+  }, [audio, volume, paused]);
 
-  const toggleMute = () => {
-    if (audioRef.current) {
-      audioRef.current.muted = !audioRef.current.muted;
-      setPaused(audioRef.current.muted);
-    }
-  };
+  // Single source of truth: `paused`. Toggling it lets the effect above
+  // call play()/pause() — and play() inside the click handler runs in a
+  // user-gesture context, so browsers that blocked autoplay will allow it.
+  const toggleMute = () => setPaused((p) => !p);
 
   return { toggleMute, paused };
 };
