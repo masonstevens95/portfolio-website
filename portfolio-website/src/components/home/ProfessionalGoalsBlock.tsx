@@ -45,8 +45,8 @@ export const ProfessionalGoalsBlock = ({ offset, speed, factor }: Props) => {
       factor={factor}
     >
       <div className="w-full h-full flex items-center justify-center px-6">
-        <div className="max-w-6xl w-full bg-black/30 backdrop-blur-md rounded-xl p-6 shadow-xl">
-          <h1 className="text-4xl text-center font-bold text-neutral-100 mb-8">
+        <div className="max-w-6xl w-full bg-[var(--orchard-bark)]/45 backdrop-blur-md border border-[var(--orchard-honey)]/15 rounded-xl p-6 shadow-xl">
+          <h1 className="text-4xl text-center font-bold text-[var(--orchard-cream)] mb-8">
             Where I'm Headed
           </h1>
           <Chrono
@@ -54,10 +54,10 @@ export const ProfessionalGoalsBlock = ({ offset, speed, factor }: Props) => {
             mode="HORIZONTAL"
             timelinePointShape="diamond"
             theme={{
-              primary: "#3b82f6", // Tailwind blue-500
-              secondary: "#111827", // Tailwind gray-900
-              cardBgColor: "#1f2937", // Tailwind gray-800
-              cardForeColor: "#f9fafb", // Tailwind gray-50
+              primary: "#d8a850", // orchard-honey
+              secondary: "#1f2a1f", // orchard-bark
+              cardBgColor: "#3a4a2c", // orchard-moss
+              cardForeColor: "#e8d8a8", // orchard-cream
             }}
             cardHeight={400}
             slideShow={false}

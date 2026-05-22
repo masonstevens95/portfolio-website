@@ -13,20 +13,20 @@ interface Props {
 export const ContactBlock = ({ offset, speed, factor }: Props) => {
   return (
     <ParallaxLayer offset={offset} speed={speed} factor={factor}>
-      <div className="w-full h-full flex flex-col items-center justify-center px-8 text-neutral-100">
+      <div className="w-full h-full flex flex-col items-center justify-center px-8 text-[var(--orchard-cream)]">
         <h1 className="text-5xl font-bold mb-4 text-center">Let's Connect</h1>
-        <p className="text-lg mb-8 text-center text-neutral-300 max-w-2xl">
+        <p className="text-lg mb-8 text-center text-[var(--orchard-cream)]/80 max-w-2xl">
           Whether you're interested in collaborating, have a question, or just
           want to say hello — I’d love to hear from you!
         </p>
         <div className="flex flex-col gap-4 text-center">
           <a
             href="mailto:youremail@example.com"
-            className="bg-white text-black px-6 py-2 rounded-md font-semibold hover:bg-neutral-200 transition"
+            className="bg-[var(--orchard-honey)] text-[var(--orchard-bark)] px-6 py-2 rounded-md font-semibold hover:bg-[var(--orchard-honey)]/80 transition"
           >
             Send an Email
           </a>
-          <div className="text-sm text-neutral-400">
+          <div className="text-sm text-[var(--orchard-cream)]/65">
             or reach me via LinkedIn, GitHub, or other platforms below.
           </div>
         </div>

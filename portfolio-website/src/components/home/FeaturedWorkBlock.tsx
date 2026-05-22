@@ -90,7 +90,7 @@ export const FeaturedWorkBlock = ({ offset, speed, factor }: Props) => {
       factor={factor}
     >
       <div className="w-full h-full flex items-center justify-center px-10 flex flex-col">
-        <h1 className="text-5xl font-bold mb-12">Featured Work</h1>
+        <h1 className="text-5xl font-bold mb-12 text-[var(--orchard-cream)]">Featured Work</h1>
         <div
           className="grid w-full max-w-7xl h-3/4 overflow-hidden rounded-2xl shadow-lg transition-all duration-500 ease-in-out"
           style={{
@@ -107,19 +107,19 @@ export const FeaturedWorkBlock = ({ offset, speed, factor }: Props) => {
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
                 onClick={() => onCardClick(project.link)}
-                className="transition-all duration-500 ease-in-out cursor-pointer relative group overflow-hidden bg-black/30"
+                className="transition-all duration-500 ease-in-out cursor-pointer relative group overflow-hidden bg-[var(--orchard-bark)]/45"
               >
                 <img
                   src={project.image}
                   alt={project.title}
                   className="object-cover w-full h-full absolute inset-0 z-0 opacity-75 group-hover:opacity-95 transition-opacity"
                 />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/70 to-transparent p-4 z-10">
-                  <h3 className="text-xl text-white font-semibold [text-shadow:_0_2px_8px_rgba(0,0,0,0.9)]">
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[var(--orchard-bark)] via-[var(--orchard-bark)]/70 to-transparent p-4 z-10">
+                  <h3 className="text-xl text-[var(--orchard-cream)] font-semibold [text-shadow:_0_2px_8px_rgba(0,0,0,0.9)]">
                     {project.title}
                   </h3>
                   {isHovered && (
-                    <p className="text-sm text-neutral-200 mt-2 transition-opacity duration-300 [text-shadow:_0_1px_4px_rgba(0,0,0,0.9)]">
+                    <p className="text-sm text-[var(--orchard-cream)]/85 mt-2 transition-opacity duration-300 [text-shadow:_0_1px_4px_rgba(0,0,0,0.9)]">
                       {project.description}
                     </p>
                   )}
@@ -130,7 +130,7 @@ export const FeaturedWorkBlock = ({ offset, speed, factor }: Props) => {
         </div>
         <Link
           to="/projects"
-          className="mt-6 text-neutral-300 hover:text-white text-base md:text-lg underline-offset-4 hover:underline transition-colors"
+          className="mt-6 text-[var(--orchard-honey)]/80 hover:text-[var(--orchard-honey)] text-base md:text-lg underline-offset-4 hover:underline transition-colors"
         >
           View all projects →
         </Link>
