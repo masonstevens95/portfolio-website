@@ -47,8 +47,8 @@ export const Header = ({}: Props) => {
   };
 
   return (
-    <div className="fixed top-0 left-0 w-full z-50 bg-black/60 backdrop-blur-sm px-8 py-4">
-      <div className="relative max-w-7xl mx-auto flex items-center justify-center text-neutral-100">
+    <div className="fixed top-0 left-0 w-full z-50 bg-[var(--orchard-bark)]/65 backdrop-blur-sm border-b border-[var(--orchard-honey)]/15 px-8 py-4">
+      <div className="relative max-w-7xl mx-auto flex items-center justify-center text-[var(--orchard-cream)]">
         {/* Centered nav */}
         <div className="flex gap-6">
           {HEADER_LABELS.map((item) => (
@@ -57,8 +57,8 @@ export const Header = ({}: Props) => {
               onClick={() => handleClick(item.id)}
               className={`transition-colors duration-300 text-base md:text-lg ${
                 selected === item.id
-                  ? "text-white font-bold underline underline-offset-4"
-                  : "text-neutral-400 hover:text-white"
+                  ? "text-[var(--orchard-cream)] font-bold underline underline-offset-4 decoration-[var(--orchard-honey)]"
+                  : "text-[var(--orchard-cream)]/60 hover:text-[var(--orchard-cream)]"
               }`}
             >
               {item.label}
