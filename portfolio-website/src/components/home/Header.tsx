@@ -21,7 +21,7 @@ const HEADER_LABELS = [
   { id: HeaderSelected.CONTACT, label: "Contact" },
 ];
 
-const AUDIO_HINT_KEY = "orchard-audio-hint-dismissed";
+const AUDIO_HINT_KEY = "orchard-audio-hint-dismissed-v2";
 
 export const Header = ({}: Props) => {
   const dispatch = useAppDispatch();
@@ -39,9 +39,11 @@ export const Header = ({}: Props) => {
     return window.localStorage.getItem(AUDIO_HINT_KEY) === "1";
   });
 
-  // Show the hint only when audio is paused AND the user hasn't dismissed it
-  // before. If autoplay succeeded (paused=false), the hint never appears.
-  const showHint = paused && !hintDismissed;
+  // Show the hint until the user clicks the audio button, regardless of
+  // whether autoplay succeeded. The arrow is a generic affordance pointing
+  // at the toggle — "this button does something" — not specifically a
+  // "click to play" cue. Dismissal is persisted across reloads.
+  const showHint = !hintDismissed;
 
   const handleAudioClick = () => {
     if (!hintDismissed) {
