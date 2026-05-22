@@ -40,11 +40,13 @@ export default defineConfig({
     }),
   ],
   optimizeDeps: {
-    // Workaround for an esbuild "could not resolve" error during dep
-    // optimization when @module-federation/vite generates load-share
-    // virtual modules for these subpaths. Excluding them lets the
-    // federation runtime handle them at module-evaluation time instead.
-    exclude: ["react/jsx-runtime", "react/jsx-dev-runtime"],
+    // Force Vite to prebundle the JSX runtimes alongside React so they
+    // share a single ReactSharedInternals instance. Without this they
+    // ended up in a separate chunk that bypassed federation sharing,
+    // splitting ReactSharedInternals.A from the one react-dom-client
+    // writes to and crashing with "dispatcher.getOwner is not a function"
+    // the moment any component used jsx-runtime under StrictMode/Redux.
+    include: ["react/jsx-runtime", "react/jsx-dev-runtime"],
   },
   build: {
     target: "esnext",
