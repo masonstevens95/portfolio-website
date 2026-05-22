@@ -261,6 +261,7 @@ export const useThreeSceneMount = (
       }
       (scene.background as THREE.CanvasTexture).dispose();
       renderer.dispose();
+      renderer.forceContextLoss();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
