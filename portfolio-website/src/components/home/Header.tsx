@@ -97,17 +97,17 @@ export const Header = ({}: Props) => {
             {showHint && (
               <motion.span
                 key="audio-hint-arrow"
-                initial={{ opacity: 0, x: -6 }}
+                initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 6, transition: { duration: 0.25 } }}
+                exit={{ opacity: 0, x: 8, transition: { duration: 0.25 } }}
                 transition={{ duration: 0.4 }}
                 aria-hidden="true"
-                className="text-[var(--orchard-honey)] text-xl pointer-events-none select-none"
+                className="text-[var(--orchard-honey)] text-3xl md:text-4xl font-bold leading-none pointer-events-none select-none drop-shadow-[0_0_8px_rgba(216,168,80,0.5)]"
               >
                 <motion.span
-                  animate={{ x: [0, 6, 0] }}
+                  animate={{ x: [0, 10, 0] }}
                   transition={{
-                    duration: 1.2,
+                    duration: 1.1,
                     repeat: Infinity,
                     ease: "easeInOut",
                   }}
