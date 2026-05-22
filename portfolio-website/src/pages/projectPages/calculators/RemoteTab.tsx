@@ -18,7 +18,7 @@ export function RemoteTab({ importer }: Props) {
     <RemoteBoundary>
       <Suspense
         fallback={
-          <div className="text-neutral-400 text-center py-8">Loading…</div>
+          <div className="text-[var(--orchard-cream)]/65 text-center py-8">Loading…</div>
         }
       >
         <RemoteCrashBoundary>

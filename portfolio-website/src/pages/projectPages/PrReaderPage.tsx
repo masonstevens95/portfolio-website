@@ -5,8 +5,8 @@ export const PrReaderPage = () => (
     title="PR Reader VSCode Extension"
     subtitle="A VS Code extension that visualizes pull requests for fast SDD code review"
   >
-    <section className="w-full mx-auto px-4 text-neutral-300 space-y-6 text-lg leading-relaxed">
-      <h2 className="text-2xl font-bold text-neutral-100 mb-4">What It Is</h2>
+    <section className="w-full mx-auto px-4 text-[var(--orchard-cream)]/80 space-y-6 text-lg leading-relaxed">
+      <h2 className="text-2xl font-bold text-[var(--orchard-cream)] mb-4">What It Is</h2>
 
       <p>
         <strong>PR Reader</strong> is a VS Code extension that turns pull
@@ -21,7 +21,7 @@ export const PrReaderPage = () => (
         bounce between GitHub, the editor, and the spec docs.
       </p>
 
-      <p className="text-sm text-neutral-500">
+      <p className="text-sm text-[var(--orchard-cream)]/50">
         Currently in development; no marketplace release yet.
       </p>
     </section>

@@ -15,7 +15,7 @@ export const CalculatorsPage = () => (
     <div className="w-full flex flex-col">
       <nav
         aria-label="Calculator tabs"
-        className="flex flex-wrap gap-2 border-b border-neutral-700 pb-2 max-w-6xl mx-auto w-full px-4"
+        className="flex flex-wrap gap-2 border-b border-[var(--orchard-moss)] pb-2 max-w-6xl mx-auto w-full px-4"
       >
         {calculatorTabs.map((tab) => (
           <NavLink
@@ -24,8 +24,8 @@ export const CalculatorsPage = () => (
             className={({ isActive }) =>
               `px-3 py-2 rounded-t text-sm transition-colors ${
                 isActive
-                  ? "bg-neutral-800 text-white"
-                  : "text-neutral-400 hover:text-white"
+                  ? "bg-[var(--orchard-moss)]/70 text-[var(--orchard-cream)]"
+                  : "text-[var(--orchard-cream)]/65 hover:text-[var(--orchard-cream)]"
               }`
             }
           >

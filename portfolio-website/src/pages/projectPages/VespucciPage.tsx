@@ -5,8 +5,8 @@ export const VespucciPage = () => (
     title="Vespucci"
     subtitle="A save-file visualizer and explorer for Europa Universalis V"
   >
-    <section className="w-full mx-auto px-4 text-neutral-300 space-y-6 text-lg leading-relaxed">
-      <h2 className="text-2xl font-bold text-neutral-100 mb-4">What It Is</h2>
+    <section className="w-full mx-auto px-4 text-[var(--orchard-cream)]/80 space-y-6 text-lg leading-relaxed">
+      <h2 className="text-2xl font-bold text-[var(--orchard-cream)] mb-4">What It Is</h2>
 
       <p>
         <strong>Vespucci</strong> is a web application for analyzing and
@@ -21,7 +21,7 @@ export const VespucciPage = () => (
           href="https://www.skanderbeg.pm"
           target="_blank"
           rel="noopener noreferrer"
-          className="underline hover:text-white"
+          className="underline hover:text-[var(--orchard-cream)]"
         >
           Skanderbeg.pm
         </a>
@@ -36,13 +36,13 @@ export const VespucciPage = () => (
           href="https://vespucci-eu5.vercel.app"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-400 underline hover:text-white"
+          className="text-[var(--orchard-honey)] underline hover:text-[var(--orchard-cream)]"
         >
           vespucci-eu5.vercel.app
         </a>
       </p>
 
-      <p className="text-sm text-neutral-500">
+      <p className="text-sm text-[var(--orchard-cream)]/50">
         Named after Amerigo Vespucci — the explorer whose voyages gave the
         Americas their name; a fitting nod to the age of exploration at the
         heart of Europa Universalis.

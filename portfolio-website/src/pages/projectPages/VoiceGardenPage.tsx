@@ -6,8 +6,8 @@ export const VoiceGardenPage = () => (
     title="Voice Garden"
     subtitle="An experimental audio-reactive garden layout generator using voice and sound frequencies"
   >
-    <section className="w-full mx-auto px-4 text-neutral-300 space-y-6 text-lg leading-relaxed">
-      <h2 className="text-2xl font-bold text-neutral-100 mb-4">What It Is</h2>
+    <section className="w-full mx-auto px-4 text-[var(--orchard-cream)]/80 space-y-6 text-lg leading-relaxed">
+      <h2 className="text-2xl font-bold text-[var(--orchard-cream)] mb-4">What It Is</h2>
 
       <p>
         <strong>Voice Garden</strong> is an experimental creative tool that

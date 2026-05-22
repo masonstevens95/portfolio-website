@@ -6,8 +6,8 @@ export const SingleLineDrawerPage = () => (
     title="SingleLineDrawer"
     subtitle="Experimental tool for background removal, edge detection, and animated outline drawing"
   >
-    <section className="w-full mx-auto px-4 text-neutral-300 space-y-6 text-lg leading-relaxed">
-      <h2 className="text-2xl font-bold text-neutral-100 mb-4">What It Is</h2>
+    <section className="w-full mx-auto px-4 text-[var(--orchard-cream)]/80 space-y-6 text-lg leading-relaxed">
+      <h2 className="text-2xl font-bold text-[var(--orchard-cream)] mb-4">What It Is</h2>
 
       <p>
         <strong>SingleLineDrawer</strong> is a creative image processing tool
@@ -36,7 +36,7 @@ export const SingleLineDrawerPage = () => (
         </strong>
       </p>
 
-      <div className="mt-12 border border-neutral-700 rounded-xl overflow-hidden">
+      <div className="mt-12 border border-[var(--orchard-moss)] rounded-xl overflow-hidden">
         <SingleLineDrawer />
       </div>
     </section>
