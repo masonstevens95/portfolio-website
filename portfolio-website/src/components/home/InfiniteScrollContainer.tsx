@@ -4,7 +4,6 @@
 
 import { useEffect, useRef } from "react";
 import { Parallax } from "@react-spring/parallax";
-import { useParallaxScroll } from "../../utils/hooks/useParallaxScroll";
 import { WelcomeBlock } from "./WelcomeBlock";
 import { useAppSelector } from "../../utils/hooks/reduxHooks";
 import { HeaderSelected } from "../../redux/slices/globalData";
@@ -17,9 +16,11 @@ import { useHeaderSelectionListener } from "../../utils/hooks/useHeaderSelection
 import { useThreeSceneMount } from "../../utils/hooks/useThreeSceneMount";
 import { useMouseParallax } from "../../utils/hooks/useMouseParallax";
 
-interface Props {}
+interface Props {
+  scroll: number;
+}
 
-export const InfiniteScrollContainer = ({}: Props) => {
+export const InfiniteScrollContainer = ({ scroll }: Props) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const parallaxRef = useRef(null);
 
@@ -32,7 +33,6 @@ export const InfiniteScrollContainer = ({}: Props) => {
     headerSelected
   );
 
-  const scroll = useParallaxScroll();
   const scrollRef = useRef(scroll);
   useEffect(() => {
     scrollRef.current = scroll;

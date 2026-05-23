@@ -4,15 +4,16 @@ HomePage
 
 import { Header } from "../components/home/Header";
 import { InfiniteScrollContainer } from "../components/home/InfiniteScrollContainer";
-import { useAmbientSound } from "../utils/hooks/useAmbientSound";
+import { useParallaxScroll } from "../utils/hooks/useParallaxScroll";
 
 interface Props {}
 
 export const HomePage = ({}: Props) => {
+  const scroll = useParallaxScroll();
   return (
     <>
-      <Header />
-      <InfiniteScrollContainer />
+      <Header scroll={scroll} />
+      <InfiniteScrollContainer scroll={scroll} />
     </>
   );
 };

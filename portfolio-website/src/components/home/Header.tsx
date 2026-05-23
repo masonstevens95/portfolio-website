@@ -10,7 +10,9 @@ import {
 import { useAppDispatch, useAppSelector } from "../../utils/hooks/reduxHooks";
 import { useAmbientSound } from "../../utils/hooks/useAmbientSound";
 
-interface Props {}
+interface Props {
+  scroll: number;
+}
 
 const HEADER_LABELS = [
   { id: HeaderSelected.WELCOME, label: "Welcome" },
@@ -20,7 +22,7 @@ const HEADER_LABELS = [
   { id: HeaderSelected.CONTACT, label: "Contact" },
 ];
 
-export const Header = ({}: Props) => {
+export const Header = ({ scroll }: Props) => {
   const dispatch = useAppDispatch();
   const selected = useAppSelector(
     (state) => state.globalDataSlice.headerSelected
