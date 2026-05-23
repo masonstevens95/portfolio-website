@@ -200,7 +200,7 @@ const buildFungiGlowTexture = (): THREE.CanvasTexture => {
 // flowing rather than blocky.
 const buildRootsTexture = (
   width: number = 1024,
-  height: number = 512,
+  height: number = 1024,
   rootCount: number = 6,
   fill: string = "#0a0805"
 ): THREE.CanvasTexture => {
@@ -241,7 +241,7 @@ const buildRootsTexture = (
     ctx.fill();
 
     if (depth >= maxDepth - 1) return;
-    const segLen = 60 + Math.random() * 40;
+    const segLen = 90 + Math.random() * 60;
 
     // Side branch — occasional, thinner, peels off to the side
     if (Math.random() < 0.55) {
@@ -263,9 +263,9 @@ const buildRootsTexture = (
     const startX =
       (i / rootCount) * width + Math.random() * (width / rootCount);
     const firstTargetX = startX + (Math.random() - 0.5) * 30;
-    const firstTargetY = 50 + Math.random() * 40;
-    const startThickness = 9 + Math.random() * 7;
-    drawSegment(startX, 0, firstTargetX, firstTargetY, startThickness, 0, 6);
+    const firstTargetY = 70 + Math.random() * 50;
+    const startThickness = 10 + Math.random() * 8;
+    drawSegment(startX, 0, firstTargetX, firstTargetY, startThickness, 0, 9);
   }
   return new THREE.CanvasTexture(c);
 };
@@ -330,9 +330,9 @@ const buildVerticalGradientTexture = (): THREE.CanvasTexture => {
   g.addColorStop(0.55, "#2a3a22");
   g.addColorStop(0.65, "#3a4a2c");
   // Underground (bottom 33%)
-  g.addColorStop(0.75, "#1a2418");
-  g.addColorStop(0.9, "#2a1f10");
-  g.addColorStop(1.0, "#0e0905");
+  g.addColorStop(0.75, "#0e1610");
+  g.addColorStop(0.9, "#160d06");
+  g.addColorStop(1.0, "#040302");
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, 128, 1024);
   return new THREE.CanvasTexture(c);
@@ -586,16 +586,23 @@ const buildUndergroundGroup = (): UndergroundStage => {
   const group = new THREE.Group();
   group.position.y = UNDERGROUND_CENTER_Y;
 
-  // Descending roots at the top of the stage
+  // Descending roots — anchored to the top of the underground stage and
+  // extending well past its center so the roots truly reach into the soil.
+  // Plane height was doubled and the texture is now 1024×1024 with deeper
+  // recursion, so root tips trail away into hair-fine branchings.
   const rootsTex = buildRootsTexture();
-  const rootsGeometry = new THREE.PlaneGeometry(SPREAD_X * 1.4, 40);
+  const rootsGeometry = new THREE.PlaneGeometry(SPREAD_X * 1.4, 90);
   const rootsMaterial = new THREE.MeshBasicMaterial({
     map: rootsTex,
     transparent: true,
     depthWrite: false,
   });
   const rootsMesh = new THREE.Mesh(rootsGeometry, rootsMaterial);
-  rootsMesh.position.set(0, SPREAD_Y * 0.35, -10);
+  // Keep the top of the roots at the top of the stage (where the camera
+  // arrives from forest), let them extend downward into the underground.
+  // Top of plane = SPREAD_Y * 0.5 ⇒ position.y = (SPREAD_Y * 0.5) - (height/2)
+  // = 40 - 45 = -5.
+  rootsMesh.position.set(0, -5, -10);
   group.add(rootsMesh);
 
   // Fungi point sprites — scattered through the soil region.
@@ -788,6 +795,18 @@ export const useThreeSceneMount = (
       forest.far.points.position.y = smoothMy * -0.3;
       forest.mid.points.position.y = smoothMy * -1.0;
       forest.near.points.position.y = smoothMy * -2.0;
+
+      // Fade forest fireflies + close branches out as the camera passes
+      // from forest into underground so they don't additive-blend through
+      // the dark soil. Linear ramp across the forest→underground blend
+      // zone [2.8, 3.1].
+      const fade =
+        s <= 2.8 ? 1 : s >= 3.1 ? 0 : 1 - (s - 2.8) / 0.3;
+      (forest.far.points.material as THREE.PointsMaterial).opacity = fade;
+      (forest.mid.points.material as THREE.PointsMaterial).opacity = fade;
+      (forest.near.points.material as THREE.PointsMaterial).opacity = fade;
+      (forest.topBranchMesh.material as THREE.MeshBasicMaterial).opacity = fade;
+      (forest.bottomBranchMesh.material as THREE.MeshBasicMaterial).opacity = fade;
     };
 
     const twinkleStars = () => {
