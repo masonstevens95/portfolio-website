@@ -1,4 +1,4 @@
-import { type RefObject, useEffect } from "react";
+import { type RefObject, useEffect, useRef } from "react";
 import * as THREE from "three";
 import type { MouseParallaxOffset } from "./useMouseParallax";
 
@@ -268,10 +268,14 @@ const buildBeetleTexture = (): THREE.CanvasTexture => {
 };
 
 // Tall vertical gradient: sky at top → forest middle → underground bottom.
-// Camera sees a vertical slice based on scene.background's UV mapping; since
-// scene.background uses cover-mode (default for textures), this paints the
-// whole viewport with a slice. We tile/scale the gradient so the visible
-// slice shifts as stage groups translate.
+//
+// The color-stop percentages (0.0/0.25/0.4/0.55/0.65/0.75/0.9/1.0) and
+// BACKDROP_HEIGHT = SPREAD_Y * 4 happen to line up with stages at
+// Y = 0/-80/-160 and STAGE_SCROLL_MULTIPLIER = 50. If you change SPREAD_Y,
+// any stage center, or STAGE_SCROLL_MULTIPLIER, this gradient will desync
+// silently — the sky/forest/underground tints would no longer fall under
+// the corresponding stage groups as they scroll past the camera. Retune
+// the stops here if you adjust any of those constants.
 const buildVerticalGradientTexture = (): THREE.CanvasTexture => {
   const c = document.createElement("canvas");
   c.width = 128;
@@ -661,8 +665,16 @@ const buildUndergroundGroup = (): UndergroundStage => {
 export const useThreeSceneMount = (
   canvasRef: RefObject<HTMLCanvasElement | null>,
   scrollRef: RefObject<number>,
-  mouseRef: RefObject<MouseParallaxOffset>
+  mouseRef: RefObject<MouseParallaxOffset>,
+  scroll: number
 ) => {
+  // Holds a static-redraw closure that the reduced-motion scroll effect
+  // calls when `scroll` changes. Populated by the main mount effect; null
+  // before mount and after unmount. Non-RM mode reads scrollRef directly
+  // in the rAF loop and never calls this.
+  const staticRedrawRef = useRef<(() => void) | null>(null);
+  const prefersReducedMotionRef = useRef(false);
+
   useEffect(() => {
     if (!canvasRef.current) return;
 
@@ -794,9 +806,17 @@ export const useThreeSceneMount = (
       rafId = requestAnimationFrame(animate);
     };
 
-    if (prefersReducedMotion) {
+    // Publish a static-redraw callback for the reduced-motion scroll effect
+    // to call when `scroll` changes. (No-op for non-RM mode, since the rAF
+    // loop already reads scrollRef each frame.)
+    prefersReducedMotionRef.current = prefersReducedMotion;
+    staticRedrawRef.current = () => {
       applyScrollAndMouse();
       renderer.render(scene, camera);
+    };
+
+    if (prefersReducedMotion) {
+      staticRedrawRef.current();
     } else {
       animate();
     }
@@ -816,6 +836,7 @@ export const useThreeSceneMount = (
     return () => {
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", handleResize);
+      staticRedrawRef.current = null;
       forest.glow.dispose();
       forest.ridgeTex.dispose();
       forest.ridgeMesh.geometry.dispose();
@@ -864,4 +885,13 @@ export const useThreeSceneMount = (
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Reduced-motion: re-apply stage offsets and render a fresh static frame
+  // when scroll changes. Non-RM mode is handled by the rAF loop reading
+  // scrollRef each frame, so this effect is a no-op there.
+  useEffect(() => {
+    if (prefersReducedMotionRef.current && staticRedrawRef.current) {
+      staticRedrawRef.current();
+    }
+  }, [scroll]);
 };

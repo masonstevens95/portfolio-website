@@ -1,7 +1,7 @@
 // utils/hooks/useAmbientSound.ts
 import { useCallback, useEffect, useRef, useState } from "react";
 
-export const useAmbientSound = (src: string, baseVolume = 0.3) => {
+export const useAmbientSound = (src: string, baseVolume = 0.1) => {
   const [paused, setPaused] = useState(false);
   const [audio] = useState(() => {
     const a = new Audio(src);

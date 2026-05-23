@@ -41,7 +41,7 @@ export const InfiniteScrollContainer = ({ scroll }: Props) => {
 
   useScrollListen(scroll, pageScrolledTime);
   const mouseRef = useMouseParallax();
-  useThreeSceneMount(canvasRef, scrollRef, mouseRef);
+  useThreeSceneMount(canvasRef, scrollRef, mouseRef, scroll);
 
   return (
     <div className="left-0 top-0 fixed w-full h-full items-right">

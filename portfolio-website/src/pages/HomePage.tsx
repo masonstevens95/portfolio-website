@@ -6,9 +6,7 @@ import { Header } from "../components/home/Header";
 import { InfiniteScrollContainer } from "../components/home/InfiniteScrollContainer";
 import { useParallaxScroll } from "../utils/hooks/useParallaxScroll";
 
-interface Props {}
-
-export const HomePage = ({}: Props) => {
+export const HomePage = () => {
   const scroll = useParallaxScroll();
   return (
     <>
