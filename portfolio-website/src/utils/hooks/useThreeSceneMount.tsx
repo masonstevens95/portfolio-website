@@ -35,7 +35,12 @@ const UNDERGROUND_CENTER_Y = -SPREAD_Y * 2;   // underground one stage below for
 // Per-stage scroll translation multipliers. Tuned so that scrolling through
 // the spec's 4-page parallax (scroll value 0..3) translates each stage by
 // exactly one stage-height as it enters/exits view.
-const STAGE_SCROLL_MULTIPLIER = SPREAD_Y / 2;
+// With 4-page parallax (scroll 0..~3) and stages stacked at Y=0/-80/-160, a
+// multiplier of 50 gives offsets 0→~150, which puts the underground center
+// within the visible viewport by scroll≈3. Earlier value (SPREAD_Y/2 = 40)
+// only reached offset 120, leaving the underground stage half-visible at
+// the page bottom.
+const STAGE_SCROLL_MULTIPLIER = 50;
 
 // =============================================================================
 // Firefly counts (forest stage)
@@ -94,6 +99,35 @@ const buildVerticalGradientTexture = (): THREE.CanvasTexture => {
 };
 
 // =============================================================================
+// Backdrop (the world-space gradient plane that translates with scroll)
+// =============================================================================
+// scene.background is a screen-space fill in three.js — it doesn't translate
+// with world objects. To make the gradient appear to scroll downward as the
+// camera "descends," render it as a large PlaneGeometry positioned far back
+// in z, and translate it together with the stage groups in applyScrollAndMouse.
+
+interface Backdrop {
+  mesh: THREE.Mesh;
+  texture: THREE.CanvasTexture;
+}
+
+const BACKDROP_WIDTH = 300;            // wide enough to fill the viewport at any reasonable aspect
+const BACKDROP_HEIGHT = SPREAD_Y * 4;  // 320 — spans more than the 3-stage extent so we never see past the edges
+const BACKDROP_Z = -80;                // behind everything (fireflies are at z >= -40)
+// Center the backdrop vertically across the three stages so it covers them all:
+// stages are at Y = 0, -80, -160; midpoint is -80.
+const BACKDROP_CENTER_Y = (SKY_CENTER_Y + UNDERGROUND_CENTER_Y) / 2;
+
+const buildBackdrop = (): Backdrop => {
+  const texture = buildVerticalGradientTexture();
+  const geometry = new THREE.PlaneGeometry(BACKDROP_WIDTH, BACKDROP_HEIGHT);
+  const material = new THREE.MeshBasicMaterial({ map: texture });
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.position.set(0, BACKDROP_CENTER_Y, BACKDROP_Z);
+  return { mesh, texture };
+};
+
+// =============================================================================
 // Firefly layer builder (used by forest stage)
 // =============================================================================
 
@@ -138,7 +172,7 @@ const buildFireflyLayer = (
 
 interface SkyStage {
   group: THREE.Group;
-  disposables: THREE.Object3D[];
+  disposables: Array<{ dispose: () => void }>;
 }
 
 const buildSkyGroup = (): SkyStage => {
@@ -172,7 +206,7 @@ const buildForestGroup = (): ForestStage => {
 
 interface UndergroundStage {
   group: THREE.Group;
-  disposables: THREE.Object3D[];
+  disposables: Array<{ dispose: () => void }>;
 }
 
 const buildUndergroundGroup = (): UndergroundStage => {
@@ -195,7 +229,11 @@ export const useThreeSceneMount = (
     if (!canvasRef.current) return;
 
     const scene = new THREE.Scene();
-    scene.background = buildVerticalGradientTexture();
+    // No scene.background — the gradient is rendered as a world-space
+    // PlaneGeometry (backdrop) so it can translate with scroll.
+
+    const backdrop = buildBackdrop();
+    scene.add(backdrop.mesh);
 
     const camera = new THREE.PerspectiveCamera(
       75,
@@ -256,6 +294,7 @@ export const useThreeSceneMount = (
       sky.group.position.y = SKY_CENTER_Y + offset;
       forest.group.position.y = FOREST_CENTER_Y + offset;
       underground.group.position.y = UNDERGROUND_CENTER_Y + offset;
+      backdrop.mesh.position.y = BACKDROP_CENTER_Y + offset;
 
       // Mouse parallax — applies inside the forest group only (its fireflies
       // were the original consumer of mouse parallax).
@@ -312,7 +351,9 @@ export const useThreeSceneMount = (
       (forest.mid.points.material as THREE.Material).dispose();
       forest.near.points.geometry.dispose();
       (forest.near.points.material as THREE.Material).dispose();
-      (scene.background as THREE.CanvasTexture).dispose();
+      backdrop.texture.dispose();
+      backdrop.mesh.geometry.dispose();
+      (backdrop.mesh.material as THREE.Material).dispose();
       disposeRendererForStrictModeSafety(renderer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
