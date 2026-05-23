@@ -3,12 +3,14 @@
 */
 
 import { AnimatePresence, motion } from "framer-motion";
+import { useEffect } from "react";
 import {
   HeaderSelected,
   setHeaderSelected,
 } from "../../redux/slices/globalData";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks/reduxHooks";
 import { useAmbientSound } from "../../utils/hooks/useAmbientSound";
+import { computeStageScroll } from "../../utils/hooks/useStageScroll";
 
 interface Props {
   scroll: number;
@@ -28,7 +30,15 @@ export const Header = ({ scroll }: Props) => {
     (state) => state.globalDataSlice.headerSelected
   );
 
-  const { toggleMute, paused } = useAmbientSound("/assets/crickets.wav", 0.1);
+  const { toggleMute, paused, setVolume } = useAmbientSound(
+    "/assets/crickets.wav",
+    0.1
+  );
+
+  useEffect(() => {
+    const { volumeMultiplier } = computeStageScroll(scroll);
+    setVolume(volumeMultiplier);
+  }, [scroll, setVolume]);
 
   // Live affordance: arrow appears whenever the ambient audio is off
   // (initial autoplay block, or the user muted it) and disappears the

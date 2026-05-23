@@ -1,13 +1,18 @@
 // utils/hooks/useAmbientSound.ts
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export const useAmbientSound = (src: string, volume = 0.3) => {
+export const useAmbientSound = (src: string, baseVolume = 0.3) => {
   const [paused, setPaused] = useState(false);
-  const [audio] = useState(() => new Audio(src));
+  const [audio] = useState(() => {
+    const a = new Audio(src);
+    a.volume = baseVolume;
+    return a;
+  });
+  const baseVolumeRef = useRef(baseVolume);
+  baseVolumeRef.current = baseVolume;
 
   useEffect(() => {
     audio.loop = true;
-    audio.volume = volume;
 
     if (paused) {
       audio.pause();
@@ -20,12 +25,18 @@ export const useAmbientSound = (src: string, volume = 0.3) => {
         setPaused(true);
       });
     }
-  }, [audio, volume, paused]);
+  }, [audio, paused]);
 
   // Single source of truth: `paused`. Toggling it lets the effect above
   // call play()/pause() — and play() inside the click handler runs in a
   // user-gesture context, so browsers that blocked autoplay will allow it.
   const toggleMute = () => setPaused((p) => !p);
 
-  return { toggleMute, paused };
+  // Mutate the underlying audio volume directly. Intentionally bypasses
+  // the effect above so we don't re-call play() on every scroll tick.
+  const setVolume = (multiplier: number) => {
+    audio.volume = baseVolumeRef.current * multiplier;
+  };
+
+  return { toggleMute, paused, setVolume };
 };
