@@ -172,6 +172,101 @@ const buildBranchTexture = (
   return new THREE.CanvasTexture(c);
 };
 
+// Warm-honey glow for fungi (lower intensity than fireflies).
+const buildFungiGlowTexture = (): THREE.CanvasTexture => {
+  return buildGlowTexture(
+    "rgba(200, 150, 70, 0.95)",
+    "rgba(160, 100, 40, 0.45)",
+    "rgba(160, 100, 40, 0)"
+  );
+};
+
+// Descending tree roots — alpha texture with branching root shapes hanging
+// from the top edge into the soil.
+const buildRootsTexture = (
+  width: number = 1024,
+  height: number = 512,
+  rootCount: number = 7,
+  fill: string = "#0a0805"
+): THREE.CanvasTexture => {
+  const c = document.createElement("canvas");
+  c.width = width;
+  c.height = height;
+  const ctx = c.getContext("2d")!;
+  ctx.fillStyle = fill;
+  for (let i = 0; i < rootCount; i++) {
+    const startX = (i / rootCount) * width + Math.random() * (width / rootCount);
+    let x = startX;
+    let y = 0;
+    const segments = 12 + Math.floor(Math.random() * 6);
+    const baseThickness = 6 + Math.random() * 8;
+    for (let s = 0; s < segments; s++) {
+      const dx = (Math.random() - 0.5) * 30;
+      const dy = height / segments;
+      const thickness = baseThickness * (1 - s / segments);
+      ctx.beginPath();
+      ctx.moveTo(x - thickness, y);
+      ctx.lineTo(x + thickness, y);
+      ctx.lineTo(x + dx + thickness * 0.6, y + dy);
+      ctx.lineTo(x + dx - thickness * 0.6, y + dy);
+      ctx.closePath();
+      ctx.fill();
+      x += dx;
+      y += dy;
+      // Occasional small side branch
+      if (Math.random() < 0.18 && s > 1) {
+        const sideDx = (Math.random() < 0.5 ? -1 : 1) * (15 + Math.random() * 20);
+        const sideThickness = thickness * 0.5;
+        ctx.beginPath();
+        ctx.moveTo(x, y - dy * 0.5);
+        ctx.lineTo(x + sideDx, y - dy * 0.5 + 8);
+        ctx.lineTo(x + sideDx, y - dy * 0.5 + 8 + sideThickness);
+        ctx.lineTo(x, y - dy * 0.5 + sideThickness);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+  }
+  return new THREE.CanvasTexture(c);
+};
+
+// Worm — soft pink-ish elongated curve.
+const buildWormTexture = (): THREE.CanvasTexture => {
+  const c = document.createElement("canvas");
+  c.width = 256;
+  c.height = 64;
+  const ctx = c.getContext("2d")!;
+  ctx.fillStyle = "#9a5a4a";
+  ctx.beginPath();
+  ctx.moveTo(8, 32);
+  ctx.quadraticCurveTo(64, 16, 128, 32);
+  ctx.quadraticCurveTo(192, 48, 248, 32);
+  ctx.lineTo(248, 38);
+  ctx.quadraticCurveTo(192, 54, 128, 38);
+  ctx.quadraticCurveTo(64, 22, 8, 38);
+  ctx.closePath();
+  ctx.fill();
+  return new THREE.CanvasTexture(c);
+};
+
+// Beetle — small dark oval body.
+const buildBeetleTexture = (): THREE.CanvasTexture => {
+  const c = document.createElement("canvas");
+  c.width = 64;
+  c.height = 32;
+  const ctx = c.getContext("2d")!;
+  ctx.fillStyle = "#1a1208";
+  ctx.beginPath();
+  ctx.ellipse(32, 16, 22, 11, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // Slight highlight stripe
+  ctx.fillStyle = "#2a1f10";
+  ctx.beginPath();
+  ctx.ellipse(32, 12, 20, 4, 0, 0, Math.PI * 2);
+  ctx.fill();
+  return new THREE.CanvasTexture(c);
+};
+
 // Tall vertical gradient: sky at top → forest middle → underground bottom.
 // Camera sees a vertical slice based on scene.background's UV mapping; since
 // scene.background uses cover-mode (default for textures), this paints the
@@ -430,16 +525,133 @@ const buildForestGroup = (): ForestStage => {
   };
 };
 
+interface CreatureState {
+  mesh: THREE.Mesh;
+  speed: number;       // x-translation per frame
+  startX: number;      // base x for the wiggle reference
+  wiggleAmp: number;   // y-wiggle amplitude (0 for beetles)
+  phase: number;       // sinusoidal phase offset
+  baseY: number;       // base y position
+}
+
 interface UndergroundStage {
   group: THREE.Group;
-  disposables: Array<{ dispose: () => void }>;
+  fungi: { points: THREE.Points; phases: Float32Array };
+  fungiTex: THREE.CanvasTexture;
+  rootsMesh: THREE.Mesh;
+  rootsTex: THREE.CanvasTexture;
+  worms: CreatureState[];
+  wormTex: THREE.CanvasTexture;
+  beetles: CreatureState[];
+  beetleTex: THREE.CanvasTexture;
 }
+
+const FUNGI_COUNT = 30;
+const WORM_COUNT = 5;
+const BEETLE_COUNT = 3;
 
 const buildUndergroundGroup = (): UndergroundStage => {
   const group = new THREE.Group();
   group.position.y = UNDERGROUND_CENTER_Y;
-  // Task 8 will add roots, fungi, worms, beetles here.
-  return { group, disposables: [] };
+
+  // Descending roots at the top of the stage
+  const rootsTex = buildRootsTexture();
+  const rootsGeometry = new THREE.PlaneGeometry(SPREAD_X * 1.4, 40);
+  const rootsMaterial = new THREE.MeshBasicMaterial({
+    map: rootsTex,
+    transparent: true,
+    depthWrite: false,
+  });
+  const rootsMesh = new THREE.Mesh(rootsGeometry, rootsMaterial);
+  rootsMesh.position.set(0, SPREAD_Y * 0.35, -10);
+  group.add(rootsMesh);
+
+  // Fungi point sprites — scattered through the soil region
+  const fungiTex = buildFungiGlowTexture();
+  const positions = new Float32Array(FUNGI_COUNT * 3);
+  const fungiPhases = new Float32Array(FUNGI_COUNT);
+  for (let i = 0; i < FUNGI_COUNT; i++) {
+    positions[i * 3 + 0] = (Math.random() - 0.5) * SPREAD_X;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * SPREAD_Y * 0.7 - SPREAD_Y * 0.05;
+    positions[i * 3 + 2] = -15 + Math.random() * 25;
+    fungiPhases[i] = Math.random() * Math.PI * 2;
+  }
+  const fungiGeometry = new THREE.BufferGeometry();
+  fungiGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  const fungiMaterial = new THREE.PointsMaterial({
+    size: 1.2,
+    map: fungiTex,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    sizeAttenuation: true,
+  });
+  const fungiPoints = new THREE.Points(fungiGeometry, fungiMaterial);
+  group.add(fungiPoints);
+
+  // Worms — five PlaneGeometry sprites with horizontal translation + y-wiggle
+  const wormTex = buildWormTexture();
+  const worms: CreatureState[] = [];
+  for (let i = 0; i < WORM_COUNT; i++) {
+    const geometry = new THREE.PlaneGeometry(8, 2);
+    const material = new THREE.MeshBasicMaterial({
+      map: wormTex,
+      transparent: true,
+      depthWrite: false,
+    });
+    const mesh = new THREE.Mesh(geometry, material);
+    const baseY =
+      ((i + 1) / (WORM_COUNT + 1) - 0.5) * SPREAD_Y * 0.6 - SPREAD_Y * 0.1;
+    const startX = (Math.random() - 0.5) * SPREAD_X;
+    mesh.position.set(startX, baseY, 0);
+    group.add(mesh);
+    worms.push({
+      mesh,
+      speed: (Math.random() < 0.5 ? -1 : 1) * (0.05 + Math.random() * 0.1),
+      startX,
+      wiggleAmp: 0.6,
+      phase: Math.random() * Math.PI * 2,
+      baseY,
+    });
+  }
+
+  // Beetles — three slower planes, no wiggle
+  const beetleTex = buildBeetleTexture();
+  const beetles: CreatureState[] = [];
+  for (let i = 0; i < BEETLE_COUNT; i++) {
+    const geometry = new THREE.PlaneGeometry(3, 1.5);
+    const material = new THREE.MeshBasicMaterial({
+      map: beetleTex,
+      transparent: true,
+      depthWrite: false,
+    });
+    const mesh = new THREE.Mesh(geometry, material);
+    const baseY =
+      ((i + 1) / (BEETLE_COUNT + 1) - 0.5) * SPREAD_Y * 0.5 + SPREAD_Y * 0.1;
+    const startX = (Math.random() - 0.5) * SPREAD_X;
+    mesh.position.set(startX, baseY, 2);
+    group.add(mesh);
+    beetles.push({
+      mesh,
+      speed: (Math.random() < 0.5 ? -1 : 1) * (0.02 + Math.random() * 0.04),
+      startX,
+      wiggleAmp: 0,
+      phase: 0,
+      baseY,
+    });
+  }
+
+  return {
+    group,
+    fungi: { points: fungiPoints, phases: fungiPhases },
+    fungiTex,
+    rootsMesh,
+    rootsTex,
+    worms,
+    wormTex,
+    beetles,
+    beetleTex,
+  };
 };
 
 // =============================================================================
@@ -556,6 +768,27 @@ export const useThreeSceneMount = (
       updateFireflyLayer(forest.mid, 0.7);
       updateFireflyLayer(forest.near, 1.1);
       twinkleStars();
+
+      // Fungi twinkle — same average-opacity trick as stars
+      const fungiMat = underground.fungi.points.material as THREE.PointsMaterial;
+      fungiMat.opacity = 0.7 + 0.2 * Math.sin(frame * 0.025);
+
+      // Worms — x-translate and y-wiggle; wrap horizontally at the spread edges
+      for (const w of underground.worms) {
+        w.mesh.position.x += w.speed;
+        if (w.mesh.position.x > SPREAD_X * 0.6) w.mesh.position.x = -SPREAD_X * 0.6;
+        if (w.mesh.position.x < -SPREAD_X * 0.6) w.mesh.position.x = SPREAD_X * 0.6;
+        w.mesh.position.y =
+          w.baseY + Math.sin(frame * 0.05 + w.phase) * w.wiggleAmp;
+      }
+
+      // Beetles — x-translate only
+      for (const b of underground.beetles) {
+        b.mesh.position.x += b.speed;
+        if (b.mesh.position.x > SPREAD_X * 0.6) b.mesh.position.x = -SPREAD_X * 0.6;
+        if (b.mesh.position.x < -SPREAD_X * 0.6) b.mesh.position.x = SPREAD_X * 0.6;
+      }
+
       applyScrollAndMouse();
       renderer.render(scene, camera);
       rafId = requestAnimationFrame(animate);
@@ -608,6 +841,22 @@ export const useThreeSceneMount = (
       sky.ridgeTex.dispose();
       sky.ridgeMesh.geometry.dispose();
       (sky.ridgeMesh.material as THREE.Material).dispose();
+      underground.fungiTex.dispose();
+      underground.fungi.points.geometry.dispose();
+      (underground.fungi.points.material as THREE.Material).dispose();
+      underground.rootsTex.dispose();
+      underground.rootsMesh.geometry.dispose();
+      (underground.rootsMesh.material as THREE.Material).dispose();
+      underground.wormTex.dispose();
+      for (const w of underground.worms) {
+        w.mesh.geometry.dispose();
+        (w.mesh.material as THREE.Material).dispose();
+      }
+      underground.beetleTex.dispose();
+      for (const b of underground.beetles) {
+        b.mesh.geometry.dispose();
+        (b.mesh.material as THREE.Material).dispose();
+      }
       backdrop.texture.dispose();
       backdrop.mesh.geometry.dispose();
       (backdrop.mesh.material as THREE.Material).dispose();
