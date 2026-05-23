@@ -295,7 +295,10 @@ const buildSkyGroup = (): SkyStage => {
     depthWrite: false,
   });
   const ridgeMesh = new THREE.Mesh(ridgeGeometry, ridgeMaterial);
-  ridgeMesh.position.set(0, -SPREAD_Y * 0.45, -20);
+  // Sit the ridge near the bottom edge of the sky stage's visible extent so
+  // at scroll=0 it just peeks into the lower part of the frame, then rises
+  // into prominence as the camera approaches the sky→forest boundary.
+  ridgeMesh.position.set(0, -SPREAD_Y * 0.7, -20);
   group.add(ridgeMesh);
 
   return {
@@ -444,12 +447,11 @@ export const useThreeSceneMount = (
       const mat = sky.starField.points.material as THREE.PointsMaterial;
       // Average twinkle by gently modulating overall opacity. Per-star twinkle
       // via attribute would be costlier and the visual difference is subtle at
-      // this density.
+      // this density. `transparent` is already true from the constructor, and
+      // opacity is a uniform — no needsUpdate required.
       const base = 0.75;
       const wobble = 0.15 * Math.sin(t);
       mat.opacity = base + wobble;
-      mat.transparent = true;
-      mat.needsUpdate = true;
     };
 
     const animate = () => {
