@@ -71,6 +71,67 @@ const buildGlowTexture = (
   return new THREE.CanvasTexture(c);
 };
 
+// Cool-white glow for stars.
+const buildStarTexture = (): THREE.CanvasTexture => {
+  return buildGlowTexture(
+    "rgba(240, 245, 255, 1.0)",
+    "rgba(190, 210, 250, 0.5)",
+    "rgba(190, 210, 250, 0)"
+  );
+};
+
+// Crescent moon — opaque cream disk with a dark "bite" subtracted from one
+// side to create the crescent silhouette.
+const buildMoonTexture = (): THREE.CanvasTexture => {
+  const c = document.createElement("canvas");
+  c.width = 128;
+  c.height = 128;
+  const ctx = c.getContext("2d")!;
+  // Full moon disk
+  ctx.fillStyle = "#f0e2b8";
+  ctx.beginPath();
+  ctx.arc(64, 64, 50, 0, Math.PI * 2);
+  ctx.fill();
+  // Bite — offset darker disk that erases the right portion, leaving a crescent
+  ctx.globalCompositeOperation = "destination-out";
+  ctx.beginPath();
+  ctx.arc(82, 64, 46, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalCompositeOperation = "source-over";
+  return new THREE.CanvasTexture(c);
+};
+
+// Distant pine ridge — silhouette of triangular pine tops along a horizon.
+// Returns a wide, short alpha texture.
+const buildPineRidgeTexture = (
+  width: number = 1024,
+  height: number = 128,
+  triangleCount: number = 18,
+  fill: string = "#0a0a08"
+): THREE.CanvasTexture => {
+  const c = document.createElement("canvas");
+  c.width = width;
+  c.height = height;
+  const ctx = c.getContext("2d")!;
+  ctx.fillStyle = fill;
+  // Baseline rectangle across the bottom 25%
+  ctx.fillRect(0, height * 0.75, width, height * 0.25);
+  // Triangles for each pine
+  const spacing = width / triangleCount;
+  for (let i = 0; i < triangleCount; i++) {
+    const cx = i * spacing + spacing / 2;
+    const top = height * (0.05 + Math.random() * 0.3);
+    const halfBase = spacing * 0.5;
+    ctx.beginPath();
+    ctx.moveTo(cx, top);
+    ctx.lineTo(cx - halfBase, height * 0.78);
+    ctx.lineTo(cx + halfBase, height * 0.78);
+    ctx.closePath();
+    ctx.fill();
+  }
+  return new THREE.CanvasTexture(c);
+};
+
 // Tall vertical gradient: sky at top → forest middle → underground bottom.
 // Camera sees a vertical slice based on scene.background's UV mapping; since
 // scene.background uses cover-mode (default for textures), this paints the
@@ -172,14 +233,80 @@ const buildFireflyLayer = (
 
 interface SkyStage {
   group: THREE.Group;
-  disposables: Array<{ dispose: () => void }>;
+  starField: { points: THREE.Points; phases: Float32Array };
+  starTex: THREE.CanvasTexture;
+  moonMesh: THREE.Mesh;
+  moonTex: THREE.CanvasTexture;
+  ridgeMesh: THREE.Mesh;
+  ridgeTex: THREE.CanvasTexture;
 }
+
+const STAR_COUNT = 150;
 
 const buildSkyGroup = (): SkyStage => {
   const group = new THREE.Group();
   group.position.y = SKY_CENTER_Y;
-  // Task 6 will add stars, moon, distant pine ridge here.
-  return { group, disposables: [] };
+
+  // Stars — scattered point sprites across the stage's full Y extent
+  const starTex = buildStarTexture();
+  const positions = new Float32Array(STAR_COUNT * 3);
+  const phases = new Float32Array(STAR_COUNT);
+  for (let i = 0; i < STAR_COUNT; i++) {
+    positions[i * 3 + 0] = (Math.random() - 0.5) * SPREAD_X * 1.2;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * SPREAD_Y;
+    positions[i * 3 + 2] = -30 + Math.random() * 20;
+    phases[i] = Math.random() * Math.PI * 2;
+  }
+  const starGeometry = new THREE.BufferGeometry();
+  starGeometry.setAttribute(
+    "position",
+    new THREE.BufferAttribute(positions, 3)
+  );
+  const starMaterial = new THREE.PointsMaterial({
+    size: 0.5,
+    map: starTex,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    sizeAttenuation: true,
+  });
+  const starPoints = new THREE.Points(starGeometry, starMaterial);
+  group.add(starPoints);
+
+  // Moon — single PlaneGeometry in the upper-left
+  const moonTex = buildMoonTexture();
+  const moonGeometry = new THREE.PlaneGeometry(12, 12);
+  const moonMaterial = new THREE.MeshBasicMaterial({
+    map: moonTex,
+    transparent: true,
+    depthWrite: false,
+  });
+  const moonMesh = new THREE.Mesh(moonGeometry, moonMaterial);
+  moonMesh.position.set(-SPREAD_X * 0.3, SPREAD_Y * 0.25, -25);
+  group.add(moonMesh);
+
+  // Distant pine ridge at the bottom of skyGroup — peeks in as camera
+  // approaches the sky→forest transition.
+  const ridgeTex = buildPineRidgeTexture();
+  const ridgeGeometry = new THREE.PlaneGeometry(SPREAD_X * 1.4, 16);
+  const ridgeMaterial = new THREE.MeshBasicMaterial({
+    map: ridgeTex,
+    transparent: true,
+    depthWrite: false,
+  });
+  const ridgeMesh = new THREE.Mesh(ridgeGeometry, ridgeMaterial);
+  ridgeMesh.position.set(0, -SPREAD_Y * 0.45, -20);
+  group.add(ridgeMesh);
+
+  return {
+    group,
+    starField: { points: starPoints, phases },
+    starTex,
+    moonMesh,
+    moonTex,
+    ridgeMesh,
+    ridgeTex,
+  };
 };
 
 interface ForestStage {
@@ -312,11 +439,25 @@ export const useThreeSceneMount = (
       forest.near.points.position.y = smoothMy * -2.0;
     };
 
+    const twinkleStars = () => {
+      const t = frame * 0.02;
+      const mat = sky.starField.points.material as THREE.PointsMaterial;
+      // Average twinkle by gently modulating overall opacity. Per-star twinkle
+      // via attribute would be costlier and the visual difference is subtle at
+      // this density.
+      const base = 0.75;
+      const wobble = 0.15 * Math.sin(t);
+      mat.opacity = base + wobble;
+      mat.transparent = true;
+      mat.needsUpdate = true;
+    };
+
     const animate = () => {
       frame++;
       updateFireflyLayer(forest.far, 0.4);
       updateFireflyLayer(forest.mid, 0.7);
       updateFireflyLayer(forest.near, 1.1);
+      twinkleStars();
       applyScrollAndMouse();
       renderer.render(scene, camera);
       rafId = requestAnimationFrame(animate);
@@ -351,6 +492,15 @@ export const useThreeSceneMount = (
       (forest.mid.points.material as THREE.Material).dispose();
       forest.near.points.geometry.dispose();
       (forest.near.points.material as THREE.Material).dispose();
+      sky.starTex.dispose();
+      sky.starField.points.geometry.dispose();
+      (sky.starField.points.material as THREE.Material).dispose();
+      sky.moonTex.dispose();
+      sky.moonMesh.geometry.dispose();
+      (sky.moonMesh.material as THREE.Material).dispose();
+      sky.ridgeTex.dispose();
+      sky.ridgeMesh.geometry.dispose();
+      (sky.ridgeMesh.material as THREE.Material).dispose();
       backdrop.texture.dispose();
       backdrop.mesh.geometry.dispose();
       (backdrop.mesh.material as THREE.Material).dispose();
