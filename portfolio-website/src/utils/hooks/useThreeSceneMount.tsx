@@ -536,7 +536,7 @@ interface CreatureState {
 
 interface UndergroundStage {
   group: THREE.Group;
-  fungi: { points: THREE.Points; phases: Float32Array };
+  fungi: { points: THREE.Points };
   fungiTex: THREE.CanvasTexture;
   rootsMesh: THREE.Mesh;
   rootsTex: THREE.CanvasTexture;
@@ -566,15 +566,15 @@ const buildUndergroundGroup = (): UndergroundStage => {
   rootsMesh.position.set(0, SPREAD_Y * 0.35, -10);
   group.add(rootsMesh);
 
-  // Fungi point sprites — scattered through the soil region
+  // Fungi point sprites — scattered through the soil region.
+  // All fungi twinkle in unison via a global material-opacity sine in
+  // animate(), so per-point phases aren't needed.
   const fungiTex = buildFungiGlowTexture();
   const positions = new Float32Array(FUNGI_COUNT * 3);
-  const fungiPhases = new Float32Array(FUNGI_COUNT);
   for (let i = 0; i < FUNGI_COUNT; i++) {
     positions[i * 3 + 0] = (Math.random() - 0.5) * SPREAD_X;
     positions[i * 3 + 1] = (Math.random() - 0.5) * SPREAD_Y * 0.7 - SPREAD_Y * 0.05;
     positions[i * 3 + 2] = -15 + Math.random() * 25;
-    fungiPhases[i] = Math.random() * Math.PI * 2;
   }
   const fungiGeometry = new THREE.BufferGeometry();
   fungiGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
@@ -643,7 +643,7 @@ const buildUndergroundGroup = (): UndergroundStage => {
 
   return {
     group,
-    fungi: { points: fungiPoints, phases: fungiPhases },
+    fungi: { points: fungiPoints },
     fungiTex,
     rootsMesh,
     rootsTex,
