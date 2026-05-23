@@ -6,15 +6,18 @@ export type Stage = "sky" | "forest" | "underground";
 
 export interface StageScrollResult {
   stage: Stage;
-  volumeMultiplier: number; // 0.25 baseline, 1.0 in forest core
+  volumeMultiplier: number; // 0.5 baseline, 1.0 in forest core
   vignetteColor: string;    // "rgba(r, g, b, 0.85)"
 }
 
+// Forest core is widened (was [1.8, 2.2], now [1.5, 2.5]) so the Featured
+// Work section has more readable scroll time before the underground stage
+// starts pulling in.
 export const STAGE_BOUNDARIES = {
-  skyToForestStart: 1.5,
-  skyToForestEnd: 1.8,
-  forestToUndergroundStart: 2.2,
-  forestToUndergroundEnd: 2.5,
+  skyToForestStart: 1.2,
+  skyToForestEnd: 1.5,
+  forestToUndergroundStart: 2.5,
+  forestToUndergroundEnd: 2.8,
 } as const;
 
 interface Rgb {
@@ -28,9 +31,9 @@ const FOREST_TINT: Rgb = { r: 26, g: 20, b: 16 };
 const UNDERGROUND_TINT: Rgb = { r: 14, g: 9, b: 5 };
 const VIGNETTE_ALPHA = 0.85;
 
-const SKY_VOLUME = 0.25;
+const SKY_VOLUME = 0.5;
 const FOREST_VOLUME = 1.0;
-const UNDERGROUND_VOLUME = 0.25;
+const UNDERGROUND_VOLUME = 0.5;
 
 const lerp = (a: number, b: number, t: number): number => a + (b - a) * t;
 

@@ -101,12 +101,14 @@ const buildMoonTexture = (): THREE.CanvasTexture => {
   return new THREE.CanvasTexture(c);
 };
 
-// Distant pine ridge — silhouette of triangular pine tops along a horizon.
-// Returns a wide, short alpha texture.
+// Pine ridge — silhouette of triangular pine tops along a horizon. Each pine
+// is independently varied (height, width, x-jitter, asymmetric tip) so the
+// silhouette reads as a real treeline rather than a regular sawtooth.
+// Returns a wide alpha texture; height parameter scales the ridge vertically.
 const buildPineRidgeTexture = (
   width: number = 1024,
-  height: number = 128,
-  triangleCount: number = 18,
+  height: number = 512,
+  triangleCount: number = 22,
   fill: string = "#0a0a08"
 ): THREE.CanvasTexture => {
   const c = document.createElement("canvas");
@@ -114,18 +116,29 @@ const buildPineRidgeTexture = (
   c.height = height;
   const ctx = c.getContext("2d")!;
   ctx.fillStyle = fill;
-  // Baseline rectangle across the bottom 25%
-  ctx.fillRect(0, height * 0.75, width, height * 0.25);
-  // Triangles for each pine
+  // Baseline rectangle across the bottom 12% (the "ground" the trees sit on)
+  ctx.fillRect(0, height * 0.88, width, height * 0.12);
   const spacing = width / triangleCount;
+  const baseY = height * 0.9;
   for (let i = 0; i < triangleCount; i++) {
-    const cx = i * spacing + spacing / 2;
-    const top = height * (0.05 + Math.random() * 0.3);
-    const halfBase = spacing * 0.5;
+    // Position with jitter so the trees aren't on a metronome
+    const baseX = i * spacing + spacing / 2;
+    const xJitter = (Math.random() - 0.5) * spacing * 0.45;
+    const cx = baseX + xJitter;
+    // Heights biased toward shorter trees with occasional giants — pow > 1
+    // pulls the distribution toward 0 (short), but the long tail produces
+    // the dramatic outliers that make a ridgeline interesting.
+    const heightRatio = 0.15 + Math.pow(Math.random(), 1.7) * 0.78;
+    const treeTopY = baseY - heightRatio * height * 0.85;
+    // Each tree has its own girth
+    const widthScale = 0.6 + Math.random() * 0.7;
+    const halfBase = spacing * 0.55 * widthScale;
+    // Slight tip asymmetry — pines lean a touch in the wind
+    const tipOffset = (Math.random() - 0.5) * spacing * 0.2;
     ctx.beginPath();
-    ctx.moveTo(cx, top);
-    ctx.lineTo(cx - halfBase, height * 0.78);
-    ctx.lineTo(cx + halfBase, height * 0.78);
+    ctx.moveTo(cx + tipOffset, treeTopY);
+    ctx.lineTo(cx - halfBase, baseY);
+    ctx.lineTo(cx + halfBase, baseY);
     ctx.closePath();
     ctx.fill();
   }
@@ -182,50 +195,77 @@ const buildFungiGlowTexture = (): THREE.CanvasTexture => {
 };
 
 // Descending tree roots — alpha texture with branching root shapes hanging
-// from the top edge into the soil.
+// from the top edge into the soil. Drawn with curved strokes (quadratic
+// bezier) instead of trapezoidal segments so the roots read as organic and
+// flowing rather than blocky.
 const buildRootsTexture = (
   width: number = 1024,
   height: number = 512,
-  rootCount: number = 7,
+  rootCount: number = 6,
   fill: string = "#0a0805"
 ): THREE.CanvasTexture => {
   const c = document.createElement("canvas");
   c.width = width;
   c.height = height;
   const ctx = c.getContext("2d")!;
+  ctx.strokeStyle = fill;
   ctx.fillStyle = fill;
-  for (let i = 0; i < rootCount; i++) {
-    const startX = (i / rootCount) * width + Math.random() * (width / rootCount);
-    let x = startX;
-    let y = 0;
-    const segments = 12 + Math.floor(Math.random() * 6);
-    const baseThickness = 6 + Math.random() * 8;
-    for (let s = 0; s < segments; s++) {
-      const dx = (Math.random() - 0.5) * 30;
-      const dy = height / segments;
-      const thickness = baseThickness * (1 - s / segments);
-      ctx.beginPath();
-      ctx.moveTo(x - thickness, y);
-      ctx.lineTo(x + thickness, y);
-      ctx.lineTo(x + dx + thickness * 0.6, y + dy);
-      ctx.lineTo(x + dx - thickness * 0.6, y + dy);
-      ctx.closePath();
-      ctx.fill();
-      x += dx;
-      y += dy;
-      // Occasional small side branch
-      if (Math.random() < 0.18 && s > 1) {
-        const sideDx = (Math.random() < 0.5 ? -1 : 1) * (15 + Math.random() * 20);
-        const sideThickness = thickness * 0.5;
-        ctx.beginPath();
-        ctx.moveTo(x, y - dy * 0.5);
-        ctx.lineTo(x + sideDx, y - dy * 0.5 + 8);
-        ctx.lineTo(x + sideDx, y - dy * 0.5 + 8 + sideThickness);
-        ctx.lineTo(x, y - dy * 0.5 + sideThickness);
-        ctx.closePath();
-        ctx.fill();
-      }
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  // Recursive branch drawer — draws one curved segment and possibly spawns
+  // a continuation and a side branch at the segment's end. Thickness
+  // tapers with depth so distal tips are hair-fine.
+  const drawSegment = (
+    x0: number,
+    y0: number,
+    x1: number,
+    y1: number,
+    thickness: number,
+    depth: number,
+    maxDepth: number
+  ) => {
+    if (depth > maxDepth || thickness < 0.6) return;
+
+    ctx.lineWidth = thickness;
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    const mx = (x0 + x1) / 2 + (Math.random() - 0.5) * 24;
+    const my = (y0 + y1) / 2 + (Math.random() - 0.5) * 6;
+    ctx.quadraticCurveTo(mx, my, x1, y1);
+    ctx.stroke();
+
+    // Small fill at the joint so adjacent segments blend smoothly
+    ctx.beginPath();
+    ctx.arc(x1, y1, thickness * 0.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    if (depth >= maxDepth - 1) return;
+    const segLen = 60 + Math.random() * 40;
+
+    // Side branch — occasional, thinner, peels off to the side
+    if (Math.random() < 0.55) {
+      const sideDir = Math.random() < 0.5 ? -1 : 1;
+      const sideX = x1 + sideDir * (30 + Math.random() * 40);
+      const sideY = y1 + segLen * (0.4 + Math.random() * 0.5);
+      drawSegment(x1, y1, sideX, sideY, thickness * 0.55, depth + 1, maxDepth);
     }
+
+    // Main continuation downward, drifting laterally
+    if (Math.random() < 0.92) {
+      const contX = x1 + (Math.random() - 0.5) * 50;
+      const contY = y1 + segLen;
+      drawSegment(x1, y1, contX, contY, thickness * 0.78, depth + 1, maxDepth);
+    }
+  };
+
+  for (let i = 0; i < rootCount; i++) {
+    const startX =
+      (i / rootCount) * width + Math.random() * (width / rootCount);
+    const firstTargetX = startX + (Math.random() - 0.5) * 30;
+    const firstTargetY = 50 + Math.random() * 40;
+    const startThickness = 9 + Math.random() * 7;
+    drawSegment(startX, 0, firstTargetX, firstTargetY, startThickness, 0, 6);
   }
   return new THREE.CanvasTexture(c);
 };
@@ -421,23 +461,22 @@ const buildSkyGroup = (): SkyStage => {
     depthWrite: false,
   });
   const moonMesh = new THREE.Mesh(moonGeometry, moonMaterial);
-  moonMesh.position.set(-SPREAD_X * 0.3, SPREAD_Y * 0.25, -25);
+  moonMesh.position.set(-SPREAD_X * 0.5, SPREAD_Y * 0.25, -25);
   group.add(moonMesh);
 
-  // Distant pine ridge at the bottom of skyGroup — peeks in as camera
-  // approaches the sky→forest transition.
-  const ridgeTex = buildPineRidgeTexture();
-  const ridgeGeometry = new THREE.PlaneGeometry(SPREAD_X * 1.4, 16);
+  // Single tall pine range that anchors the lower half of the sky stage —
+  // peeks in at scroll=0 and grows prominent as the camera descends. Much
+  // taller than the prior ridge so it actually reads as a treeline, with
+  // per-tree variation provided by buildPineRidgeTexture's randomization.
+  const ridgeTex = buildPineRidgeTexture(2048, 512, 26, "#0a0a08");
+  const ridgeGeometry = new THREE.PlaneGeometry(SPREAD_X * 1.6, 60);
   const ridgeMaterial = new THREE.MeshBasicMaterial({
     map: ridgeTex,
     transparent: true,
     depthWrite: false,
   });
   const ridgeMesh = new THREE.Mesh(ridgeGeometry, ridgeMaterial);
-  // Sit the ridge near the bottom edge of the sky stage's visible extent so
-  // at scroll=0 it just peeks into the lower part of the frame, then rises
-  // into prominence as the camera approaches the sky→forest boundary.
-  ridgeMesh.position.set(0, -SPREAD_Y * 0.7, -20);
+  ridgeMesh.position.set(0, -SPREAD_Y * 0.45, -20);
   group.add(ridgeMesh);
 
   return {
@@ -457,8 +496,6 @@ interface ForestStage {
   mid: FireflyLayer;
   near: FireflyLayer;
   glow: THREE.CanvasTexture;
-  ridgeMesh: THREE.Mesh;
-  ridgeTex: THREE.CanvasTexture;
   topBranchMesh: THREE.Mesh;
   topBranchTex: THREE.CanvasTexture;
   bottomBranchMesh: THREE.Mesh;
@@ -475,17 +512,10 @@ const buildForestGroup = (): ForestStage => {
   const near = buildFireflyLayer(NEAR_COUNT, 2.0, 10, glow);
   group.add(far.points, mid.points, near.points);
 
-  // Horizon pine ridge — top of forest stage, where camera arrives from sky
-  const ridgeTex = buildPineRidgeTexture(1024, 160, 14, "#0a0a08");
-  const ridgeGeometry = new THREE.PlaneGeometry(SPREAD_X * 1.4, 20);
-  const ridgeMaterial = new THREE.MeshBasicMaterial({
-    map: ridgeTex,
-    transparent: true,
-    depthWrite: false,
-  });
-  const ridgeMesh = new THREE.Mesh(ridgeGeometry, ridgeMaterial);
-  ridgeMesh.position.set(0, SPREAD_Y * 0.45, -25);
-  group.add(ridgeMesh);
+  // The distant horizon treeline lives in skyGroup — the camera carries it
+  // down to the top of the forest stage as you scroll past the boundary.
+  // The forest stage itself frames the firefly field with close branches,
+  // not another competing ridge.
 
   // Close-branch frames — top (draping down) and bottom (rising up)
   const topBranchTex = buildBranchTexture();
@@ -520,8 +550,6 @@ const buildForestGroup = (): ForestStage => {
     mid,
     near,
     glow,
-    ridgeMesh,
-    ridgeTex,
     topBranchMesh,
     topBranchTex,
     bottomBranchMesh,
@@ -838,9 +866,6 @@ export const useThreeSceneMount = (
       window.removeEventListener("resize", handleResize);
       staticRedrawRef.current = null;
       forest.glow.dispose();
-      forest.ridgeTex.dispose();
-      forest.ridgeMesh.geometry.dispose();
-      (forest.ridgeMesh.material as THREE.Material).dispose();
       forest.topBranchTex.dispose();
       forest.topBranchMesh.geometry.dispose();
       (forest.topBranchMesh.material as THREE.Material).dispose();
