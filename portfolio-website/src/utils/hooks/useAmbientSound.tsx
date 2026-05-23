@@ -1,5 +1,5 @@
 // utils/hooks/useAmbientSound.ts
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export const useAmbientSound = (src: string, baseVolume = 0.3) => {
   const [paused, setPaused] = useState(false);
@@ -34,9 +34,11 @@ export const useAmbientSound = (src: string, baseVolume = 0.3) => {
 
   // Mutate the underlying audio volume directly. Intentionally bypasses
   // the effect above so we don't re-call play() on every scroll tick.
-  const setVolume = (multiplier: number) => {
+  // Wrapped in useCallback so consumer effects (e.g. Header's scroll-driven
+  // setVolume call) get a stable identity and only re-fire on `scroll`.
+  const setVolume = useCallback((multiplier: number) => {
     audio.volume = baseVolumeRef.current * multiplier;
-  };
+  }, [audio]);
 
   return { toggleMute, paused, setVolume };
 };
