@@ -111,7 +111,7 @@ interface Backdrop {
   texture: THREE.CanvasTexture;
 }
 
-const BACKDROP_WIDTH = 300;            // wide enough to fill the viewport at any reasonable aspect
+const BACKDROP_WIDTH = 500;            // wide enough to fill the viewport at ultrawide aspect ratios (≥21:9)
 const BACKDROP_HEIGHT = SPREAD_Y * 4;  // 320 — spans more than the 3-stage extent so we never see past the edges
 const BACKDROP_Z = -80;                // behind everything (fireflies are at z >= -40)
 // Center the backdrop vertically across the three stages so it covers them all:
