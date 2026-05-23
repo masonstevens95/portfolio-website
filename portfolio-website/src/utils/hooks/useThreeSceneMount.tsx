@@ -132,6 +132,46 @@ const buildPineRidgeTexture = (
   return new THREE.CanvasTexture(c);
 };
 
+// Close-branch silhouette — irregular silhouette of pine branches/needles.
+// Rendered wider than tall, hangs from the top of the forest stage (or rises
+// from the bottom, depending on orientation/scale-y).
+const buildBranchTexture = (
+  width: number = 1024,
+  height: number = 256,
+  fill: string = "#0a0a08"
+): THREE.CanvasTexture => {
+  const c = document.createElement("canvas");
+  c.width = width;
+  c.height = height;
+  const ctx = c.getContext("2d")!;
+  ctx.fillStyle = fill;
+  // Draw 6-8 overlapping irregular branch shapes
+  const branchCount = 6 + Math.floor(Math.random() * 3);
+  for (let i = 0; i < branchCount; i++) {
+    const cx = (i / branchCount) * width + Math.random() * (width / branchCount);
+    const baseY = 0;
+    const tipY = height * (0.4 + Math.random() * 0.5);
+    const branchWidth = width * (0.08 + Math.random() * 0.06);
+    ctx.beginPath();
+    ctx.moveTo(cx - branchWidth, baseY);
+    ctx.quadraticCurveTo(
+      cx + branchWidth * (Math.random() - 0.5) * 2,
+      tipY * 0.6,
+      cx + branchWidth * 0.3,
+      tipY
+    );
+    ctx.quadraticCurveTo(
+      cx - branchWidth * 0.5,
+      tipY * 0.7,
+      cx + branchWidth,
+      baseY
+    );
+    ctx.closePath();
+    ctx.fill();
+  }
+  return new THREE.CanvasTexture(c);
+};
+
 // Tall vertical gradient: sky at top → forest middle → underground bottom.
 // Camera sees a vertical slice based on scene.background's UV mapping; since
 // scene.background uses cover-mode (default for textures), this paints the
@@ -318,6 +358,12 @@ interface ForestStage {
   mid: FireflyLayer;
   near: FireflyLayer;
   glow: THREE.CanvasTexture;
+  ridgeMesh: THREE.Mesh;
+  ridgeTex: THREE.CanvasTexture;
+  topBranchMesh: THREE.Mesh;
+  topBranchTex: THREE.CanvasTexture;
+  bottomBranchMesh: THREE.Mesh;
+  bottomBranchTex: THREE.CanvasTexture;
 }
 
 const buildForestGroup = (): ForestStage => {
@@ -328,10 +374,60 @@ const buildForestGroup = (): ForestStage => {
   const far = buildFireflyLayer(FAR_COUNT, 0.6, -40, glow);
   const mid = buildFireflyLayer(MID_COUNT, 1.1, -10, glow);
   const near = buildFireflyLayer(NEAR_COUNT, 2.0, 10, glow);
-
   group.add(far.points, mid.points, near.points);
 
-  return { group, far, mid, near, glow };
+  // Horizon pine ridge — top of forest stage, where camera arrives from sky
+  const ridgeTex = buildPineRidgeTexture(1024, 160, 14, "#0a0a08");
+  const ridgeGeometry = new THREE.PlaneGeometry(SPREAD_X * 1.4, 20);
+  const ridgeMaterial = new THREE.MeshBasicMaterial({
+    map: ridgeTex,
+    transparent: true,
+    depthWrite: false,
+  });
+  const ridgeMesh = new THREE.Mesh(ridgeGeometry, ridgeMaterial);
+  ridgeMesh.position.set(0, SPREAD_Y * 0.45, -25);
+  group.add(ridgeMesh);
+
+  // Close-branch frames — top (draping down) and bottom (rising up)
+  const topBranchTex = buildBranchTexture();
+  const topBranchGeometry = new THREE.PlaneGeometry(SPREAD_X * 1.4, 30);
+  const topBranchMaterial = new THREE.MeshBasicMaterial({
+    map: topBranchTex,
+    transparent: true,
+    depthWrite: false,
+  });
+  const topBranchMesh = new THREE.Mesh(topBranchGeometry, topBranchMaterial);
+  topBranchMesh.position.set(0, SPREAD_Y * 0.4, 15);
+  topBranchMesh.scale.y = -1; // flip so branches hang down from the top edge
+  group.add(topBranchMesh);
+
+  const bottomBranchTex = buildBranchTexture();
+  const bottomBranchGeometry = new THREE.PlaneGeometry(SPREAD_X * 1.4, 24);
+  const bottomBranchMaterial = new THREE.MeshBasicMaterial({
+    map: bottomBranchTex,
+    transparent: true,
+    depthWrite: false,
+  });
+  const bottomBranchMesh = new THREE.Mesh(
+    bottomBranchGeometry,
+    bottomBranchMaterial
+  );
+  bottomBranchMesh.position.set(0, -SPREAD_Y * 0.4, 15);
+  group.add(bottomBranchMesh);
+
+  return {
+    group,
+    far,
+    mid,
+    near,
+    glow,
+    ridgeMesh,
+    ridgeTex,
+    topBranchMesh,
+    topBranchTex,
+    bottomBranchMesh,
+    bottomBranchTex,
+  };
 };
 
 interface UndergroundStage {
@@ -488,6 +584,15 @@ export const useThreeSceneMount = (
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", handleResize);
       forest.glow.dispose();
+      forest.ridgeTex.dispose();
+      forest.ridgeMesh.geometry.dispose();
+      (forest.ridgeMesh.material as THREE.Material).dispose();
+      forest.topBranchTex.dispose();
+      forest.topBranchMesh.geometry.dispose();
+      (forest.topBranchMesh.material as THREE.Material).dispose();
+      forest.bottomBranchTex.dispose();
+      forest.bottomBranchMesh.geometry.dispose();
+      (forest.bottomBranchMesh.material as THREE.Material).dispose();
       forest.far.points.geometry.dispose();
       (forest.far.points.material as THREE.Material).dispose();
       forest.mid.points.geometry.dispose();
