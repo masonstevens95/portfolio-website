@@ -10,14 +10,15 @@ export interface StageScrollResult {
   vignetteColor: string;    // "rgba(r, g, b, 0.85)"
 }
 
-// Forest core is widened (was [1.8, 2.2], now [1.5, 2.5]) so the Featured
-// Work section has more readable scroll time before the underground stage
-// starts pulling in.
+// Forest boundaries shifted later in scroll so the sky stage has more
+// uncontested time before the audio/vignette transition starts, and the
+// forest→underground crossover happens closer to the bottom of the page.
+// Forest core spans scroll [1.8, 2.8] (1.0 wide).
 export const STAGE_BOUNDARIES = {
-  skyToForestStart: 1.2,
-  skyToForestEnd: 1.5,
-  forestToUndergroundStart: 2.5,
-  forestToUndergroundEnd: 2.8,
+  skyToForestStart: 1.5,
+  skyToForestEnd: 1.8,
+  forestToUndergroundStart: 2.8,
+  forestToUndergroundEnd: 3.1,
 } as const;
 
 interface Rgb {

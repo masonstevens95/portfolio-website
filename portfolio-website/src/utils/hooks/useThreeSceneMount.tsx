@@ -641,7 +641,7 @@ const buildUndergroundGroup = (): UndergroundStage => {
       mesh,
       speed: (Math.random() < 0.5 ? -1 : 1) * (0.05 + Math.random() * 0.1),
       startX,
-      wiggleAmp: 0.6,
+      wiggleAmp: 1.8,
       phase: Math.random() * Math.PI * 2,
       baseY,
     });
@@ -813,13 +813,25 @@ export const useThreeSceneMount = (
       const fungiMat = underground.fungi.points.material as THREE.PointsMaterial;
       fungiMat.opacity = 0.7 + 0.2 * Math.sin(frame * 0.025);
 
-      // Worms — x-translate and y-wiggle; wrap horizontally at the spread edges
+      // Worms — slithering motion: x-translates while the body rides a
+      // sinusoidal y-wave, the body tilts along its slope (head leads the
+      // curve), and the sprite squeezes/stretches slightly along the
+      // direction of travel. The combination of all three reads as a snake
+      // following an undulating path rather than a rigid sprite bobbing.
       for (const w of underground.worms) {
         w.mesh.position.x += w.speed;
         if (w.mesh.position.x > SPREAD_X * 0.6) w.mesh.position.x = -SPREAD_X * 0.6;
         if (w.mesh.position.x < -SPREAD_X * 0.6) w.mesh.position.x = SPREAD_X * 0.6;
-        w.mesh.position.y =
-          w.baseY + Math.sin(frame * 0.05 + w.phase) * w.wiggleAmp;
+        const t = frame * 0.06 + w.phase;
+        w.mesh.position.y = w.baseY + Math.sin(t) * w.wiggleAmp;
+        // Tilt the body to track the wave's slope. cos(t) is the derivative
+        // of sin(t), so rotation.z follows the curve's tangent. Sign is
+        // flipped when moving leftward so the head still leads.
+        const dir = w.speed >= 0 ? 1 : -1;
+        w.mesh.rotation.z = Math.cos(t) * 0.45 * dir;
+        // Subtle body contraction along the direction of travel — slightly
+        // out-of-phase with the wave so the squeeze isn't synced to the peaks.
+        w.mesh.scale.x = 1 + 0.08 * Math.sin(t * 1.5 + 0.7);
       }
 
       // Beetles — x-translate only

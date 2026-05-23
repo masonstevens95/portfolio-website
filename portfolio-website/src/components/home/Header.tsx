@@ -32,7 +32,7 @@ export const Header = ({ scroll }: Props) => {
 
   const { toggleMute, paused, setVolume } = useAmbientSound(
     "/assets/crickets.wav",
-    0.1
+    0.2
   );
 
   useEffect(() => {
