@@ -15,6 +15,7 @@ import { headerToPageMap } from "../../utils/headerToPageMap";
 import { useHeaderSelectionListener } from "../../utils/hooks/useHeaderSelectionListener";
 import { useThreeSceneMount } from "../../utils/hooks/useThreeSceneMount";
 import { useMouseParallax } from "../../utils/hooks/useMouseParallax";
+import { SceneVignette } from "./SceneVignette";
 
 interface Props {
   scroll: number;
@@ -50,7 +51,9 @@ export const InfiniteScrollContainer = ({ scroll }: Props) => {
         className="fixed top-0 left-0 w-full h-full"
       />
 
-      <div className="left-0 top-0 fixed z-1 w-full h-full">
+      <SceneVignette scroll={scroll} />
+
+      <div className="left-0 top-0 fixed z-10 w-full h-full">
         <Parallax className="parallax" pages={4} ref={parallaxRef}>
           <WelcomeBlock {...headerToPageMap[HeaderSelected.WELCOME]} />
           <AboutMeBlock {...headerToPageMap[HeaderSelected.ABOUT_ME]} />
