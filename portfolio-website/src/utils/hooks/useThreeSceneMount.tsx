@@ -101,9 +101,13 @@ const buildMoonTexture = (): THREE.CanvasTexture => {
   return new THREE.CanvasTexture(c);
 };
 
-// Pine ridge — silhouette of triangular pine tops along a horizon. Each pine
-// is independently varied (height, width, x-jitter, asymmetric tip) so the
-// silhouette reads as a real treeline rather than a regular sawtooth.
+// Polygonal pine ridge — each tree is built from 3-5 stacked triangle tiers
+// (the classic faceted-Christmas-tree silhouette) rather than a single solid
+// triangle. Tiers narrow as they rise and overlap slightly so the silhouette
+// reads as layered foliage with visible "shelves" between sections. Per-tree
+// randomization (tier count, height, base width, x-jitter, tier overlap)
+// keeps the ridgeline from looking mechanical.
+//
 // Returns a wide alpha texture; height parameter scales the ridge vertically.
 const buildPineRidgeTexture = (
   width: number = 1024,
@@ -119,7 +123,7 @@ const buildPineRidgeTexture = (
   // Baseline rectangle across the bottom 12% (the "ground" the trees sit on)
   ctx.fillRect(0, height * 0.88, width, height * 0.12);
   const spacing = width / triangleCount;
-  const baseY = height * 0.9;
+  const groundY = height * 0.9;
   for (let i = 0; i < triangleCount; i++) {
     // Position with jitter so the trees aren't on a metronome
     const baseX = i * spacing + spacing / 2;
@@ -128,19 +132,33 @@ const buildPineRidgeTexture = (
     // Heights biased toward shorter trees with occasional giants — pow > 1
     // pulls the distribution toward 0 (short), but the long tail produces
     // the dramatic outliers that make a ridgeline interesting.
-    const heightRatio = 0.15 + Math.pow(Math.random(), 1.7) * 0.78;
-    const treeTopY = baseY - heightRatio * height * 0.85;
-    // Each tree has its own girth
+    const heightRatio = 0.25 + Math.pow(Math.random(), 1.7) * 0.7;
+    const totalHeight = heightRatio * height * 0.85;
+    // Each tree has its own girth at the base
     const widthScale = 0.6 + Math.random() * 0.7;
-    const halfBase = spacing * 0.55 * widthScale;
-    // Slight tip asymmetry — pines lean a touch in the wind
-    const tipOffset = (Math.random() - 0.5) * spacing * 0.2;
-    ctx.beginPath();
-    ctx.moveTo(cx + tipOffset, treeTopY);
-    ctx.lineTo(cx - halfBase, baseY);
-    ctx.lineTo(cx + halfBase, baseY);
-    ctx.closePath();
-    ctx.fill();
+    let halfBase = spacing * 0.6 * widthScale;
+    // Stack 3-5 triangle tiers. Each tier sits on top of the previous one
+    // with some downward overlap so adjacent tiers share an edge slice;
+    // the upper tier is narrower so the silhouette shows a faceted profile.
+    const tierCount = 3 + Math.floor(Math.random() * 3);
+    const tierBaseHeight = totalHeight / (tierCount * 0.75); // overlap → effective height ≈ totalHeight
+    let baseY = groundY;
+    for (let tier = 0; tier < tierCount; tier++) {
+      // Slight tip asymmetry, smaller for upper tiers so the top is steady
+      const tipOffset =
+        (Math.random() - 0.5) * spacing * 0.2 * (1 - tier / tierCount);
+      const tipY = baseY - tierBaseHeight * (0.95 + Math.random() * 0.15);
+      ctx.beginPath();
+      ctx.moveTo(cx + tipOffset, tipY);
+      ctx.lineTo(cx - halfBase, baseY);
+      ctx.lineTo(cx + halfBase, baseY);
+      ctx.closePath();
+      ctx.fill();
+      // Next tier sits inside the upper portion of the current one — the
+      // 0.55-0.65 factor controls how much each tier "shelf" shows.
+      baseY = tipY + tierBaseHeight * (0.32 + Math.random() * 0.12);
+      halfBase *= 0.68 + Math.random() * 0.08;
+    }
   }
   return new THREE.CanvasTexture(c);
 };
@@ -285,24 +303,6 @@ const buildWormTexture = (): THREE.CanvasTexture => {
   ctx.quadraticCurveTo(192, 54, 128, 38);
   ctx.quadraticCurveTo(64, 22, 8, 38);
   ctx.closePath();
-  ctx.fill();
-  return new THREE.CanvasTexture(c);
-};
-
-// Beetle — small dark oval body.
-const buildBeetleTexture = (): THREE.CanvasTexture => {
-  const c = document.createElement("canvas");
-  c.width = 64;
-  c.height = 32;
-  const ctx = c.getContext("2d")!;
-  ctx.fillStyle = "#1a1208";
-  ctx.beginPath();
-  ctx.ellipse(32, 16, 22, 11, 0, 0, Math.PI * 2);
-  ctx.fill();
-  // Slight highlight stripe
-  ctx.fillStyle = "#2a1f10";
-  ctx.beginPath();
-  ctx.ellipse(32, 12, 20, 4, 0, 0, Math.PI * 2);
   ctx.fill();
   return new THREE.CanvasTexture(c);
 };
@@ -557,13 +557,12 @@ const buildForestGroup = (): ForestStage => {
   };
 };
 
-interface CreatureState {
+interface WormState {
   mesh: THREE.Mesh;
-  speed: number;       // x-translation per frame
-  startX: number;      // base x for the wiggle reference
-  wiggleAmp: number;   // y-wiggle amplitude (0 for beetles)
+  baseSpeed: number;   // sign carries direction, magnitude is base x speed
   phase: number;       // sinusoidal phase offset
   baseY: number;       // base y position
+  wiggleAmp: number;   // y-wave amplitude
 }
 
 interface UndergroundStage {
@@ -572,15 +571,12 @@ interface UndergroundStage {
   fungiTex: THREE.CanvasTexture;
   rootsMesh: THREE.Mesh;
   rootsTex: THREE.CanvasTexture;
-  worms: CreatureState[];
+  worms: WormState[];
   wormTex: THREE.CanvasTexture;
-  beetles: CreatureState[];
-  beetleTex: THREE.CanvasTexture;
 }
 
 const FUNGI_COUNT = 30;
 const WORM_COUNT = 5;
-const BEETLE_COUNT = 3;
 
 const buildUndergroundGroup = (): UndergroundStage => {
   const group = new THREE.Group();
@@ -628,11 +624,12 @@ const buildUndergroundGroup = (): UndergroundStage => {
   const fungiPoints = new THREE.Points(fungiGeometry, fungiMaterial);
   group.add(fungiPoints);
 
-  // Worms — five PlaneGeometry sprites with horizontal translation + y-wiggle
+  // Worms — five PlaneGeometry sprites with horizontal translation + y-wiggle.
+  // Elongated geometry (12×2) so the slither curves read across the body.
   const wormTex = buildWormTexture();
-  const worms: CreatureState[] = [];
+  const worms: WormState[] = [];
   for (let i = 0; i < WORM_COUNT; i++) {
-    const geometry = new THREE.PlaneGeometry(8, 2);
+    const geometry = new THREE.PlaneGeometry(12, 2);
     const material = new THREE.MeshBasicMaterial({
       map: wormTex,
       transparent: true,
@@ -646,36 +643,10 @@ const buildUndergroundGroup = (): UndergroundStage => {
     group.add(mesh);
     worms.push({
       mesh,
-      speed: (Math.random() < 0.5 ? -1 : 1) * (0.05 + Math.random() * 0.1),
-      startX,
-      wiggleAmp: 1.8,
+      baseSpeed:
+        (Math.random() < 0.5 ? -1 : 1) * (0.06 + Math.random() * 0.12),
+      wiggleAmp: 2.5,
       phase: Math.random() * Math.PI * 2,
-      baseY,
-    });
-  }
-
-  // Beetles — three slower planes, no wiggle
-  const beetleTex = buildBeetleTexture();
-  const beetles: CreatureState[] = [];
-  for (let i = 0; i < BEETLE_COUNT; i++) {
-    const geometry = new THREE.PlaneGeometry(3, 1.5);
-    const material = new THREE.MeshBasicMaterial({
-      map: beetleTex,
-      transparent: true,
-      depthWrite: false,
-    });
-    const mesh = new THREE.Mesh(geometry, material);
-    const baseY =
-      ((i + 1) / (BEETLE_COUNT + 1) - 0.5) * SPREAD_Y * 0.5 + SPREAD_Y * 0.1;
-    const startX = (Math.random() - 0.5) * SPREAD_X;
-    mesh.position.set(startX, baseY, 2);
-    group.add(mesh);
-    beetles.push({
-      mesh,
-      speed: (Math.random() < 0.5 ? -1 : 1) * (0.02 + Math.random() * 0.04),
-      startX,
-      wiggleAmp: 0,
-      phase: 0,
       baseY,
     });
   }
@@ -688,8 +659,6 @@ const buildUndergroundGroup = (): UndergroundStage => {
     rootsTex,
     worms,
     wormTex,
-    beetles,
-    beetleTex,
   };
 };
 
@@ -832,32 +801,30 @@ export const useThreeSceneMount = (
       const fungiMat = underground.fungi.points.material as THREE.PointsMaterial;
       fungiMat.opacity = 0.7 + 0.2 * Math.sin(frame * 0.025);
 
-      // Worms — slithering motion: x-translates while the body rides a
-      // sinusoidal y-wave, the body tilts along its slope (head leads the
-      // curve), and the sprite squeezes/stretches slightly along the
-      // direction of travel. The combination of all three reads as a snake
-      // following an undulating path rather than a rigid sprite bobbing.
+      // Worms — slithering motion built from four overlaid effects so the
+      // animation reads as an actual snake following a path rather than a
+      // sprite bobbing in place:
+      //   - main sin wave on y (body curve)
+      //   - secondary higher-frequency wobble (organic micro-undulation)
+      //   - variable forward speed (slow at curve peaks, fast at zero-
+      //     crossings — when a real snake's body is straight it slides
+      //     forward; when it's curved it's pushing against the soil)
+      //   - rotation tracking the wave's slope (head leads the curve)
+      //   - longitudinal stretch/squeeze + small vertical pinch at peaks
       for (const w of underground.worms) {
-        w.mesh.position.x += w.speed;
+        const t = frame * 0.08 + w.phase;
+        const wave =
+          Math.sin(t) * w.wiggleAmp +
+          Math.sin(t * 2.3 + 1.1) * w.wiggleAmp * 0.22;
+        const speedScale = 0.4 + Math.abs(Math.cos(t)) * 0.9;
+        w.mesh.position.x += w.baseSpeed * speedScale;
         if (w.mesh.position.x > SPREAD_X * 0.6) w.mesh.position.x = -SPREAD_X * 0.6;
         if (w.mesh.position.x < -SPREAD_X * 0.6) w.mesh.position.x = SPREAD_X * 0.6;
-        const t = frame * 0.06 + w.phase;
-        w.mesh.position.y = w.baseY + Math.sin(t) * w.wiggleAmp;
-        // Tilt the body to track the wave's slope. cos(t) is the derivative
-        // of sin(t), so rotation.z follows the curve's tangent. Sign is
-        // flipped when moving leftward so the head still leads.
-        const dir = w.speed >= 0 ? 1 : -1;
-        w.mesh.rotation.z = Math.cos(t) * 0.45 * dir;
-        // Subtle body contraction along the direction of travel — slightly
-        // out-of-phase with the wave so the squeeze isn't synced to the peaks.
-        w.mesh.scale.x = 1 + 0.08 * Math.sin(t * 1.5 + 0.7);
-      }
-
-      // Beetles — x-translate only
-      for (const b of underground.beetles) {
-        b.mesh.position.x += b.speed;
-        if (b.mesh.position.x > SPREAD_X * 0.6) b.mesh.position.x = -SPREAD_X * 0.6;
-        if (b.mesh.position.x < -SPREAD_X * 0.6) b.mesh.position.x = SPREAD_X * 0.6;
+        w.mesh.position.y = w.baseY + wave;
+        const dir = w.baseSpeed >= 0 ? 1 : -1;
+        w.mesh.rotation.z = Math.cos(t) * 0.6 * dir;
+        w.mesh.scale.x = 1 + 0.12 * Math.sin(t * 1.7 + 0.7);
+        w.mesh.scale.y = 1 - 0.06 * Math.abs(Math.sin(t));
       }
 
       applyScrollAndMouse();
@@ -928,11 +895,6 @@ export const useThreeSceneMount = (
       for (const w of underground.worms) {
         w.mesh.geometry.dispose();
         (w.mesh.material as THREE.Material).dispose();
-      }
-      underground.beetleTex.dispose();
-      for (const b of underground.beetles) {
-        b.mesh.geometry.dispose();
-        (b.mesh.material as THREE.Material).dispose();
       }
       backdrop.texture.dispose();
       backdrop.mesh.geometry.dispose();
