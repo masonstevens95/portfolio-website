@@ -2,7 +2,6 @@
   Header
 */
 
-import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   HeaderSelected,
@@ -21,8 +20,6 @@ const HEADER_LABELS = [
   { id: HeaderSelected.CONTACT, label: "Contact" },
 ];
 
-const AUDIO_HINT_KEY = "orchard-audio-hint-dismissed-v3";
-
 export const Header = ({}: Props) => {
   const dispatch = useAppDispatch();
   const selected = useAppSelector(
@@ -34,26 +31,10 @@ export const Header = ({}: Props) => {
     0.1
   );
 
-  const [hintDismissed, setHintDismissed] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.localStorage.getItem(AUDIO_HINT_KEY) === "1";
-  });
-
-  // Show the hint until the user clicks the audio button, regardless of
-  // whether autoplay succeeded. The arrow is a generic affordance pointing
-  // at the toggle — "this button does something" — not specifically a
-  // "click to play" cue. Dismissal is persisted across reloads.
-  const showHint = !hintDismissed;
-
-  const handleAudioClick = () => {
-    if (!hintDismissed) {
-      setHintDismissed(true);
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem(AUDIO_HINT_KEY, "1");
-      }
-    }
-    toggleMute();
-  };
+  // Live affordance: arrow appears whenever the ambient audio is off
+  // (initial autoplay block, or the user muted it) and disappears the
+  // moment audio is playing again.
+  const showHint = paused;
 
   const handleClick = (id: HeaderSelected) => {
     const element = document.getElementById(HeaderSelected[id]);
@@ -119,7 +100,7 @@ export const Header = ({}: Props) => {
             )}
           </AnimatePresence>
           <button
-            onClick={handleAudioClick}
+            onClick={toggleMute}
             className="text-[var(--orchard-cream)] hover:text-[var(--orchard-honey)] text-xl"
             title="Toggle ambient audio"
           >
