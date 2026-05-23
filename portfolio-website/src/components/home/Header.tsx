@@ -26,10 +26,7 @@ export const Header = ({}: Props) => {
     (state) => state.globalDataSlice.headerSelected
   );
 
-  const { toggleMute, paused } = useAmbientSound(
-    "/assets/crickets.wav",
-    0.1
-  );
+  const { toggleMute, paused } = useAmbientSound("/assets/crickets.wav", 0.1);
 
   // Live affordance: arrow appears whenever the ambient audio is off
   // (initial autoplay block, or the user muted it) and disappears the

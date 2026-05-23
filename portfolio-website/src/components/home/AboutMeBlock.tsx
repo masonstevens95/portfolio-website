@@ -21,7 +21,7 @@ export const AboutMeBlock = ({ offset, speed, factor }: Props) => {
       <div className="w-full h-full flex items-center justify-center p-8">
         <div className="bg-[var(--orchard-bark)]/45 rounded-3xl shadow-lg backdrop-blur-lg border border-[var(--orchard-honey)]/15 p-10 max-w-5xl w-full flex flex-col md:flex-row items-center gap-8">
           <img
-            src="/assets/profile.jpg"
+            src="/assets/profile_new.jpeg"
             alt="Profile photo"
             className="w-48 h-48 rounded-full object-cover border-4 border-[var(--orchard-cream)]/30 shadow-md"
           />
