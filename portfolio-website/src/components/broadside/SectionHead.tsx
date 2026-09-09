@@ -28,7 +28,7 @@ export const SectionHead = ({ article, title, id, className = "" }: Props) => (
     <Label>Article {article}</Label>
     <h2
       className="display m-0"
-      style={{ fontSize: "clamp(24px, 4vw, 38px)", letterSpacing: "0.01em" }}
+      style={{ fontSize: "clamp(22px, 3.4vw, 32px)", letterSpacing: "0.01em" }}
     >
       {title}
     </h2>

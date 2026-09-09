@@ -25,13 +25,13 @@ export const HomePage = () => (
       <DoubleRule className="mt-2" />
 
       <AboutMeBlock />
-      <DoubleRule className="mt-14" />
+      <DoubleRule className="mt-[52px]" />
 
       <FeaturedWorkBlock />
-      <DoubleRule className="mt-14" />
+      <DoubleRule className="mt-[52px]" />
 
       <ContactBlock />
-      <DoubleRule className="mt-14" accent="bottom" />
+      <DoubleRule className="mt-[52px]" />
     </main>
   </>
 );

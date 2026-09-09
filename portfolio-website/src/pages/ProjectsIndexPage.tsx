@@ -96,12 +96,13 @@ export const ProjectsIndexPage = () => {
         {/* The index is the site's one genuinely ordered sequence, so plate
             numbering is legitimate here. The kit permits numbering only where
             order is real. */}
-        <ul className="list-none p-0 m-0" style={{ borderTop: "var(--rule-heavy) solid var(--ink)" }}>
+        <ul className="list-none p-0 m-0 ink-frame">
           {projects.map((project, index) => (
             <li key={project.slug}>
+              {index > 0 && <Rule weight="thin" />}
               <Link
                 to={`/projects/${project.slug}`}
-                className="flex gap-5 items-start py-5 no-underline group"
+                className="flex gap-5 items-start p-4 no-underline group"
                 style={{ color: "var(--ink)" }}
               >
                 <div className="w-28 h-28 shrink-0 overflow-hidden ink-frame">
@@ -128,7 +129,6 @@ export const ProjectsIndexPage = () => {
                   </span>
                 </div>
               </Link>
-              <Rule weight="thin" />
             </li>
           ))}
         </ul>

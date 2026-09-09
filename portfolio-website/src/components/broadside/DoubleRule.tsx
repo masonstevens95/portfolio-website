@@ -15,7 +15,7 @@ interface Props {
   className?: string;
 }
 
-export const DoubleRule = ({ accent = "bottom", className = "" }: Props) => (
+export const DoubleRule = ({ accent = "none", className = "" }: Props) => (
   <div
     className={`flex flex-col w-full ${className}`}
     style={{ gap: "var(--rule-gap)" }}

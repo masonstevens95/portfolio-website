@@ -15,22 +15,22 @@ const CONTACT_EMAIL = "mason.c.stevens@gmail.com";
 const GITHUB = "https://github.com/masonstevens95";
 
 export const ContactBlock = () => (
-  <section className="mt-14">
+  <section className="mt-[52px]">
     <SectionHead article="III" title="Contact" id="CONTACT" />
 
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 items-start">
-      <div style={{ maxWidth: "42ch" }}>
+    <div className="grid grid-cols-1 md:grid-cols-2 ink-frame">
+      <div className="px-[22px] py-5" style={{ maxWidth: "44ch" }}>
         <p className="m-0 copy">
           If you want to collaborate on something, have a question about any of
           the work above, or just want to say hello &mdash; write to me.
         </p>
       </div>
 
-      <div className="flex flex-col gap-3 items-start">
+      <div className="px-[22px] py-5 flex flex-col gap-3 items-start border-t md:border-t-0 md:border-l border-[var(--ink)]">
         <a
           href={`mailto:${CONTACT_EMAIL}`}
           className="display no-underline hover:opacity-70 transition-opacity"
-          style={{ fontSize: "clamp(17px, 2.2vw, 22px)" }}
+          style={{ fontSize: "21px" }}
         >
           {CONTACT_EMAIL}
         </a>

@@ -21,7 +21,7 @@ interface Props {
 }
 
 export const Masthead = ({ overline, wordmark, motto, estd }: Props) => (
-  <header className="text-center pt-6 pb-4">
+  <header className="text-center pt-7 pb-4">
     {overline && (
       <Label as="p" tracking="wide" className="m-0 mb-3">
         {overline}
@@ -29,7 +29,7 @@ export const Masthead = ({ overline, wordmark, motto, estd }: Props) => (
     )}
     <h1
       className="display my-2"
-      style={{ fontSize: "clamp(38px, 8vw, 76px)" }}
+      style={{ fontSize: "clamp(40px, 9.5vw, 92px)" }}
     >
       {wordmark}
     </h1>

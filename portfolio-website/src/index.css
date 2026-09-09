@@ -36,7 +36,7 @@ body::after {
   inset: 0;
   pointer-events: none;
   z-index: 60;
-  opacity: 0.28;
+  opacity: 0.3;
   mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='0.28'/%3E%3C/svg%3E");
   background-size: 160px 160px;
@@ -66,8 +66,8 @@ body::after {
 
 /* Body copy. The grotesque at reading size — the handbill, not the printout. */
 .copy {
-  font-size: 15.5px;
-  line-height: 1.68;
+  font-size: 15px;
+  line-height: 1.6;
 }
 
 /* The plate frame. A drawn member is bounded by an ink rule — square corners,

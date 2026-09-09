@@ -25,12 +25,12 @@ export const TitleBlock = ({
   className = "",
 }: Props) => (
   <div
-    className={`flex justify-between items-end gap-3 px-3 py-3 ink-frame-top ${className}`}
+    className={`flex justify-between items-end gap-3 py-2.5 ink-frame-top ${className}`}
   >
     <div className="min-w-0">
       <div
         className="display"
-        style={{ fontSize: "clamp(16px, 2vw, 19px)", lineHeight: 1.05 }}
+        style={{ fontSize: "18px", lineHeight: 1 }}
       >
         {title}
       </div>

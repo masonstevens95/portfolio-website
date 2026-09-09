@@ -9,13 +9,13 @@
 import { SectionHead } from "../broadside";
 
 export const AboutMeBlock = () => (
-  <section className="mt-14">
+  <section className="mt-[52px]">
     <SectionHead article="I" title="About" id="ABOUT_ME" />
 
-    {/* No outer frame. The kit's "On screen" note rules out filled boxes; the
-        photo's hairline is the only drawn member here. */}
-    <div className="grid grid-cols-1 md:grid-cols-[minmax(0,180px)_1fr] gap-6 md:gap-10 items-start">
-      <div>
+    {/* Hairline plate. The kit rules out *filled boxes*, not frames — at 1px
+        the frame is a drawn member, which is the point. */}
+    <div className="grid grid-cols-1 md:grid-cols-[minmax(0,220px)_1fr] ink-frame">
+      <div className="p-[18px] border-b md:border-b-0 md:border-r border-[var(--ink)]">
         <img
           src="/assets/profile_new.jpeg"
           alt="Mason Stevens"
@@ -29,7 +29,7 @@ export const AboutMeBlock = () => (
         />
       </div>
 
-      <div style={{ maxWidth: "56ch" }}>
+      <div className="px-[22px] py-5" style={{ maxWidth: "52ch" }}>
         <p className="m-0 copy">
           I&rsquo;m a designer and developer building tools that connect people
           to plants and to the ground they stand on. Garden layout software,
@@ -43,7 +43,7 @@ export const AboutMeBlock = () => (
           somewhere in the Piedmont.
         </p>
         <p
-          className="label m-0 mt-6"
+          className="label m-0 mt-5"
           style={{ letterSpacing: "0.13em", fontWeight: 600 }}
         >
           Winston-Salem, N.C. · UX · Frontend · Spatial

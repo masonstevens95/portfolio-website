@@ -42,11 +42,11 @@
 
   /* Metrics lifted from the locked comp */
   --display-tracking: 0.05em;
-  --display-leading:  0.84;
+  --display-leading:  0.86;
   --label-tracking:   0.16em;  /* uppercase labels; kit range is 0.10em to 0.16em */
   --rule-heavy: 1px;   /* print/plan sheets use 5px; on screen that is ~4x too heavy */
   --rule-thin:  1px;   /* print/plan sheets use 2px */
-  --rule-gap:   3px;   /* at hairline weights this reads as two lines, not one band */
+  --rule-gap:   4px;   /* at hairline weights this reads as two lines, not one band */
   --maxw: 1000px;
 }
 

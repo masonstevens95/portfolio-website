@@ -74,15 +74,19 @@ export const FeaturedWorkBlock = () => {
   };
 
   return (
-    <section className="mt-14">
+    <section className="mt-[52px]">
       <SectionHead article="II" title="Selected Work" id="FEATURED_WORK" />
 
       <div
-        /* No outer frame and no ink bleeding through the gutters — the kit
-           rules out filled boxes on screen. Each plate carries its own
-           hairline instead. */
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"
-        style={{ gridAutoRows: "1fr" }}
+        /* Hairline plate grid: cells share 1px ink gutters, which is the ink
+           ground showing through a 1px gap. Not a filled box — the gutter IS
+           the rule. */
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ink-frame"
+        style={{
+          gap: "var(--rule-heavy)",
+          background: "var(--ink)",
+          gridAutoRows: "1fr",
+        }}
       >
         {featuredProjects.map((project, index) => {
           const isHovered = hoveredIndex === index;
@@ -96,7 +100,8 @@ export const FeaturedWorkBlock = () => {
               onFocus={() => setHoveredIndex(index)}
               onBlur={() => setHoveredIndex(null)}
               onClick={() => onCardClick(project.link)}
-              className="text-left flex flex-col cursor-pointer"
+              className="text-left flex flex-col cursor-pointer px-3 pt-3"
+              style={{ background: "var(--stock)" }}
             >
               <div className="flex-1 flex flex-col">
                 {/* Reserve two lines so a caption that wraps does not shift
@@ -112,9 +117,10 @@ export const FeaturedWorkBlock = () => {
                     neighbours. A fixed height keeps every title block on the
                     same line across a row. */}
                 <div
-                  className="w-full h-48 md:h-56 overflow-hidden"
+                  className="w-full h-[140px] overflow-hidden ink-frame"
                   style={{
-                    border: `2px solid ${isHovered ? "var(--spruce)" : "var(--ink)"}`,
+                    borderColor: isHovered ? "var(--spruce)" : "var(--ink)",
+                    transition: "border-color 200ms",
                   }}
                 >
                   <PlateImage
@@ -125,9 +131,8 @@ export const FeaturedWorkBlock = () => {
                 </div>
               </div>
 
-              <div className="mt-auto pt-2.5">
+              <div className="mt-auto pt-3">
                 <TitleBlock
-                  className="px-0 py-0 pt-2.5"
                   title={project.title}
                   subtitle={isHovered ? "View project →" : undefined}
                   reserveSubtitle
