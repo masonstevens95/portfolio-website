@@ -1,8 +1,7 @@
 /*
   AboutMeBlock — Article I
 
-  Hard-bordered two-column plate. The frosted card it replaced used
-  rounded-3xl, shadow-lg, backdrop-blur-lg and a translucent fill, all four of
+  Hard-bordered two-column plate. The frosted card it replaced used,, and a translucent fill, all four of
   which the brand prohibits.
 */
 

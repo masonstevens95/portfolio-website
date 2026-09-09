@@ -8,8 +8,8 @@ export const YardenPage = () => {
       title="Yarden.diy"
       subtitle="A web-based garden layout planner for nurseries and backyard designers"
     >
-      <section className="w-full w-full mx-auto px-4 text-[var(--orchard-cream)]/80 space-y-6 text-lg leading-relaxed">
-        <h2 className="text-2xl font-bold text-[var(--orchard-cream)] mb-4">What It Is</h2>
+      <section className="w-full w-full mx-auto px-4 text-[var(--ink)] space-y-6 text-lg leading-relaxed">
+        <h2 className="text-2xl font-bold text-[var(--ink)] mb-4">What It Is</h2>
         <p>
           Yarden lets users design and share their own garden layouts using an
           intuitive drag-and-drop interface. The tool uses plant metadata to
@@ -31,7 +31,7 @@ export const YardenPage = () => {
 
       {/* Fullscreen responsive embedded live preview */}
       <div className="w-full mt-16">
-        <h3 className="text-center text-2xl text-[var(--orchard-cream)] font-semibold mb-4">
+        <h3 className="text-center text-2xl text-[var(--ink)] font-semibold mb-4">
           🪴 Live Preview
         </h3>
         <EmbeddedYardenPreview />
@@ -39,7 +39,7 @@ export const YardenPage = () => {
 
       {/* Kickstarter embed */}
       <div className="w-full mt-16">
-        <h3 className="text-center text-2xl text-[var(--orchard-cream)] font-semibold mb-4">
+        <h3 className="text-center text-2xl text-[var(--ink)] font-semibold mb-4">
           📣 Kickstarter Campaign
         </h3>
         <EmbeddedYardenKickstarter />

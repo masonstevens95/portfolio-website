@@ -38,7 +38,7 @@ class ErrorComponentBoundary extends Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div className="text-[var(--orchard-cream)]/65 text-center py-8">
+        <div className="text-[var(--ink)] text-center py-8">
           Something went wrong rendering this calculator.
         </div>
       );
@@ -85,7 +85,7 @@ export class RemoteCrashBoundary extends Component<Props, State> {
         <ErrorComponentBoundary>
           <Suspense
             fallback={
-              <div className="text-[var(--orchard-cream)]/65 text-center py-8">
+              <div className="text-[var(--ink)] text-center py-8">
                 Showing error details…
               </div>
             }

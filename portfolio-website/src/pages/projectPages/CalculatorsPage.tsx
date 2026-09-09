@@ -15,17 +15,17 @@ export const CalculatorsPage = () => (
     <div className="w-full flex flex-col">
       <nav
         aria-label="Calculator tabs"
-        className="flex flex-wrap gap-2 border-b border-[var(--orchard-moss)] pb-2 max-w-6xl mx-auto w-full px-4"
+        className="flex flex-wrap gap-2 border-b border-[var(--ink)] pb-2 max-w-6xl mx-auto w-full px-4"
       >
         {calculatorTabs.map((tab) => (
           <NavLink
             key={tab.slug}
             to={`${BASE_PATH}/${tab.slug}`}
             className={({ isActive }) =>
-              `px-3 py-2 rounded-t text-sm transition-colors ${
+              `px-3 py-2 text-sm transition-colors ${
                 isActive
-                  ? "bg-[var(--orchard-moss)]/70 text-[var(--orchard-cream)]"
-                  : "text-[var(--orchard-cream)]/65 hover:text-[var(--orchard-cream)]"
+                  ? "bg-[var(--ink)] text-[var(--stock)]"
+                  : "text-[var(--ink)] hover:text-[var(--spruce)]"
               }`
             }
           >

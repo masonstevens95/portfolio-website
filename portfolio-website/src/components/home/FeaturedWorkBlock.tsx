@@ -4,7 +4,7 @@
   A plate grid: cells share 4px ink rules, each carrying a caption, an image
   and a title block.
 
-  The hover-to-expand grid this replaced used rounded-2xl, shadow-lg, a
+  The hover-to-expand grid this replaced used,, a
   bottom gradient scrim and text-shadow on every title — four prohibitions in
   one component. Hover is now a spruce title rule, not a color wash.
 */

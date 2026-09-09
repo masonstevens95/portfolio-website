@@ -1,5 +1,5 @@
 export const HortibasePage = () => (
-  <div className="p-10 text-[var(--orchard-cream)]">
+  <div className="p-10 text-[var(--ink)]">
     <h1 className="text-3xl font-bold mb-4">Hortibase</h1>
     <p>
       Aggregates and structures plant data from open sources. Exposes the

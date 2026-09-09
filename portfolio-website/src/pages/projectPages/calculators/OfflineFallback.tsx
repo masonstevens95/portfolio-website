@@ -7,9 +7,9 @@
 export const OfflineFallback = () => (
   <div
     role="alert"
-    className="w-full mx-auto px-4 py-12 text-center text-[var(--orchard-cream)]/80"
+    className="w-full mx-auto px-4 py-12 text-center text-[var(--ink)]"
   >
-    <h2 className="text-2xl font-bold text-[var(--orchard-cream)] mb-2">
+    <h2 className="text-2xl font-bold text-[var(--ink)] mb-2">
       This demo is offline
     </h2>
     <p>
@@ -18,7 +18,7 @@ export const OfflineFallback = () => (
         href="https://calculators-two-alpha.vercel.app"
         target="_blank"
         rel="noopener noreferrer"
-        className="underline hover:text-[var(--orchard-cream)]"
+        className="underline hover:text-[var(--ink)]"
       >
         calculators-two-alpha.vercel.app
       </a>

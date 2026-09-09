@@ -7,21 +7,24 @@ interface Props {
 }
 
 /**
- * Generic live-site embed: a thin "Open in new tab ↗" link plus an
- * iframe that fills most of the visible viewport. Used for project
- * pages that just want to host a separately deployed app inside the
- * portfolio chrome.
+ * Generic live-site embed, framed as a mounted plate.
+ *
+ * The embedded app is separately deployed and owns its own styling, so it
+ * will not match the broadside. Giving it a hard ink frame and a plate
+ * caption makes that discontinuity read as a deliberate exhibit rather than
+ * a broken page.
  */
 export function EmbeddedIframe({ src, title }: Props) {
   return (
     <div className="w-full">
-      <div className="flex justify-end mb-2">
+      <div className="flex justify-between items-baseline gap-4 mb-2">
+        <p className="label m-0">Plate — {title}, live</p>
         <a
           href={src}
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`Open ${title} in a new tab`}
-          className="text-sm text-neutral-400 hover:text-white transition-colors"
+          className="label no-underline hover:underline"
         >
           Open in new tab ↗
         </a>
@@ -30,7 +33,8 @@ export function EmbeddedIframe({ src, title }: Props) {
         src={src}
         title={title}
         loading="lazy"
-        className="w-full h-[calc(100vh-280px)] min-h-[500px] bg-neutral-950 border border-neutral-700 rounded-lg"
+        className="w-full h-[calc(100vh-280px)] min-h-[500px]"
+        style={{ border: "4px solid var(--ink)", background: "var(--stock)" }}
       />
     </div>
   );
