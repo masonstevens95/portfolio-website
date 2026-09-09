@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import { ProjectPageTemplate } from "./ProjectPageTemplate";
+import { PlateCaption, Rule } from "../components/broadside";
 
 interface ProjectEntry {
   slug: string;
@@ -85,44 +87,73 @@ const projects: ProjectEntry[] = [
   },
 ];
 
-export const ProjectsIndexPage = () => (
-  <ProjectPageTemplate
-    title="Projects"
-    subtitle="Everything that has a page on this site"
-  >
-    <section className="w-full max-w-4xl mx-auto px-4">
-      <ul className="flex flex-col gap-4">
-        {projects.map((project) => (
-          <li key={project.slug}>
-            <Link
-              to={`/projects/${project.slug}`}
-              className="flex gap-4 items-start p-4 rounded-lg border border-[var(--orchard-moss)]/70 hover:border-[var(--orchard-honey)]/50 hover:bg-[var(--orchard-moss)]/40 transition-colors"
-            >
-              {project.image ? (
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-32 h-32 object-cover rounded flex-shrink-0 bg-[var(--orchard-moss)]"
-                />
-              ) : (
+export const ProjectsIndexPage = () => {
+  // /assets/pixel_art_placeholder.png is referenced but absent from public/.
+  const [failed, setFailed] = useState<Record<string, boolean>>({});
+
+  return (
+    <ProjectPageTemplate
+      title="Projects"
+      subtitle="Everything that has a page on this site"
+    >
+      <section className="w-full">
+        {/* The index is the site's one genuinely ordered sequence, so plate
+            numbering is legitimate here. The kit permits numbering only where
+            order is real. */}
+        <ul className="list-none p-0 m-0" style={{ border: "4px solid var(--ink)" }}>
+          {projects.map((project, index) => (
+            <li key={project.slug}>
+              {index > 0 && <Rule weight="thin" />}
+              <Link
+                to={`/projects/${project.slug}`}
+                className="flex gap-4 items-start p-4 no-underline group"
+                style={{ color: "var(--ink)" }}
+              >
                 <div
-                  aria-hidden="true"
-                  className="w-32 h-32 rounded flex-shrink-0 bg-[var(--orchard-moss)] border border-[var(--orchard-moss)]/70 flex items-center justify-center text-3xl text-[var(--orchard-cream)]/40 font-semibold"
+                  className="w-28 h-28 shrink-0 overflow-hidden"
+                  style={{ border: "2px solid var(--ink)" }}
                 >
-                  {project.title.charAt(0)}
+                  {project.image && !failed[project.slug] ? (
+                    <img
+                      src={project.image}
+                      alt=""
+                      onError={() =>
+                        setFailed((f) => ({ ...f, [project.slug]: true }))
+                      }
+                      className="w-full h-full object-cover"
+                      style={{ filter: "grayscale(1) contrast(1.05)" }}
+                    />
+                  ) : (
+                    <div
+                      aria-hidden="true"
+                      className="display w-full h-full flex items-center justify-center"
+                      style={{ fontSize: "40px", opacity: 0.25 }}
+                    >
+                      {project.title.charAt(0)}
+                    </div>
+                  )}
                 </div>
-              )}
-              <div className="flex-1 min-w-0">
-                <h3 className="text-xl text-[var(--orchard-cream)] font-semibold mb-1">
-                  {project.title}
-                </h3>
-                <p className="text-[var(--orchard-cream)]/65 mb-2">{project.description}</p>
-                <span className="text-sm text-[var(--orchard-honey)]">View project →</span>
-              </div>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </section>
-  </ProjectPageTemplate>
-);
+
+                <div className="flex-1 min-w-0">
+                  <PlateCaption>{`No. ${index + 1}`}</PlateCaption>
+                  <h3
+                    className="display m-0 mb-1"
+                    style={{ fontSize: "clamp(18px, 2.4vw, 24px)" }}
+                  >
+                    {project.title}
+                  </h3>
+                  <p className="m-0 mb-2" style={{ fontSize: "14px", lineHeight: 1.5 }}>
+                    {project.description}
+                  </p>
+                  <span className="label group-hover:underline">
+                    View project &rarr;
+                  </span>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </ProjectPageTemplate>
+  );
+};
