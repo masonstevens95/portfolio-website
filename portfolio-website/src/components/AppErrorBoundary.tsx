@@ -41,7 +41,7 @@ export class AppErrorBoundary extends Component<Props, State> {
             <h1 className="display m-0 mb-3" style={{ fontSize: "34px" }}>
               Something went wrong
             </h1>
-            <p className="m-0 mb-5" >
+            <p className="m-0 mb-5 copy">
               An unexpected error happened. Try reloading the page; the full
               error has been logged to the browser console.
             </p>

@@ -2,18 +2,18 @@
   Header
 
   Sticky nav on the stock ground with a heavy ink rule beneath it. Uppercase
-  tracked labels, spruce underline on the active item.
+  tracked spruce labels.
 
-  The audio toggle, the animated hint arrow, its localStorage key and the
-  Redux dispatch all went with the ambient scene. Nav is now plain anchor
-  navigation to the ids owned by SectionHead, so there is no selection state
-  to hold anywhere.
+  There is deliberately no active-item state: the audio toggle, the animated
+  hint arrow, its localStorage key and the Redux scroll-spy all went with the
+  ambient scene. Nav is plain anchor navigation to the ids owned by
+  SectionHead, so nothing needs to track which section is in view.
 */
 
 import { Rule } from "../broadside";
 
 const NAV = [
-  { id: "welcome", label: "Welcome" },
+  { id: "WELCOME", label: "Welcome" },
   { id: "ABOUT_ME", label: "About" },
   { id: "FEATURED_WORK", label: "Work" },
   { id: "CONTACT", label: "Contact" },

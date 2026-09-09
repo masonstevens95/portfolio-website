@@ -9,15 +9,16 @@
 interface Props {
   title: string;
   subtitle?: string;
-  /** Right-aligned meta — figures render tabular. */
-  meta?: string;
+  /** Keep the subtitle's line reserved when it is hidden, so toggling it
+   *  cannot change the block's height. */
+  reserveSubtitle?: boolean;
   className?: string;
 }
 
 export const TitleBlock = ({
   title,
   subtitle,
-  meta,
+  reserveSubtitle = false,
   className = "",
 }: Props) => (
   <div
@@ -30,26 +31,18 @@ export const TitleBlock = ({
       >
         {title}
       </div>
-      {subtitle && (
+      {(subtitle || reserveSubtitle) && (
         <div
           className="label mt-1"
-          style={{ letterSpacing: "0.1em", fontWeight: 700 }}
+          style={{
+            letterSpacing: "0.1em",
+            fontWeight: 700,
+            visibility: subtitle ? "visible" : "hidden",
+          }}
         >
-          {subtitle}
+          {subtitle ?? "\u00A0"}
         </div>
       )}
     </div>
-    {meta && (
-      <div
-        className="data shrink-0 text-right"
-        style={{
-          fontSize: "11px",
-          letterSpacing: "0.12em",
-          textTransform: "uppercase",
-        }}
-      >
-        {meta}
-      </div>
-    )}
   </div>
 );

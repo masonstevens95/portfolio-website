@@ -24,6 +24,75 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 
 const SRC = join(import.meta.dirname, ".");
+// index.html is where the display face is loaded, so it is where the
+// "no editorial serifs" decision would actually regress. It sits outside
+// src/, so scan it explicitly.
+const EXTRA_FILES = [join(SRC, "..", "index.html")];
+
+/**
+ * Blank out comment bodies before matching.
+ *
+ * The patterns below are ordinary English words, so a comment accurately
+ * describing what was removed ("the card used a rounded corner and a shadow")
+ * would fail the build. That is not hypothetical — it silently mangled two
+ * comments before this was added. Code is checked; prose about code is not.
+ */
+const stripComments = (source: string): string[] => {
+  let inBlock = false;
+
+  return source.split("\n").map((line) => {
+    let out = "";
+    let quote: string | null = null;
+    let i = 0;
+
+    while (i < line.length) {
+      const ch = line[i];
+
+      if (inBlock) {
+        const close = line.indexOf("*/", i);
+        if (close === -1) return out;
+        inBlock = false;
+        i = close + 2;
+        continue;
+      }
+
+      // Inside a string literal nothing is a comment. This matters: without
+      // it, the "//" in "https://..." reads as a line comment and truncates
+      // the URL, which hid a real Fraunces font link from the check.
+      if (quote) {
+        out += ch;
+        if (ch === "\\") {
+          out += line[i + 1] ?? "";
+          i += 2;
+          continue;
+        }
+        if (ch === quote) quote = null;
+        i += 1;
+        continue;
+      }
+
+      if (ch === '"' || ch === "'" || ch === "`") {
+        quote = ch;
+        out += ch;
+        i += 1;
+        continue;
+      }
+
+      if (line.startsWith("/*", i)) {
+        inBlock = true;
+        i += 2;
+        continue;
+      }
+      if (line.startsWith("//", i)) return out;
+      if (line.startsWith("<!--", i)) return out;
+
+      out += ch;
+      i += 1;
+    }
+
+    return out;
+  });
+};
 
 /**
  * Files allowed to contain an otherwise-forbidden string, with the reason.
@@ -84,11 +153,13 @@ const walk = (dir: string): string[] =>
 describe("Broadside brand prohibitions", () => {
   // Read every file once and share the lines across all patterns, rather than
   // re-reading the tree per prohibition.
-  const files = walk(SRC)
-    .filter((f) => /\.(tsx?|css)$/.test(f))
+  const files = [...walk(SRC).filter((f) => /\.(tsx?|css)$/.test(f)), ...EXTRA_FILES]
     .map((file) => ({
       rel: relative(SRC, file).split("\\").join("/"),
-      lines: readFileSync(file, "utf8").split("\n"),
+      // Keep the raw line for the failure message; match against the
+      // comment-stripped one so accurate prose does not fail the build.
+      raw: readFileSync(file, "utf8").split("\n"),
+      lines: stripComments(readFileSync(file, "utf8")),
     }))
     .filter(({ rel }) => !ALLOWED[rel]);
 
@@ -102,10 +173,10 @@ describe("Broadside brand prohibitions", () => {
     it(`has no ${label}`, () => {
       const offenders: string[] = [];
 
-      for (const { rel, lines } of files) {
+      for (const { rel, raw, lines } of files) {
         lines.forEach((line, i) => {
           if (pattern.test(line)) {
-            offenders.push(`${rel}:${i + 1}  ${line.trim()}`);
+            offenders.push(`${rel}:${i + 1}  ${raw[i].trim()}`);
           }
         });
       }

@@ -13,7 +13,7 @@
 import { Masthead } from "../broadside";
 
 export const WelcomeBlock = () => (
-  <section id="welcome" className="scroll-mt-24">
+  <section id="WELCOME" className="scroll-mt-24">
     <Masthead
       overline="Software · Tools · Interfaces"
       wordmark="Mason Stevens"

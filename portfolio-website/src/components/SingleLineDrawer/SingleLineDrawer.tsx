@@ -270,6 +270,8 @@ export const SingleLineDrawer = () => {
             value={edgeThreshold}
             onChange={(e) => setEdgeThreshold(Number(e.target.value))}
             className="w-32"
+            /* The native control paints browser-blue, a third hue. */
+            style={{ accentColor: "var(--spruce)" }}
           />
         </div>
       </div>
@@ -277,35 +279,35 @@ export const SingleLineDrawer = () => {
         <button
           onClick={resetImage}
           disabled={!originalImageData}
-          className="bg-[var(--spruce)] px-3 py-1 disabled:bg-[var(--ink)]"
+          className="bg-[var(--spruce)] text-[var(--stock)] px-3 py-1 disabled:opacity-35"
         >
           Reset Image
         </button>
         <button
           onClick={removeBgStep}
           disabled={!originalImageData || step >= 1}
-          className="bg-[var(--ink)] px-3 py-1 disabled:bg-[var(--ink)]"
+          className="bg-[var(--ink)] text-[var(--stock)] px-3 py-1 disabled:opacity-35"
         >
           Remove BG
         </button>
         <button
           onClick={detectOutline}
           disabled={step < 1 || step >= 2}
-          className="bg-[var(--spruce)] px-3 py-1 disabled:bg-[var(--ink)]"
+          className="bg-[var(--spruce)] text-[var(--stock)] px-3 py-1 disabled:opacity-35"
         >
           Detect Outline
         </button>
         <button
           onClick={animateOutline}
           disabled={outlinePath == null}
-          className="bg-[var(--spruce)] px-3 py-1 disabled:bg-[var(--ink)]"
+          className="bg-[var(--spruce)] text-[var(--stock)] px-3 py-1 disabled:opacity-35"
         >
           Animate
         </button>
         <button
           onClick={() => exportCanvasAsPNG(canvasRef.current)}
           disabled={!originalImageData}
-          className="bg-[var(--ink)] px-3 py-1"
+          className="bg-[var(--ink)] text-[var(--stock)] px-3 py-1 disabled:opacity-35"
         >
           Export PNG
         </button>
@@ -313,11 +315,11 @@ export const SingleLineDrawer = () => {
 
       <div
         ref={containerRef}
-        className="flex-1 relative flex items-center justify-center bg-black overflow-hidden"
+        className="flex-1 relative flex items-center justify-center bg-[var(--ink)] overflow-hidden"
       >
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-[var(--stock)] z-20">
-            <div className="animate-spin h-10 w-10 border-t-2 border-b-2 border-white" />
+            <div className="animate-spin h-10 w-10 border-t-2 border-b-2 border-[var(--ink)]" />
           </div>
         )}
         <canvas ref={canvasRef} className="block" />

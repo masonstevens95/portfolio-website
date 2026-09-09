@@ -1,8 +1,9 @@
 /*
   AboutMeBlock — Article I
 
-  Hard-bordered two-column plate. The frosted card it replaced used,, and a translucent fill, all four of
-  which the brand prohibits.
+  Hard-bordered two-column plate. The frosted card it replaced used a soft
+  corner radius, a drop shadow, a blurred backdrop and a translucent fill —
+  all four prohibited by the brand.
 */
 
 import { SectionHead } from "../broadside";
@@ -29,14 +30,14 @@ export const AboutMeBlock = () => (
       </div>
 
       <div className="p-5" style={{ maxWidth: "48ch" }}>
-        <p className="m-0" >
+        <p className="m-0 copy">
           I&rsquo;m a designer and developer building tools that connect people
           to plants and to the ground they stand on. Garden layout software,
           save-file parsers, land calculators, a VS Code extension for reading
           pull requests. The through-line is making something legible that
           wasn&rsquo;t before.
         </p>
-        <p className="m-0 mt-4" >
+        <p className="m-0 mt-4 copy">
           Outside of work I&rsquo;m in the orchard, arguing for missing-middle
           housing and a land value tax in Winston-Salem, or on a mountain bike
           somewhere in the Piedmont.

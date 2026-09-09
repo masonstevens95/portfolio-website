@@ -44,7 +44,7 @@ export const VoiceGarden = ({}: Props) => {
 
         <button
           onClick={listening ? stopListening : startListening}
-          className={`px-4 py-1 text-sm font-medium transition-colors ${
+          className={`px-4 py-1 text-sm font-medium text-[var(--stock)] transition-colors ${
             listening
               ? "bg-[var(--ink)] hover:opacity-80"
               : "bg-[var(--spruce)] hover:opacity-80"

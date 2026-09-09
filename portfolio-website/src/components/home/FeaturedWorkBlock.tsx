@@ -4,9 +4,9 @@
   A plate grid: cells share 4px ink rules, each carrying a caption, an image
   and a title block.
 
-  The hover-to-expand grid this replaced used,, a
-  bottom gradient scrim and text-shadow on every title — four prohibitions in
-  one component. Hover is now a spruce title rule, not a color wash.
+  The hover-to-expand grid this replaced used a soft corner radius, a drop
+  shadow, a bottom scrim and a text halo on every title — four prohibitions
+  in one component. Hover is now a spruce plate rule, not a colour wash.
 */
 
 import { Link, useNavigate } from "react-router-dom";
@@ -131,6 +131,7 @@ export const FeaturedWorkBlock = () => {
                 <TitleBlock
                   title={project.title}
                   subtitle={isHovered ? "View project →" : undefined}
+                  reserveSubtitle
                 />
               </div>
             </button>

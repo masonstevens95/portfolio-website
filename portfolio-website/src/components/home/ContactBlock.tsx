@@ -22,7 +22,7 @@ export const ContactBlock = () => (
       className="grid grid-cols-1 md:grid-cols-2 ink-frame"
     >
       <div className="p-5" style={{ maxWidth: "44ch" }}>
-        <p className="m-0" >
+        <p className="m-0 copy">
           If you want to collaborate on something, have a question about any of
           the work above, or just want to say hello &mdash; write to me.
         </p>
@@ -36,7 +36,12 @@ export const ContactBlock = () => (
         >
           {CONTACT_EMAIL}
         </a>
-        <a href={GITHUB} className="label no-underline hover:underline">
+        <a
+          href={GITHUB}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="label no-underline hover:underline"
+        >
           GitHub &rarr;
         </a>
       </div>
