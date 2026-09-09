@@ -8,7 +8,7 @@ export const YardenPage = () => {
       title="Yarden.diy"
       subtitle="A web-based garden layout planner for nurseries and backyard designers"
     >
-      <section className="w-full w-full mx-auto px-4 text-[var(--ink)] space-y-6 text-lg leading-relaxed">
+      <section className="w-full mx-auto px-4 text-[var(--ink)] space-y-6 text-lg leading-relaxed">
         <h2 className="text-2xl font-bold text-[var(--ink)] mb-4">What It Is</h2>
         <p>
           Yarden lets users design and share their own garden layouts using an

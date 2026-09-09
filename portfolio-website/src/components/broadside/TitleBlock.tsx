@@ -21,8 +21,7 @@ export const TitleBlock = ({
   className = "",
 }: Props) => (
   <div
-    className={`flex justify-between items-end gap-3 px-3 py-3 ${className}`}
-    style={{ borderTop: "4px solid var(--ink)" }}
+    className={`flex justify-between items-end gap-3 px-3 py-3 ink-frame-top ${className}`}
   >
     <div className="min-w-0">
       <div

@@ -17,3 +17,4 @@ export { Masthead } from "./Masthead";
 export { SectionHead } from "./SectionHead";
 export { PlateCaption } from "./PlateCaption";
 export { TitleBlock } from "./TitleBlock";
+export { PlateImage } from "./PlateImage";

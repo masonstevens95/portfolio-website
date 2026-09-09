@@ -33,8 +33,8 @@ export function EmbeddedIframe({ src, title }: Props) {
         src={src}
         title={title}
         loading="lazy"
-        className="w-full h-[calc(100vh-280px)] min-h-[500px]"
-        style={{ border: "4px solid var(--ink)", background: "var(--stock)" }}
+        className="w-full h-[calc(100vh-280px)] min-h-[500px] ink-frame"
+        style={{ background: "var(--stock)" }}
       />
     </div>
   );

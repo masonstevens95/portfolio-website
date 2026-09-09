@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
 import { ProjectPageTemplate } from "./ProjectPageTemplate";
-import { PlateCaption, Rule } from "../components/broadside";
+import { PlateCaption, PlateImage, Rule } from "../components/broadside";
 
 interface ProjectEntry {
   slug: string;
@@ -88,9 +87,6 @@ const projects: ProjectEntry[] = [
 ];
 
 export const ProjectsIndexPage = () => {
-  // /assets/pixel_art_placeholder.png is referenced but absent from public/.
-  const [failed, setFailed] = useState<Record<string, boolean>>({});
-
   return (
     <ProjectPageTemplate
       title="Projects"
@@ -100,7 +96,7 @@ export const ProjectsIndexPage = () => {
         {/* The index is the site's one genuinely ordered sequence, so plate
             numbering is legitimate here. The kit permits numbering only where
             order is real. */}
-        <ul className="list-none p-0 m-0" style={{ border: "4px solid var(--ink)" }}>
+        <ul className="list-none p-0 m-0 ink-frame">
           {projects.map((project, index) => (
             <li key={project.slug}>
               {index > 0 && <Rule weight="thin" />}
@@ -113,25 +109,11 @@ export const ProjectsIndexPage = () => {
                   className="w-28 h-28 shrink-0 overflow-hidden"
                   style={{ border: "2px solid var(--ink)" }}
                 >
-                  {project.image && !failed[project.slug] ? (
-                    <img
-                      src={project.image}
-                      alt=""
-                      onError={() =>
-                        setFailed((f) => ({ ...f, [project.slug]: true }))
-                      }
-                      className="w-full h-full object-cover"
-                      style={{ filter: "grayscale(1) contrast(1.05)" }}
-                    />
-                  ) : (
-                    <div
-                      aria-hidden="true"
-                      className="display w-full h-full flex items-center justify-center"
-                      style={{ fontSize: "40px", opacity: 0.25 }}
-                    >
-                      {project.title.charAt(0)}
-                    </div>
-                  )}
+                  <PlateImage
+                    src={project.image}
+                    title={project.title}
+                    fallbackSize="40px"
+                  />
                 </div>
 
                 <div className="flex-1 min-w-0">

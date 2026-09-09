@@ -19,11 +19,10 @@ export const ContactBlock = () => (
     <SectionHead article="III" title="Contact" id="CONTACT" />
 
     <div
-      className="grid grid-cols-1 md:grid-cols-2"
-      style={{ border: "4px solid var(--ink)" }}
+      className="grid grid-cols-1 md:grid-cols-2 ink-frame"
     >
       <div className="p-5" style={{ maxWidth: "44ch" }}>
-        <p className="m-0" style={{ fontSize: "15px", lineHeight: 1.55 }}>
+        <p className="m-0" >
           If you want to collaborate on something, have a question about any of
           the work above, or just want to say hello &mdash; write to me.
         </p>

@@ -6,17 +6,24 @@
    which itself was extracted from comp-broadside-locked.html.
 
    Spec of record is ~/AI-OS/brand-assets/brand-kit.md. If this file and the
-   kit disagree, the kit wins — re-copy rather than editing values here.
+   kit disagree, the kit wins.
+
+   THIS IS A SUBSET, NOT A BYTE-FOR-BYTE COPY. Re-syncing means reconciling,
+   not overwriting. What was deliberately left out and where it went instead:
+     - .display / .label / .data  ->  src/index.css, alongside this site's own
+       .copy and .ink-frame, so every shared class lives in one file.
+     - .rule / .doublerule        ->  src/components/broadside/Rule.tsx and
+       DoubleRule.tsx, which need to vary weight and ink per instance.
+     - .grain                     ->  src/index.css as body::after, so the
+       overlay covers the document on every route without a mount point.
+     - --red / --red-deep aliases ->  dropped entirely. They exist upstream so
+       the old comps keep rendering; omitting them here makes the superseded
+       name unavailable rather than merely discouraged.
 
    The brand assets live outside this repository and outside the Vite root,
    so they cannot be imported. This is a copy on purpose: a stale copy is a
    smaller problem than a build that depends on an unversioned path on one
    machine.
-
-   The kit's legacy --red / --red-deep aliases are deliberately NOT carried
-   across. They exist so the old comps keep rendering; new work uses --spruce,
-   and omitting them makes the wrong name unavailable rather than merely
-   discouraged.
    ========================================================================== */
 
 :root {

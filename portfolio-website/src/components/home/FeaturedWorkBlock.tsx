@@ -11,7 +11,7 @@
 
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { PlateCaption, SectionHead, TitleBlock } from "../broadside";
+import { PlateCaption, PlateImage, SectionHead, TitleBlock } from "../broadside";
 
 const featuredProjects = [
   {
@@ -62,10 +62,6 @@ const PLATE_NUMERALS = ["I", "II", "III", "IV", "V", "VI"];
 
 export const FeaturedWorkBlock = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  // /assets/pixel_art_placeholder.png is referenced but absent from public/.
-  // Rather than shipping a broken-image icon, a missing plate falls back to
-  // its initial set in the display face.
-  const [failed, setFailed] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
 
   const onCardClick = (link: string) => {
@@ -82,9 +78,8 @@ export const FeaturedWorkBlock = () => {
       <SectionHead article="II" title="Selected Work" id="FEATURED_WORK" />
 
       <div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ink-frame"
         style={{
-          border: "4px solid var(--ink)",
           gap: "4px",
           background: "var(--ink)",
           gridAutoRows: "1fr",
@@ -124,33 +119,11 @@ export const FeaturedWorkBlock = () => {
                     border: `2px solid ${isHovered ? "var(--spruce)" : "var(--ink)"}`,
                   }}
                 >
-                  {failed[project.title] ? (
-                    <div
-                      aria-hidden="true"
-                      className="display w-full h-full flex items-center justify-center"
-                      style={{ fontSize: "clamp(28px, 6vw, 56px)", opacity: 0.25 }}
-                    >
-                      {project.title.charAt(0)}
-                    </div>
-                  ) : (
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      onError={() =>
-                        setFailed((f) => ({ ...f, [project.title]: true }))
-                      }
-                      className="w-full h-full object-cover"
-                      style={{
-                        /* Two inks on stock. Screenshots are content, not
-                           chrome, so they desaturate into the system and come
-                           back to full colour on hover. */
-                        filter: isHovered
-                          ? "none"
-                          : "grayscale(1) contrast(1.05)",
-                        transition: "filter 200ms",
-                      }}
-                    />
-                  )}
+                  <PlateImage
+                    src={project.image}
+                    title={project.title}
+                    colour={isHovered}
+                  />
                 </div>
               </div>
 

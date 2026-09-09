@@ -35,14 +35,13 @@ export class AppErrorBoundary extends Component<Props, State> {
           style={{ background: "var(--stock)", color: "var(--ink)" }}
         >
           <div
-            className="max-w-md p-6"
-            style={{ border: "4px solid var(--ink)" }}
+            className="max-w-md p-6 ink-frame"
           >
             <p className="label m-0 mb-3">Notice</p>
             <h1 className="display m-0 mb-3" style={{ fontSize: "34px" }}>
               Something went wrong
             </h1>
-            <p className="m-0 mb-5" style={{ fontSize: "15px", lineHeight: 1.55 }}>
+            <p className="m-0 mb-5" >
               An unexpected error happened. Try reloading the page; the full
               error has been logged to the browser console.
             </p>

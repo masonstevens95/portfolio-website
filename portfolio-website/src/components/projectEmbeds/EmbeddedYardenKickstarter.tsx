@@ -15,8 +15,8 @@ export const EmbeddedYardenKickstarter = () => {
         href="https://www.kickstarter.com/projects/masonstevens95/yarden-revolutionizing-landscape-design"
         target="_blank"
         rel="noopener noreferrer"
-        className="block p-6 no-underline"
-        style={{ border: "4px solid var(--ink)", color: "var(--ink)" }}
+        className="block p-6 no-underline ink-frame"
+        style={{ color: "var(--ink)" }}
       >
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -25,8 +25,7 @@ export const EmbeddedYardenKickstarter = () => {
               Yarden Kickstarter
             </h3>
             <p
-              className="m-0 max-w-xl"
-              style={{ fontSize: "15px", lineHeight: 1.55 }}
+              className="m-0 max-w-xl copy"
             >
               Explore the original Kickstarter campaign I created to launch
               Yarden. Although it wasn't funded, the experience was a huge

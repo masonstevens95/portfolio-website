@@ -63,6 +63,18 @@ body::after {
   color: var(--spruce);
 }
 
+/* Body copy. The grotesque at reading size — the handbill, not the printout. */
+.copy {
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+/* The plate frame. A drawn member is bounded by a heavy ink rule — square
+   corners, no softening. Used for every bordered block on the site, so the
+   rule weight changes in one place. */
+.ink-frame { border: 4px solid var(--ink); }
+.ink-frame-top { border-top: 4px solid var(--ink); }
+
 /* Bills of material, cut lists, any column of figures. Always tabular. */
 .data {
   font-variant-numeric: tabular-nums;

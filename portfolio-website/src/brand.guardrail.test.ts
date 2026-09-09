@@ -47,17 +47,23 @@ const FORBIDDEN: { label: string; pattern: RegExp }[] = [
     label: "gradient (no gradients)",
     pattern: /linear-gradient|radial-gradient|conic-gradient|\bbg-gradient-to-/,
   },
+  // Each of the three below matches both the kebab-case CSS/Tailwind spelling
+  // and the camelCase inline-style spelling. The site leans heavily on
+  // style={{...}}, so a kebab-only pattern would let a shadow back in through
+  // the dominant convention.
   {
     label: "shadow (no drop shadows)",
-    pattern: /\bbox-shadow\b|\bdrop-shadow\b|\bshadow-(?:sm|md|lg|xl|2xl|inner)\b|\[text-shadow:/,
+    pattern:
+      /\bbox-shadow\b|\bdrop-shadow\b|\bshadow-(?:sm|md|lg|xl|2xl|inner)\b|\[text-shadow:|\bboxShadow\b|\btextShadow\b|\bfilter:\s*["'`]?drop-shadow/,
   },
   {
     label: "backdrop blur (frosted surfaces are not printed)",
-    pattern: /\bbackdrop-blur\b/,
+    pattern: /\bbackdrop-blur\b|\bbackdropFilter\b|\bWebkitBackdropFilter\b/,
   },
   {
     label: "border radius (a printed rule has square corners)",
-    pattern: /\brounded(?:-(?:sm|md|lg|xl|2xl|3xl|full|t|b|l|r))?\b|\bborder-radius\b/,
+    pattern:
+      /\brounded(?:-(?:sm|md|lg|xl|2xl|3xl|full|t|b|l|r))?\b|\bborder-radius\b|\bborderRadius\b/,
   },
   {
     label: "superseded typeface (no editorial serifs)",
@@ -76,7 +82,15 @@ const walk = (dir: string): string[] =>
   });
 
 describe("Broadside brand prohibitions", () => {
-  const files = walk(SRC).filter((f) => /\.(tsx?|css)$/.test(f));
+  // Read every file once and share the lines across all patterns, rather than
+  // re-reading the tree per prohibition.
+  const files = walk(SRC)
+    .filter((f) => /\.(tsx?|css)$/.test(f))
+    .map((file) => ({
+      rel: relative(SRC, file).split("\\").join("/"),
+      lines: readFileSync(file, "utf8").split("\n"),
+    }))
+    .filter(({ rel }) => !ALLOWED[rel]);
 
   it("finds source files to check", () => {
     // Guards against the walk silently matching nothing, which would make
@@ -88,17 +102,12 @@ describe("Broadside brand prohibitions", () => {
     it(`has no ${label}`, () => {
       const offenders: string[] = [];
 
-      for (const file of files) {
-        const rel = relative(SRC, file).split("\\").join("/");
-        if (ALLOWED[rel]) continue;
-
-        readFileSync(file, "utf8")
-          .split("\n")
-          .forEach((line, i) => {
-            if (pattern.test(line)) {
-              offenders.push(`${rel}:${i + 1}  ${line.trim()}`);
-            }
-          });
+      for (const { rel, lines } of files) {
+        lines.forEach((line, i) => {
+          if (pattern.test(line)) {
+            offenders.push(`${rel}:${i + 1}  ${line.trim()}`);
+          }
+        });
       }
 
       expect(
