@@ -1,7 +1,7 @@
 ---
 title: "refactor: Retheme masonstevens.dev to the Broadside brand"
 type: refactor
-status: active
+status: completed
 date: 2026-09-08
 ---
 

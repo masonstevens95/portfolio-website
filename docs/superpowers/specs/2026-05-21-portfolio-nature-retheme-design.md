@@ -1,5 +1,12 @@
 # Portfolio Nature Retheme — Design
 
+> **SUPERSEDED 2026-09-08.** The orchard/forest identity described here was
+> replaced wholesale by the Broadside brand system. See
+> `docs/plans/2026-09-08-001-refactor-broadside-brand-retheme-plan.md`.
+> This document is kept because its surface inventory is still an accurate
+> checklist of everything a full theme swap has to touch — read it for that,
+> not as current direction.
+
 **Date:** 2026-05-21
 **Status:** Draft, pending user review
 **Scope:** Replace the portfolio's current sci-fi / "space" identity (rotating Earth + 200-star three.js scene, space-arp ambient audio, neutral-grey palette) with a coherent forest / orchard identity. Visual language only — no IA, routing, or feature changes.
