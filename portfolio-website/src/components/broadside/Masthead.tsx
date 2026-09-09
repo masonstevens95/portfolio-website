@@ -16,7 +16,7 @@ interface Props {
   overline?: string;
   wordmark: string;
   motto?: string;
-  /** e.g. "Winston-Salem, N.C. · No. 1" */
+  /** e.g. "Hillsborough, N.C." */
   estd?: string;
 }
 

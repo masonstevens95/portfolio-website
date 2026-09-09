@@ -13,6 +13,7 @@ import { SectionHead } from "../broadside";
 
 const CONTACT_EMAIL = "mason.c.stevens@gmail.com";
 const GITHUB = "https://github.com/masonstevens95";
+const LINKEDIN = "https://www.linkedin.com/in/masonstevens95/";
 
 export const ContactBlock = () => (
   <section className="mt-[52px]">
@@ -41,6 +42,14 @@ export const ContactBlock = () => (
           className="label no-underline hover:underline"
         >
           GitHub &rarr;
+        </a>
+        <a
+          href={LINKEDIN}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="label no-underline hover:underline"
+        >
+          LinkedIn &rarr;
         </a>
       </div>
     </div>

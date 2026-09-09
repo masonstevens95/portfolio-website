@@ -22,7 +22,7 @@ export const WelcomeBlock = () => (
       overline="Software · Tools · Interfaces"
       wordmark="Mason Stevens"
       motto="Build the thing, then show the work."
-      estd="Winston-Salem, N.C."
+      estd="Hillsborough, N.C."
     />
   </section>
 );

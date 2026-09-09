@@ -39,14 +39,14 @@ export const AboutMeBlock = () => (
         </p>
         <p className="m-0 mt-4 copy">
           Outside of work I&rsquo;m in the orchard, arguing for missing-middle
-          housing and a land value tax in Winston-Salem, or on a mountain bike
+          housing and a land value tax in Hillsborough, or on a mountain bike
           somewhere in the Piedmont.
         </p>
         <p
           className="label m-0 mt-5"
           style={{ letterSpacing: "0.13em", fontWeight: 600 }}
         >
-          Winston-Salem, N.C. · UX · Frontend · Spatial
+          Hillsborough, N.C. · UX · Frontend · Spatial
         </p>
       </div>
     </div>
