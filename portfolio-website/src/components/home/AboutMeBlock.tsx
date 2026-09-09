@@ -1,45 +1,53 @@
 /*
-  AboutMeBlock.tsx
+  AboutMeBlock — Article I
+
+  Hard-bordered two-column plate. The frosted card it replaced used
+  rounded-3xl, shadow-lg, backdrop-blur-lg and a translucent fill, all four of
+  which the brand prohibits.
 */
 
-import { ParallaxLayer } from "@react-spring/parallax";
+import { SectionHead } from "../broadside";
 
-interface Props {
-  offset: number;
-  speed: number;
-  factor: number;
-}
+export const AboutMeBlock = () => (
+  <section className="mt-14">
+    <SectionHead article="I" title="About" id="ABOUT_ME" />
 
-export const AboutMeBlock = ({ offset, speed, factor }: Props) => {
-  return (
-    <ParallaxLayer
-      aria-description="About the creator of Yarden"
-      offset={offset}
-      speed={speed}
-      factor={factor}
+    <div
+      className="grid grid-cols-1 md:grid-cols-[minmax(0,240px)_1fr]"
+      style={{ border: "4px solid var(--ink)" }}
     >
-      <div className="w-full h-full flex items-center justify-center p-8">
-        <div className="bg-[var(--orchard-bark)]/45 rounded-3xl shadow-lg backdrop-blur-lg border border-[var(--orchard-honey)]/15 p-10 max-w-5xl w-full flex flex-col md:flex-row items-center gap-8">
-          <img
-            src="/assets/profile_new.jpeg"
-            alt="Profile photo"
-            className="w-48 h-48 rounded-full object-cover border-4 border-[var(--orchard-cream)]/30 shadow-md"
-          />
-          <div className="text-left text-[var(--orchard-cream)]">
-            <h1 className="text-5xl font-bold mb-4">Hi, I’m Mason</h1>
-            <p className="text-lg leading-relaxed text-[var(--orchard-cream)]/85">
-              I’m a designer, developer, and nature enthusiast building tools
-              that connect people to plants. With a background in UX, spatial
-              computing, and frontend systems, I focus on crafting interactive
-              experiences that feel natural, intuitive, and beautiful.
-            </p>
-            <p className="text-lg mt-4 text-[var(--orchard-cream)]/65">
-              Outside of work, you’ll find me in my orchard, sketching
-              interfaces, or mountain biking trails around Winston-Salem.
-            </p>
-          </div>
-        </div>
+      <div className="p-5 flex items-start justify-center border-b-4 md:border-b-0 md:border-r-4 border-[var(--ink)]">
+        <img
+          src="/assets/profile_new.jpeg"
+          alt="Mason Stevens"
+          className="w-full max-w-[200px] object-cover"
+          style={{
+            border: "4px solid var(--ink)",
+            aspectRatio: "1 / 1",
+            /* Two inks on stock. A full-colour photograph is a third hue;
+               grayscale keeps it inside the system without hiding it. */
+            filter: "grayscale(1) contrast(1.05)",
+          }}
+        />
       </div>
-    </ParallaxLayer>
-  );
-};
+
+      <div className="p-5" style={{ maxWidth: "48ch" }}>
+        <p className="m-0" style={{ fontSize: "15px", lineHeight: 1.55 }}>
+          I&rsquo;m a designer and developer building tools that connect people
+          to plants and to the ground they stand on. Garden layout software,
+          save-file parsers, land calculators, a VS Code extension for reading
+          pull requests. The through-line is making something legible that
+          wasn&rsquo;t before.
+        </p>
+        <p className="m-0 mt-4" style={{ fontSize: "15px", lineHeight: 1.55 }}>
+          Outside of work I&rsquo;m in the orchard, arguing for missing-middle
+          housing and a land value tax in Winston-Salem, or on a mountain bike
+          somewhere in the Piedmont.
+        </p>
+        <p className="data m-0 mt-5" style={{ fontSize: "12px" }}>
+          Winston-Salem, N.C. · UX · Frontend · Spatial
+        </p>
+      </div>
+    </div>
+  </section>
+);

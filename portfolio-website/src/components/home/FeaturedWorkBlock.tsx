@@ -1,16 +1,17 @@
 /*
-  FeaturedWorkBlock.tsx
+  FeaturedWorkBlock — Article II
+
+  A plate grid: cells share 4px ink rules, each carrying a caption, an image
+  and a title block.
+
+  The hover-to-expand grid this replaced used rounded-2xl, shadow-lg, a
+  bottom gradient scrim and text-shadow on every title — four prohibitions in
+  one component. Hover is now a spruce title rule, not a color wash.
 */
 
-import { ParallaxLayer } from "@react-spring/parallax";
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
-interface Props {
-  offset: number;
-  speed: number;
-  factor: number;
-}
+import { useState } from "react";
+import { PlateCaption, SectionHead, TitleBlock } from "../broadside";
 
 const featuredProjects = [
   {
@@ -57,21 +58,15 @@ const featuredProjects = [
   },
 ];
 
-const COLS = 3;
-const ROWS = 2;
+const PLATE_NUMERALS = ["I", "II", "III", "IV", "V", "VI"];
 
-const buildTracks = (count: number, hoveredTrack: number | null): string =>
-  Array.from({ length: count }, (_, i) =>
-    hoveredTrack === null ? "1fr" : i === hoveredTrack ? "2.5fr" : "0.75fr"
-  ).join(" ");
-
-export const FeaturedWorkBlock = ({ offset, speed, factor }: Props) => {
+export const FeaturedWorkBlock = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  // /assets/pixel_art_placeholder.png is referenced but absent from public/.
+  // Rather than shipping a broken-image icon, a missing plate falls back to
+  // its initial set in the display face.
+  const [failed, setFailed] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
-
-  const hoveredCol = hoveredIndex !== null ? hoveredIndex % COLS : null;
-  const hoveredRow =
-    hoveredIndex !== null ? Math.floor(hoveredIndex / COLS) : null;
 
   const onCardClick = (link: string) => {
     if (!link || link === "#") return;
@@ -83,58 +78,98 @@ export const FeaturedWorkBlock = ({ offset, speed, factor }: Props) => {
   };
 
   return (
-    <ParallaxLayer
-      aria-description="Featured work section with hover-to-expand projects"
-      offset={offset}
-      speed={speed}
-      factor={factor}
-    >
-      <div className="w-full h-full flex items-center justify-center px-10 flex flex-col">
-        <h1 className="text-5xl font-bold mb-12 text-[var(--orchard-cream)]">Featured Work</h1>
-        <div
-          className="grid w-full max-w-7xl h-3/4 overflow-hidden rounded-2xl shadow-lg transition-all duration-500 ease-in-out"
-          style={{
-            gridTemplateColumns: buildTracks(COLS, hoveredCol),
-            gridTemplateRows: buildTracks(ROWS, hoveredRow),
-          }}
-        >
-          {featuredProjects.map((project, index) => {
-            const isHovered = hoveredIndex === index;
+    <section className="mt-14">
+      <SectionHead article="II" title="Selected Work" id="FEATURED_WORK" />
 
-            return (
-              <div
-                key={index}
-                onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() => setHoveredIndex(null)}
-                onClick={() => onCardClick(project.link)}
-                className="transition-all duration-500 ease-in-out cursor-pointer relative group overflow-hidden bg-[var(--orchard-bark)]/45"
-              >
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="object-cover w-full h-full absolute inset-0 z-0 opacity-75 group-hover:opacity-95 transition-opacity"
-                />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[var(--orchard-bark)] via-[var(--orchard-bark)]/70 to-transparent p-4 z-10">
-                  <h3 className="text-xl text-[var(--orchard-cream)] font-semibold [text-shadow:_0_2px_8px_rgba(0,0,0,0.9)]">
+      <div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+        style={{
+          border: "4px solid var(--ink)",
+          gap: "4px",
+          background: "var(--ink)",
+          gridAutoRows: "1fr",
+        }}
+      >
+        {featuredProjects.map((project, index) => {
+          const isHovered = hoveredIndex === index;
+
+          return (
+            <button
+              key={project.title}
+              type="button"
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              onFocus={() => setHoveredIndex(index)}
+              onBlur={() => setHoveredIndex(null)}
+              onClick={() => onCardClick(project.link)}
+              className="text-left flex flex-col cursor-pointer"
+              style={{ background: "var(--stock)" }}
+            >
+              <div className="p-3 pb-0 flex-1 flex flex-col">
+                {/* Reserve two lines so a caption that wraps does not shift
+                    its plate relative to the rest of the row. */}
+                <div className="min-h-[2.6em]">
+                  <PlateCaption plate={PLATE_NUMERALS[index]}>
                     {project.title}
-                  </h3>
-                  {isHovered && (
-                    <p className="text-sm text-[var(--orchard-cream)]/85 mt-2 transition-opacity duration-300 [text-shadow:_0_1px_4px_rgba(0,0,0,0.9)]">
-                      {project.description}
-                    </p>
+                  </PlateCaption>
+                </div>
+                {/* Fixed band rather than an aspect ratio: in a flex column
+                    aspect-ratio loses to flex sizing, and plates whose
+                    captions wrap to two lines end up shorter than their
+                    neighbours. A fixed height keeps every title block on the
+                    same line across a row. */}
+                <div
+                  className="w-full h-48 md:h-56 overflow-hidden"
+                  style={{
+                    border: `2px solid ${isHovered ? "var(--spruce)" : "var(--ink)"}`,
+                  }}
+                >
+                  {failed[project.title] ? (
+                    <div
+                      aria-hidden="true"
+                      className="display w-full h-full flex items-center justify-center"
+                      style={{ fontSize: "clamp(28px, 6vw, 56px)", opacity: 0.25 }}
+                    >
+                      {project.title.charAt(0)}
+                    </div>
+                  ) : (
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      onError={() =>
+                        setFailed((f) => ({ ...f, [project.title]: true }))
+                      }
+                      className="w-full h-full object-cover"
+                      style={{
+                        /* Two inks on stock. Screenshots are content, not
+                           chrome, so they desaturate into the system and come
+                           back to full colour on hover. */
+                        filter: isHovered
+                          ? "none"
+                          : "grayscale(1) contrast(1.05)",
+                        transition: "filter 200ms",
+                      }}
+                    />
                   )}
                 </div>
               </div>
-            );
-          })}
-        </div>
-        <Link
-          to="/projects"
-          className="mt-6 text-[var(--orchard-honey)]/80 hover:text-[var(--orchard-honey)] text-base md:text-lg underline-offset-4 hover:underline transition-colors"
-        >
+
+              <div className="mt-auto pt-3">
+                <TitleBlock
+                  title={project.title}
+                  subtitle={isHovered ? "View project →" : undefined}
+                />
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      <p className="m-0 mt-4">
+        <Link to="/projects" className="label no-underline hover:underline">
           View all projects →
         </Link>
-      </div>
-    </ParallaxLayer>
+      </p>
+    </section>
   );
 };

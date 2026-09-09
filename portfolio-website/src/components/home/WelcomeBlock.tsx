@@ -1,37 +1,24 @@
 /*
-  WelcomeBlock - Styled like AboutMeBlock, aligned right
+  WelcomeBlock
+
+  The masthead. Replaces the old "Welcome to My Portfolio" H1, which said
+  nothing the page did not already say.
+
+  The overline names what the site is about. The motto is deliberately NOT
+  the brand's — "The land belongs to all of us." belongs to the writing side
+  of the brand and would have this page declare a position unrelated to its
+  contents. This one is in the same register and true of the work below it.
 */
 
-import { ParallaxLayer } from "@react-spring/parallax";
+import { Masthead } from "../broadside";
 
-interface Props {
-  offset: number;
-  speed: number;
-  factor: number;
-}
-
-export const WelcomeBlock = ({ offset, speed, factor }: Props) => {
-  return (
-    <ParallaxLayer
-      aria-description="Welcome Block"
-      offset={offset}
-      speed={speed}
-      factor={factor}
-    >
-      <div className="w-full h-full flex items-center justify-end p-8">
-        <div className="bg-[var(--orchard-bark)]/45 rounded-3xl shadow-lg backdrop-blur-lg border border-[var(--orchard-honey)]/15 p-10 max-w-4xl w-full flex flex-col items-end text-right gap-6">
-          <h1 className="text-5xl md:text-6xl font-bold text-[var(--orchard-cream)]">
-            Welcome to My Portfolio
-          </h1>
-          <h2 className="text-3xl md:text-4xl font-semibold text-[var(--orchard-cream)]/80">
-            Showcasing UI/UX, Web Projects & Creative Tools
-          </h2>
-          {/* <p className="text-lg max-w-xl text-neutral-400">
-            I’m Mason – a designer and developer focused on building intuitive
-            tools for spatial interaction, digital design, and the outdoors.
-          </p> */}
-        </div>
-      </div>
-    </ParallaxLayer>
-  );
-};
+export const WelcomeBlock = () => (
+  <section id="welcome" className="scroll-mt-24">
+    <Masthead
+      overline="Software · Tools · Interfaces"
+      wordmark="Mason Stevens"
+      motto="“Build the thing, then show the work.”"
+      estd="Winston-Salem, N.C. · No. 1"
+    />
+  </section>
+);
