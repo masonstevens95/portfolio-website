@@ -1,0 +1,69 @@
+/* ==========================================================================
+   Mason the Brand — Broadside
+   Web tokens and primitives.
+
+   VENDORED COPY. Copied 2026-09-08 from ~/AI-OS/brand-assets/web-tokens.css,
+   which itself was extracted from comp-broadside-locked.html.
+
+   Spec of record is ~/AI-OS/brand-assets/brand-kit.md. If this file and the
+   kit disagree, the kit wins — re-copy rather than editing values here.
+
+   The brand assets live outside this repository and outside the Vite root,
+   so they cannot be imported. This is a copy on purpose: a stale copy is a
+   smaller problem than a build that depends on an unversioned path on one
+   machine.
+
+   The kit's legacy --red / --red-deep aliases are deliberately NOT carried
+   across. They exist so the old comps keep rendering; new work uses --spruce,
+   and omitting them makes the wrong name unavailable rather than merely
+   discouraged.
+   ========================================================================== */
+
+:root {
+  /* Inks. Two on stock. No third hue. */
+  --stock:        #EEECE4;  /* paper ground. Flat neutral, not cream, not distressed. */
+  --ink:          #17140F;  /* type, linework, hatching, primary rules */
+  --spruce:       #0E4A45;  /* accent: rules, plate labels, dimensions, motto */
+  --spruce-deep:  #093430;  /* accent text on stock needing more contrast */
+
+  /* Type. Display is condensed and medium, deliberately not Impact-heavy.
+     Avenir Next Condensed is a macOS system font and resolves for almost
+     nobody else. Barlow Semi Condensed 600 is loaded in index.html and is
+     what visitors actually see. Order matters. */
+  --display: "Avenir Next Condensed", "Barlow Semi Condensed", "Arial Narrow", "Helvetica Neue", system-ui, sans-serif;
+  --label:   "Helvetica Neue", Inter, Arial, system-ui, sans-serif;
+
+  /* Metrics lifted from the locked comp */
+  --display-tracking: 0.05em;
+  --display-leading:  0.84;
+  --label-tracking:   0.16em;  /* uppercase labels; kit range is 0.10em to 0.16em */
+  --rule-heavy: 5px;
+  --rule-thin:  2px;
+  --rule-gap:   3px;
+  --maxw: 1000px;
+}
+
+/* --- Prohibitions -------------------------------------------------------
+   No gradients. No drop shadows. No third hue. No editorial serifs.
+   No large fills of spruce; it is an accent, not a background.
+   Drawn solids use a 45deg engraving hatch in ink, never a flat fill.
+
+   These are enforced by src/brand.guardrail.test.ts. If that test fails,
+   the fix is the component, not the test — see brand-kit.md, "Standing
+   decisions, do not relitigate".
+   ----------------------------------------------------------------------- */
+
+.hatch-45 {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--ink) 0, var(--ink) 1px,
+    transparent 1px, transparent 5px
+  );
+}
+
+/* --- Dark mode ----------------------------------------------------------
+   The kit's default is a single light printed object, and that default holds:
+   the page is a broadside, not a UI. A dark variant would invert to ink
+   ground with the accent lifted to ~#2E8A80 for contrast. Deliberately not
+   shipped. See brand-kit.md.
+   ----------------------------------------------------------------------- */

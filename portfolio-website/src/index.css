@@ -1,21 +1,19 @@
 @import "tailwindcss";
+@import "./styles/broadside.css";
+
+/* Brand tokens and primitives live in ./styles/broadside.css, vendored from
+   the brand kit. This file holds only what the site adds on top of them. */
 
 :root {
-  /* Orchard palette */
-  --orchard-bark: #1f2a1f;
-  --orchard-moss: #3a4a2c;
-  --orchard-fern: #6b7a45;
-  --orchard-honey: #d8a850;
-  --orchard-amber: #c8804a;
-  --orchard-cream: #e8d8a8;
-
-  font-family: "Lato", system-ui, -apple-system, sans-serif;
+  font-family: var(--label);
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: dark;
-  color: var(--orchard-cream);
-  background-color: var(--orchard-bark);
+  /* The kit treats every surface as a printed object. Light is the default
+     and there is no dark variant. */
+  color-scheme: light;
+  color: var(--ink);
+  background-color: var(--stock);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -24,25 +22,50 @@
 }
 
 body {
-  background-color: var(--orchard-bark);
+  background-color: var(--stock);
   position: relative;
 }
 
+/* Letterpress grain. Subtle monochrome noise over the whole surface,
+   multiplied so it darkens the stock rather than fogging it. Rendered as an
+   inline feTurbulence SVG so it needs no asset file and no gradient. */
 body::after {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 100;
-  opacity: 0.18;
-  background-image:
-    radial-gradient(rgba(248, 226, 176, 0.10) 0.8px, transparent 0.8px),
-    radial-gradient(rgba(20, 30, 15, 0.18) 0.8px, transparent 0.8px);
-  background-size: 3px 3px, 4px 4px;
-  background-position: 0 0, 1px 2px;
+  z-index: 60;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='0.28'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
 }
 
-h1, h2, h3, h4, .display {
-  font-family: "Fraunces", Georgia, serif;
-  font-variation-settings: "opsz" 144;
+/* Display type: wordmark, headlines, plate titles. Always uppercase.
+   Applied via the .display class or the Broadside primitives — never bound
+   to bare h1/h2/h3, so a heading inside body copy stays in the grotesque. */
+.display {
+  font-family: var(--display);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--display-tracking);
+  line-height: var(--display-leading);
+  color: var(--ink);
+}
+
+/* Small uppercase labels: article numbers, plate captions, kickers. Spruce. */
+.label {
+  font-family: var(--label);
+  font-weight: 800;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: var(--label-tracking);
+  color: var(--spruce);
+}
+
+/* Bills of material, cut lists, any column of figures. Always tabular. */
+.data {
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  letter-spacing: 0.04em;
 }
