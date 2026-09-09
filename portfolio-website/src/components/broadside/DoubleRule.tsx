@@ -9,12 +9,13 @@
 import { Rule } from "./Rule";
 
 interface Props {
-  /** Which of the pair is spruce, if either. */
+  /** Which of the pair is spruce. The kit allows either; the site uses the
+   *  lower rule so the ink line leads. "none" is for a plain divider. */
   accent?: "none" | "top" | "bottom";
   className?: string;
 }
 
-export const DoubleRule = ({ accent = "none", className = "" }: Props) => (
+export const DoubleRule = ({ accent = "bottom", className = "" }: Props) => (
   <div
     className={`flex flex-col w-full ${className}`}
     style={{ gap: "var(--rule-gap)" }}

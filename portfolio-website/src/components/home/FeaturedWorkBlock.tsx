@@ -78,12 +78,11 @@ export const FeaturedWorkBlock = () => {
       <SectionHead article="II" title="Selected Work" id="FEATURED_WORK" />
 
       <div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ink-frame"
-        style={{
-          gap: "4px",
-          background: "var(--ink)",
-          gridAutoRows: "1fr",
-        }}
+        /* No outer frame and no ink bleeding through the gutters — the kit
+           rules out filled boxes on screen. Each plate carries its own
+           hairline instead. */
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"
+        style={{ gridAutoRows: "1fr" }}
       >
         {featuredProjects.map((project, index) => {
           const isHovered = hoveredIndex === index;
@@ -98,9 +97,8 @@ export const FeaturedWorkBlock = () => {
               onBlur={() => setHoveredIndex(null)}
               onClick={() => onCardClick(project.link)}
               className="text-left flex flex-col cursor-pointer"
-              style={{ background: "var(--stock)" }}
             >
-              <div className="p-3 pb-0 flex-1 flex flex-col">
+              <div className="flex-1 flex flex-col">
                 {/* Reserve two lines so a caption that wraps does not shift
                     its plate relative to the rest of the row. */}
                 <div className="min-h-[2.6em]">
@@ -127,11 +125,15 @@ export const FeaturedWorkBlock = () => {
                 </div>
               </div>
 
-              <div className="mt-auto pt-3">
+              <div className="mt-auto pt-2.5">
                 <TitleBlock
+                  className="px-0 py-0 pt-2.5"
                   title={project.title}
                   subtitle={isHovered ? "View project →" : undefined}
                   reserveSubtitle
+                  // TitleBlock takes a `meta` figure (a year, right-aligned and
+                  // tabular). Left unset rather than inventing dates for real
+                  // projects — add them to featuredProjects when known.
                 />
               </div>
             </button>

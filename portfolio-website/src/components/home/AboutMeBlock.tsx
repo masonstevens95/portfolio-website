@@ -12,14 +12,14 @@ export const AboutMeBlock = () => (
   <section className="mt-14">
     <SectionHead article="I" title="About" id="ABOUT_ME" />
 
-    <div
-      className="grid grid-cols-1 md:grid-cols-[minmax(0,240px)_1fr] ink-frame"
-    >
-      <div className="p-5 flex items-start justify-center border-b-4 md:border-b-0 md:border-r-4 border-[var(--ink)]">
+    {/* No outer frame. The kit's "On screen" note rules out filled boxes; the
+        photo's hairline is the only drawn member here. */}
+    <div className="grid grid-cols-1 md:grid-cols-[minmax(0,180px)_1fr] gap-6 md:gap-10 items-start">
+      <div>
         <img
           src="/assets/profile_new.jpeg"
           alt="Mason Stevens"
-          className="w-full max-w-[200px] object-cover ink-frame"
+          className="w-full object-cover ink-frame"
           style={{
             aspectRatio: "1 / 1",
             /* Two inks on stock. A full-colour photograph is a third hue;
@@ -29,7 +29,7 @@ export const AboutMeBlock = () => (
         />
       </div>
 
-      <div className="p-5" style={{ maxWidth: "48ch" }}>
+      <div style={{ maxWidth: "56ch" }}>
         <p className="m-0 copy">
           I&rsquo;m a designer and developer building tools that connect people
           to plants and to the ground they stand on. Garden layout software,
@@ -42,7 +42,10 @@ export const AboutMeBlock = () => (
           housing and a land value tax in Winston-Salem, or on a mountain bike
           somewhere in the Piedmont.
         </p>
-        <p className="data m-0 mt-5" style={{ fontSize: "12px" }}>
+        <p
+          className="label m-0 mt-6"
+          style={{ letterSpacing: "0.13em", fontWeight: 600 }}
+        >
           Winston-Salem, N.C. · UX · Frontend · Spatial
         </p>
       </div>

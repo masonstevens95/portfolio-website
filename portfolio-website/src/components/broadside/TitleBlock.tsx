@@ -12,6 +12,8 @@ interface Props {
   /** Keep the subtitle's line reserved when it is hidden, so toggling it
    *  cannot change the block's height. */
   reserveSubtitle?: boolean;
+  /** Right-aligned figure — a year, a quantity. Always tabular. */
+  meta?: string;
   className?: string;
 }
 
@@ -19,6 +21,7 @@ export const TitleBlock = ({
   title,
   subtitle,
   reserveSubtitle = false,
+  meta,
   className = "",
 }: Props) => (
   <div
@@ -27,7 +30,7 @@ export const TitleBlock = ({
     <div className="min-w-0">
       <div
         className="display"
-        style={{ fontSize: "clamp(18px, 2.4vw, 24px)", lineHeight: 0.9 }}
+        style={{ fontSize: "clamp(16px, 2vw, 19px)", lineHeight: 1.05 }}
       >
         {title}
       </div>
@@ -44,5 +47,19 @@ export const TitleBlock = ({
         </div>
       )}
     </div>
+
+    {meta && (
+      <div
+        className="data shrink-0"
+        style={{
+          fontSize: "10.5px",
+          letterSpacing: "0.1em",
+          fontWeight: 400,
+          opacity: 0.5,
+        }}
+      >
+        {meta}
+      </div>
+    )}
   </div>
 );

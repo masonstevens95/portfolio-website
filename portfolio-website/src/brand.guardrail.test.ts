@@ -135,6 +135,13 @@ const FORBIDDEN: { label: string; pattern: RegExp }[] = [
       /\brounded(?:-(?:sm|md|lg|xl|2xl|3xl|full|t|b|l|r))?\b|\bborder-radius\b|\bborderRadius\b/,
   },
   {
+    // brand-kit.md, "On screen": a 4px border on a web page is a plan-sheet
+    // mark applied at the wrong scale. Frames go through .ink-frame, which is
+    // driven by --rule-heavy, so there is no reason to hand-write one.
+    label: "heavy frame (frames are hairlines, never filled boxes)",
+    pattern: /(?:[3-9]|\d\d)px\s+solid|border(?:-\w+)?-(?:[3-9]|\d\d)\b/,
+  },
+  {
     label: "superseded typeface (no editorial serifs)",
     pattern: /\bFraunces\b|\bLato\b/,
   },

@@ -26,16 +26,17 @@ body {
   position: relative;
 }
 
-/* Letterpress grain. Subtle monochrome noise over the whole surface,
-   multiplied so it darkens the stock rather than fogging it. Rendered as an
-   inline feTurbulence SVG so it needs no asset file and no gradient. */
+/* Letterpress grain. Rendered as an inline feTurbulence SVG so it needs no
+   asset file and no gradient. Screen value ~0.28 per the kit's "On screen"
+   note; the print value of 0.5 reads as dirt rather than texture on a
+   backlit display. */
 body::after {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 60;
-  opacity: 0.5;
+  opacity: 0.28;
   mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='0.28'/%3E%3C/svg%3E");
   background-size: 160px 160px;
@@ -65,15 +66,16 @@ body::after {
 
 /* Body copy. The grotesque at reading size — the handbill, not the printout. */
 .copy {
-  font-size: 15px;
-  line-height: 1.55;
+  font-size: 15.5px;
+  line-height: 1.68;
 }
 
-/* The plate frame. A drawn member is bounded by a heavy ink rule — square
-   corners, no softening. Used for every bordered block on the site, so the
-   rule weight changes in one place. */
-.ink-frame { border: 4px solid var(--ink); }
-.ink-frame-top { border-top: 4px solid var(--ink); }
+/* The plate frame. A drawn member is bounded by an ink rule — square corners,
+   no softening. Hairline, never a filled box: a 4px border on screen is a
+   plan-sheet mark applied at the wrong scale (brand-kit.md, "On screen").
+   Used for every bordered block, so the weight changes in one place. */
+.ink-frame { border: var(--rule-heavy) solid var(--ink); }
+.ink-frame-top { border-top: var(--rule-heavy) solid var(--ink); }
 
 /* Bills of material, cut lists, any column of figures. Always tabular. */
 .data {

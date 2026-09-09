@@ -29,16 +29,20 @@ export const Masthead = ({ overline, wordmark, motto, estd }: Props) => (
     )}
     <h1
       className="display my-2"
-      style={{ fontSize: "clamp(46px, 13vw, 124px)" }}
+      style={{ fontSize: "clamp(38px, 8vw, 76px)" }}
     >
       {wordmark}
     </h1>
     {motto && (
+      /* Italic, sentence case, no quote marks. Set bold-uppercase-tracked it
+         becomes the loudest element on the page and inverts the hierarchy the
+         wordmark is supposed to own. See brand-kit.md, "Motto line". */
       <p
-        className="label m-0 mt-3"
+        className="m-0 mt-4 italic"
         style={{
-          fontSize: "clamp(12px, 2vw, 16px)",
-          letterSpacing: "0.12em",
+          fontSize: "14px",
+          letterSpacing: 0,
+          color: "var(--spruce)",
         }}
       >
         {motto}
@@ -46,8 +50,8 @@ export const Masthead = ({ overline, wordmark, motto, estd }: Props) => (
     )}
     {estd && (
       <p
-        className="m-0 mt-1 uppercase opacity-55"
-        style={{ fontSize: "10.5px", letterSpacing: "0.28em" }}
+        className="m-0 mt-2.5 uppercase opacity-45"
+        style={{ fontSize: "10px", letterSpacing: "0.22em" }}
       >
         {estd}
       </p>

@@ -2,8 +2,8 @@
    Mason the Brand — Broadside
    Web tokens and primitives.
 
-   VENDORED COPY. Copied 2026-09-08 from ~/AI-OS/brand-assets/web-tokens.css,
-   which itself was extracted from comp-broadside-locked.html.
+   VENDORED COPY. Re-synced 2026-09-09 from ~/AI-OS/brand-assets/web-tokens.css
+   after the kit added its "On screen" scale rule.
 
    Spec of record is ~/AI-OS/brand-assets/brand-kit.md. If this file and the
    kit disagree, the kit wins.
@@ -44,14 +44,16 @@
   --display-tracking: 0.05em;
   --display-leading:  0.84;
   --label-tracking:   0.16em;  /* uppercase labels; kit range is 0.10em to 0.16em */
-  --rule-heavy: 5px;
-  --rule-thin:  2px;
-  --rule-gap:   3px;
+  --rule-heavy: 1px;   /* print/plan sheets use 5px; on screen that is ~4x too heavy */
+  --rule-thin:  1px;   /* print/plan sheets use 2px */
+  --rule-gap:   3px;   /* at hairline weights this reads as two lines, not one band */
   --maxw: 1000px;
 }
 
 /* --- Prohibitions -------------------------------------------------------
    No gradients. No drop shadows. No third hue. No editorial serifs.
+   Frames are hairlines, never filled boxes: a 4px border on screen is a
+   plan-sheet mark applied at the wrong scale.
    No large fills of spruce; it is an accent, not a background.
    Drawn solids use a 45deg engraving hatch in ink, never a flat fill.
 
