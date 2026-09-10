@@ -976,7 +976,7 @@ In `portfolio-website/src/components/home/AboutMeBlock.tsx`, find the glass card
 ```tsx
         <div className="bg-black/30 rounded-3xl shadow-lg backdrop-blur-lg p-10 max-w-5xl w-full flex flex-col md:flex-row items-center gap-8">
           <img
-            src="/assets/profile.jpg" // replace with your actual profile path
+            src="/assets/profile_new.jpeg" // replace with your actual profile path
             alt="Profile photo"
             className="w-48 h-48 rounded-full object-cover border-4 border-neutral-100 shadow-md"
           />
@@ -1001,7 +1001,7 @@ Replace with:
 ```tsx
         <div className="bg-[var(--orchard-bark)]/45 rounded-3xl shadow-lg backdrop-blur-lg border border-[var(--orchard-honey)]/15 p-10 max-w-5xl w-full flex flex-col md:flex-row items-center gap-8">
           <img
-            src="/assets/profile.jpg"
+            src="/assets/profile_new.jpeg"
             alt="Profile photo"
             className="w-48 h-48 rounded-full object-cover border-4 border-[var(--orchard-cream)]/30 shadow-md"
           />
