@@ -33,7 +33,6 @@ export const Header = () => (
           key={item.id}
           href={`#${item.id}`}
           className="label no-underline hover:opacity-70 transition-opacity"
-          style={{ color: "var(--spruce)" }}
         >
           {item.label}
         </a>

@@ -39,11 +39,7 @@ export const Masthead = ({ overline, wordmark, motto, estd }: Props) => (
          wordmark is supposed to own. See brand-kit.md, "Motto line". */
       <p
         className="m-0 mt-4 italic"
-        style={{
-          fontSize: "14px",
-          letterSpacing: 0,
-          color: "var(--spruce)",
-        }}
+        style={{ fontSize: "14px", letterSpacing: 0 }}
       >
         {motto}
       </p>

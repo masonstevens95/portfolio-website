@@ -44,24 +44,29 @@ body::after {
 
 /* Display type: wordmark, headlines, plate titles. Always uppercase.
    Applied via the .display class or the Broadside primitives — never bound
-   to bare h1/h2/h3, so a heading inside body copy stays in the grotesque. */
+   to bare h1/h2/h3, so a heading inside body copy stays in the grotesque.
+
+   NOTE: the kit assigns spruce to labels and ink to display type. This site
+   runs those roles inverted — the display carries the colour and the labels
+   carry the ink. See brand-kit.md "Usage discipline"; if this treatment
+   sticks, that section needs updating. */
 .display {
   font-family: var(--display);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: var(--display-tracking);
   line-height: var(--display-leading);
-  color: var(--ink);
+  color: var(--spruce);
 }
 
-/* Small uppercase labels: article numbers, plate captions, kickers. Spruce. */
+/* Small uppercase labels: article numbers, plate captions, kickers. Ink. */
 .label {
   font-family: var(--label);
   font-weight: 800;
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: var(--label-tracking);
-  color: var(--spruce);
+  color: var(--ink);
 }
 
 /* Body copy. The grotesque at reading size — the handbill, not the printout. */
