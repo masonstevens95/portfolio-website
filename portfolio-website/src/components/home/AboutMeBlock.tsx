@@ -26,16 +26,18 @@ export const AboutMeBlock = () => (
 
       <div className="px-[22px] py-5" style={{ maxWidth: "52ch" }}>
         <p className="m-0 copy">
-          I&rsquo;m a designer and developer building tools that connect people
-          to plants and to the ground they stand on. Garden layout software,
-          save-file parsers, land calculators, a VS Code extension for reading
-          pull requests. The through-line is making something legible that
-          wasn&rsquo;t before.
+          I build software that makes complicated things legible. Garden layout
+          software for people doing it themselves. Parsers that turn a binary
+          save file into something you can read. Calculators that answer what a
+          piece of land actually costs. A VS Code extension that makes a pull
+          request reviewable at a glance.
         </p>
         <p className="m-0 mt-4 copy">
-          Outside of work I&rsquo;m in the orchard, arguing for missing-middle
-          housing and a land value tax in Hillsborough, or on a mountain bike
-          somewhere in the Piedmont.
+          The land part isn&rsquo;t a hobby on the side of that. I grow food,
+          and I argue for missing-middle housing and a land value tax in
+          Hillsborough, because most people can&rsquo;t see what zoning costs
+          them or what a parcel is actually worth. Same problem, different
+          tools.
         </p>
         <p
           className="label m-0 mt-5"
