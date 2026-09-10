@@ -1,8 +1,13 @@
 /*
   PlateImage.tsx
 
-  An image inside a plate, desaturated into the two-ink system, with an
-  initial-letter fallback when the file is missing.
+  An image inside a plate, with an initial-letter fallback when the file is
+  missing.
+
+  Images render in full colour. The kit's "no third hue" rule sits in the
+  Palette section and governs the ink system — rules, type, linework, fills.
+  It does not ask photographs or screenshots to be desaturated, and doing so
+  drains the page of the only colour it has.
 
   The fallback is not hypothetical: /assets/pixel_art_placeholder.png is
   referenced by the featured grid and the projects index but absent from
@@ -16,8 +21,6 @@ interface Props {
   src?: string;
   /** Falls back to this word's first letter, and labels the image. */
   title: string;
-  /** Full colour on hover. Off by default — screenshots are content, not chrome. */
-  colour?: boolean;
   className?: string;
   /** Font size of the fallback initial. */
   fallbackSize?: string;
@@ -26,7 +29,6 @@ interface Props {
 export const PlateImage = ({
   src,
   title,
-  colour = false,
   className = "",
   fallbackSize = "clamp(28px, 6vw, 56px)",
 }: Props) => {
@@ -50,10 +52,6 @@ export const PlateImage = ({
       alt={title}
       onError={() => setFailed(true)}
       className={`w-full h-full object-cover ${className}`}
-      style={{
-        filter: colour ? "none" : "grayscale(1) contrast(1.05)",
-        transition: "filter 200ms",
-      }}
     />
   );
 };

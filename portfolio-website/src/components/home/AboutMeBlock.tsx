@@ -20,12 +20,7 @@ export const AboutMeBlock = () => (
           src="/assets/profile_new.jpeg"
           alt="Mason Stevens"
           className="w-full object-cover ink-frame"
-          style={{
-            aspectRatio: "1 / 1",
-            /* Two inks on stock. A full-colour photograph is a third hue;
-               grayscale keeps it inside the system without hiding it. */
-            filter: "grayscale(1) contrast(1.05)",
-          }}
+          style={{ aspectRatio: "1 / 1" }}
         />
       </div>
 

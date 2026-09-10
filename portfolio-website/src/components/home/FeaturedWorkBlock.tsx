@@ -123,11 +123,7 @@ export const FeaturedWorkBlock = () => {
                     transition: "border-color 200ms",
                   }}
                 >
-                  <PlateImage
-                    src={project.image}
-                    title={project.title}
-                    colour={isHovered}
-                  />
+                  <PlateImage src={project.image} title={project.title} />
                 </div>
               </div>
 
