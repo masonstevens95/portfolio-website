@@ -31,17 +31,24 @@ export class AppErrorBoundary extends Component<Props, State> {
       return (
         <div
           role="alert"
-          className="min-h-screen w-full bg-neutral-900 text-neutral-100 flex items-center justify-center px-4"
+          className="min-h-screen w-full flex items-center justify-center px-4"
+          style={{ background: "var(--stock)", color: "var(--ink)" }}
         >
-          <div className="max-w-md text-center">
-            <h1 className="text-3xl font-bold mb-4">Something went wrong</h1>
-            <p className="text-neutral-300 mb-6">
+          <div
+            className="max-w-md p-6 ink-frame"
+          >
+            <p className="label m-0 mb-3">Notice</p>
+            <h1 className="display m-0 mb-3" style={{ fontSize: "34px" }}>
+              Something went wrong
+            </h1>
+            <p className="m-0 mb-5 copy">
               An unexpected error happened. Try reloading the page; the full
               error has been logged to the browser console.
             </p>
             <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-neutral-100 text-neutral-900 rounded hover:bg-white transition-colors font-medium"
+              className="label px-4 py-2"
+              style={{ border: "2px solid var(--spruce)" }}
             >
               Reload
             </button>

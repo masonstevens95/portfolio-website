@@ -1,16 +1,90 @@
 @import "tailwindcss";
+@import "./styles/broadside.css";
+
+/* Brand tokens and primitives live in ./styles/broadside.css, vendored from
+   the brand kit. This file holds only what the site adds on top of them. */
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: var(--label);
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* The kit treats every surface as a printed object. Light is the default
+     and there is no dark variant. */
+  color-scheme: light;
+  color: var(--ink);
+  background-color: var(--stock);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--stock);
+  position: relative;
+}
+
+/* Letterpress grain. Rendered as an inline feTurbulence SVG so it needs no
+   asset file and no gradient. Screen value ~0.28 per the kit's "On screen"
+   note; the print value of 0.5 reads as dirt rather than texture on a
+   backlit display. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0.3;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='0.28'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+/* Display type: wordmark, headlines, plate titles. Always uppercase.
+   Applied via the .display class or the Broadside primitives — never bound
+   to bare h1/h2/h3, so a heading inside body copy stays in the grotesque.
+
+   NOTE: the kit assigns spruce to labels and ink to display type. This site
+   runs those roles inverted — the display carries the colour and the labels
+   carry the ink. See brand-kit.md "Usage discipline"; if this treatment
+   sticks, that section needs updating. */
+.display {
+  font-family: var(--display);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--display-tracking);
+  line-height: var(--display-leading);
+  color: var(--spruce);
+}
+
+/* Small uppercase labels: article numbers, plate captions, kickers. Ink. */
+.label {
+  font-family: var(--label);
+  font-weight: 800;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: var(--label-tracking);
+  color: var(--ink);
+}
+
+/* Body copy. The grotesque at reading size — the handbill, not the printout. */
+.copy {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* The plate frame. A drawn member is bounded by an ink rule — square corners,
+   no softening. Hairline, never a filled box: a 4px border on screen is a
+   plan-sheet mark applied at the wrong scale (brand-kit.md, "On screen").
+   Used for every bordered block, so the weight changes in one place. */
+.ink-frame { border: var(--rule-heavy) solid var(--ink); }
+.ink-frame-top { border-top: var(--rule-heavy) solid var(--ink); }
+
+/* Bills of material, cut lists, any column of figures. Always tabular. */
+.data {
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  letter-spacing: 0.04em;
 }

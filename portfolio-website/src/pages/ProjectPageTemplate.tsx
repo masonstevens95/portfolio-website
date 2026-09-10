@@ -1,10 +1,14 @@
 /*
   ProjectPageTemplate.tsx
+
+  The shared broadside frame for every inner page. Themeing it once
+  propagates to the projects index and all eleven project pages.
 */
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa6";
+import { DoubleRule, Rule } from "../components/broadside";
 
 interface Props {
   title?: string;
@@ -16,30 +20,52 @@ export const ProjectPageTemplate = ({ title, subtitle, children }: Props) => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen w-full bg-neutral-900 text-neutral-100 py-16 px-4 md:px-8">
-      {/* Back to home button */}
-      <div className="max-w-6xl mx-auto mb-8">
-        <button
-          onClick={() => navigate("/")}
-          className="flex items-center gap-2 text-neutral-300 hover:text-white transition-colors text-sm font-medium"
+    <div
+      className="min-h-screen w-full"
+      style={{ background: "var(--stock)", color: "var(--ink)" }}
+    >
+      <div className="sticky top-0 z-50" style={{ background: "var(--stock)" }}>
+        <div
+          className="mx-auto px-4 sm:px-8 py-3"
+          style={{ maxWidth: "var(--maxw)" }}
         >
-          <FaArrowLeft className="w-4 h-4" />
-          Back to Home
-        </button>
+          <button
+            onClick={() => navigate("/")}
+            className="label flex items-center gap-2 hover:underline"
+          >
+            <FaArrowLeft className="w-3 h-3" aria-hidden="true" />
+            Back to Home
+          </button>
+        </div>
+        <Rule weight="heavy" />
       </div>
 
-      {/* Optional intro header */}
-      {(title || subtitle) && (
-        <div className="w-full mb-12 text-center px-4">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">{title}</h1>
-          {subtitle && (
-            <p className="text-xl md:text-2xl text-neutral-400">{subtitle}</p>
-          )}
-        </div>
-      )}
+      <div
+        className="mx-auto px-4 sm:px-8 pb-24"
+        style={{ maxWidth: "var(--maxw)" }}
+      >
+        {(title || subtitle) && (
+          <header className="pt-10 pb-6">
+            <h1
+              className="display m-0"
+              style={{ fontSize: "clamp(36px, 8vw, 74px)" }}
+            >
+              {title}
+            </h1>
+            {subtitle && (
+              <p
+                className="label m-0 mt-3"
+                style={{ fontSize: "12px", letterSpacing: "0.12em" }}
+              >
+                {subtitle}
+              </p>
+            )}
+            <DoubleRule className="mt-5" />
+          </header>
+        )}
 
-      {/* Full-width container for content */}
-      <div className="w-full flex flex-col gap-12">{children}</div>
+        <div className="w-full flex flex-col gap-10">{children}</div>
+      </div>
     </div>
   );
 };

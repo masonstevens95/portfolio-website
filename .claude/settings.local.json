@@ -7,5 +7,8 @@
       "Bash(chmod +x /Users/masonstevens/Developer/portfolio-website/docker-run.sh)",
       "Bash(chmod +x /Users/masonstevens/Developer/portfolio-website/.devcontainer/init-firewall.sh)"
     ]
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true
   }
 }

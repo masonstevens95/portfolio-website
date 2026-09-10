@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ProjectPageTemplate } from "./ProjectPageTemplate";
+import { PlateCaption, PlateImage, Rule } from "../components/broadside";
 
 interface ProjectEntry {
   slug: string;
@@ -85,44 +86,53 @@ const projects: ProjectEntry[] = [
   },
 ];
 
-export const ProjectsIndexPage = () => (
-  <ProjectPageTemplate
-    title="Projects"
-    subtitle="Everything that has a page on this site"
-  >
-    <section className="w-full max-w-4xl mx-auto px-4">
-      <ul className="flex flex-col gap-4">
-        {projects.map((project) => (
-          <li key={project.slug}>
-            <Link
-              to={`/projects/${project.slug}`}
-              className="flex gap-4 items-start p-4 rounded-lg border border-neutral-800 hover:border-neutral-600 hover:bg-neutral-900/50 transition-colors"
-            >
-              {project.image ? (
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-32 h-32 object-cover rounded flex-shrink-0 bg-neutral-900"
-                />
-              ) : (
-                <div
-                  aria-hidden="true"
-                  className="w-32 h-32 rounded flex-shrink-0 bg-neutral-900 border border-neutral-800 flex items-center justify-center text-3xl text-neutral-600 font-semibold"
-                >
-                  {project.title.charAt(0)}
+export const ProjectsIndexPage = () => {
+  return (
+    <ProjectPageTemplate
+      title="Projects"
+      subtitle="Everything that has a page on this site"
+    >
+      <section className="w-full">
+        {/* The index is the site's one genuinely ordered sequence, so plate
+            numbering is legitimate here. The kit permits numbering only where
+            order is real. */}
+        <ul className="list-none p-0 m-0 ink-frame">
+          {projects.map((project, index) => (
+            <li key={project.slug}>
+              {index > 0 && <Rule weight="thin" />}
+              <Link
+                to={`/projects/${project.slug}`}
+                className="flex gap-5 items-start p-4 no-underline group"
+                style={{ color: "var(--ink)" }}
+              >
+                <div className="w-28 h-28 shrink-0 overflow-hidden ink-frame">
+                  <PlateImage
+                    src={project.image}
+                    title={project.title}
+                    fallbackSize="40px"
+                  />
                 </div>
-              )}
-              <div className="flex-1 min-w-0">
-                <h3 className="text-xl text-neutral-100 font-semibold mb-1">
-                  {project.title}
-                </h3>
-                <p className="text-neutral-400 mb-2">{project.description}</p>
-                <span className="text-sm text-blue-400">View project →</span>
-              </div>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </section>
-  </ProjectPageTemplate>
-);
+
+                <div className="flex-1 min-w-0">
+                  <PlateCaption>{`No. ${index + 1}`}</PlateCaption>
+                  <h3
+                    className="display m-0 mb-1"
+                    style={{ fontSize: "clamp(18px, 2.4vw, 24px)" }}
+                  >
+                    {project.title}
+                  </h3>
+                  <p className="m-0 mb-2" style={{ fontSize: "14px", lineHeight: 1.5 }}>
+                    {project.description}
+                  </p>
+                  <span className="label group-hover:underline">
+                    View project &rarr;
+                  </span>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </ProjectPageTemplate>
+  );
+};

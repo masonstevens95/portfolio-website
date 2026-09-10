@@ -1,0 +1,78 @@
+/* ==========================================================================
+   Mason the Brand — Broadside
+   Web tokens and primitives.
+
+   VENDORED COPY. Re-synced 2026-09-09 from ~/AI-OS/brand-assets/web-tokens.css
+   after the kit added its "On screen" scale rule.
+
+   Spec of record is ~/AI-OS/brand-assets/brand-kit.md. If this file and the
+   kit disagree, the kit wins.
+
+   THIS IS A SUBSET, NOT A BYTE-FOR-BYTE COPY. Re-syncing means reconciling,
+   not overwriting. What was deliberately left out and where it went instead:
+     - .display / .label / .data  ->  src/index.css, alongside this site's own
+       .copy and .ink-frame, so every shared class lives in one file.
+     - .rule / .doublerule        ->  src/components/broadside/Rule.tsx and
+       DoubleRule.tsx, which need to vary weight and ink per instance.
+     - .grain                     ->  src/index.css as body::after, so the
+       overlay covers the document on every route without a mount point.
+     - --red / --red-deep aliases ->  dropped entirely. They exist upstream so
+       the old comps keep rendering; omitting them here makes the superseded
+       name unavailable rather than merely discouraged.
+
+   The brand assets live outside this repository and outside the Vite root,
+   so they cannot be imported. This is a copy on purpose: a stale copy is a
+   smaller problem than a build that depends on an unversioned path on one
+   machine.
+   ========================================================================== */
+
+:root {
+  /* Inks. Two on stock. No third hue. */
+  --stock:        #EEECE4;  /* paper ground. Flat neutral, not cream, not distressed. */
+  --ink:          #17140F;  /* type, linework, hatching, primary rules */
+  --spruce:       #0E4A45;  /* accent: rules, plate labels, dimensions, motto */
+  --spruce-deep:  #093430;  /* accent text on stock needing more contrast */
+
+  /* Type. Display is condensed and medium, deliberately not Impact-heavy.
+     Avenir Next Condensed is a macOS system font and resolves for almost
+     nobody else. Barlow Semi Condensed 600 is loaded in index.html and is
+     what visitors actually see. Order matters. */
+  --display: "Avenir Next Condensed", "Barlow Semi Condensed", "Arial Narrow", "Helvetica Neue", system-ui, sans-serif;
+  --label:   "Helvetica Neue", Inter, Arial, system-ui, sans-serif;
+
+  /* Metrics lifted from the locked comp */
+  --display-tracking: 0.05em;
+  --display-leading:  0.86;
+  --label-tracking:   0.16em;  /* uppercase labels; kit range is 0.10em to 0.16em */
+  --rule-heavy: 1px;   /* print/plan sheets use 5px; on screen that is ~4x too heavy */
+  --rule-thin:  1px;   /* print/plan sheets use 2px */
+  --rule-gap:   4px;   /* at hairline weights this reads as two lines, not one band */
+  --maxw: 1000px;
+}
+
+/* --- Prohibitions -------------------------------------------------------
+   No gradients. No drop shadows. No third hue. No editorial serifs.
+   Frames are hairlines, never filled boxes: a 4px border on screen is a
+   plan-sheet mark applied at the wrong scale.
+   No large fills of spruce; it is an accent, not a background.
+   Drawn solids use a 45deg engraving hatch in ink, never a flat fill.
+
+   These are enforced by src/brand.guardrail.test.ts. If that test fails,
+   the fix is the component, not the test — see brand-kit.md, "Standing
+   decisions, do not relitigate".
+   ----------------------------------------------------------------------- */
+
+.hatch-45 {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--ink) 0, var(--ink) 1px,
+    transparent 1px, transparent 5px
+  );
+}
+
+/* --- Dark mode ----------------------------------------------------------
+   The kit's default is a single light printed object, and that default holds:
+   the page is a broadside, not a UI. A dark variant would invert to ink
+   ground with the accent lifted to ~#2E8A80 for contrast. Deliberately not
+   shipped. See brand-kit.md.
+   ----------------------------------------------------------------------- */

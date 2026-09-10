@@ -9,7 +9,7 @@ export const EmbeddedYardenPreview = () => {
   const [loading, setLoading] = useState(true);
 
   return (
-    <section className="w-full h-[70vh] my-12 relative rounded-xl overflow-hidden shadow-lg border border-neutral-800">
+    <section className="w-full h-[70vh] my-12 relative overflow-hidden border border-[var(--ink)]">
       {/* Loader overlay */}
       {loading && <LoadingWaveform />}
 

@@ -5,8 +5,8 @@ export const GaribaldiPage = () => (
     title="Garibaldi"
     subtitle="A modder-friendly save file visualizer and timeline explorer for Victoria 3"
   >
-    <section className="w-full mx-auto px-4 text-neutral-300 space-y-6 text-lg leading-relaxed ">
-      <h2 className="text-2xl font-bold text-neutral-100 mb-4">What It Is</h2>
+    <section className="w-full mx-auto px-4 text-[var(--ink)] space-y-6 text-lg leading-relaxed">
+      <h2 className="text-2xl font-bold text-[var(--ink)] mb-4">What It Is</h2>
 
       <p>
         <strong>Garibaldi</strong> is a work-in-progress web application
@@ -16,7 +16,7 @@ export const GaribaldiPage = () => (
           href="https://www.skanderbeg.pm"
           target="_blank"
           rel="noopener noreferrer"
-          className="underline hover:text-white"
+          className="underline hover:text-[var(--ink)]"
         >
           Skanderbeg.pm
         </a>{" "}
@@ -45,7 +45,7 @@ export const GaribaldiPage = () => (
           href="https://github.com/masonstevens95/Garibaldi"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-400 underline hover:text-white"
+          className="text-[var(--spruce)] underline hover:text-[var(--ink)]"
         >
           github.com/masonstevens95/Garibaldi
         </a>
@@ -55,10 +55,10 @@ export const GaribaldiPage = () => (
         <img
           src="/assets/garibaldi.jpg"
           alt="Garibaldi image"
-          className="w-full h-auto rounded-xl shadow-md mb-6"
+          className="w-full h-auto mb-6"
         />
 
-        <p className="text-sm text-neutral-500">
+        <p className="text-sm text-[var(--ink)]">
           Fun fact: Garibaldi is named after Giuseppe Garibaldi — a key figure
           in the unification of Italy during the Victorian era. I thought it
           would be a cute shout out to the original Skanderbeg tool since

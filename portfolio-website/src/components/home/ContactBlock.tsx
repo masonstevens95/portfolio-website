@@ -1,36 +1,57 @@
 /*
-  ContactBlock
+  ContactBlock — Article III
+
+  The honey pill button and its translucent surround are gone; the address is
+  a bordered ink block.
+
+  NOTE: the previous version shipped a live `mailto:youremail@example.com`
+  placeholder. CONTACT_EMAIL below is the one line to change if a different
+  address should be public.
 */
 
-import { ParallaxLayer } from "@react-spring/parallax";
+import { SectionHead } from "../broadside";
 
-interface Props {
-  offset: number;
-  speed: number;
-  factor: number;
-}
+const CONTACT_EMAIL = "mason.c.stevens@gmail.com";
+const GITHUB = "https://github.com/masonstevens95";
+const LINKEDIN = "https://www.linkedin.com/in/masonstevens95/";
 
-export const ContactBlock = ({ offset, speed, factor }: Props) => {
-  return (
-    <ParallaxLayer offset={offset} speed={speed} factor={factor}>
-      <div className="w-full h-full flex flex-col items-center justify-center px-8 text-neutral-100">
-        <h1 className="text-5xl font-bold mb-4 text-center">Let's Connect</h1>
-        <p className="text-lg mb-8 text-center text-neutral-300 max-w-2xl">
-          Whether you're interested in collaborating, have a question, or just
-          want to say hello — I’d love to hear from you!
+export const ContactBlock = () => (
+  <section className="mt-[52px]">
+    <SectionHead article="III" title="Contact" id="CONTACT" />
+
+    <div className="grid grid-cols-1 md:grid-cols-2 ink-frame">
+      <div className="px-[22px] py-5" style={{ maxWidth: "44ch" }}>
+        <p className="m-0 copy">
+          If you want to collaborate on something, have a question about any of
+          the work above, or just want to say hello &mdash; write to me.
         </p>
-        <div className="flex flex-col gap-4 text-center">
-          <a
-            href="mailto:youremail@example.com"
-            className="bg-white text-black px-6 py-2 rounded-md font-semibold hover:bg-neutral-200 transition"
-          >
-            Send an Email
-          </a>
-          <div className="text-sm text-neutral-400">
-            or reach me via LinkedIn, GitHub, or other platforms below.
-          </div>
-        </div>
       </div>
-    </ParallaxLayer>
-  );
-};
+
+      <div className="px-[22px] py-5 flex flex-col gap-3 items-start border-t md:border-t-0 md:border-l border-[var(--ink)]">
+        <a
+          href={`mailto:${CONTACT_EMAIL}`}
+          className="display no-underline hover:opacity-70 transition-opacity"
+          style={{ fontSize: "21px" }}
+        >
+          {CONTACT_EMAIL}
+        </a>
+        <a
+          href={GITHUB}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="label no-underline hover:underline"
+        >
+          GitHub &rarr;
+        </a>
+        <a
+          href={LINKEDIN}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="label no-underline hover:underline"
+        >
+          LinkedIn &rarr;
+        </a>
+      </div>
+    </div>
+  </section>
+);

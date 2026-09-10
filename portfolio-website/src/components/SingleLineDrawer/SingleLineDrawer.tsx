@@ -254,12 +254,12 @@ export const SingleLineDrawer = () => {
     <div
       onDrop={handleDrop}
       onDragOver={(e) => e.preventDefault()}
-      className="w-full h-[70vh] border border-dashed border-neutral-700 rounded-xl relative flex flex-col"
+      className="w-full h-[70vh] border border-dashed border-[var(--ink)] relative flex flex-col"
     >
-      <div className="flex items-center gap-4 p-2 bg-neutral-800 text-neutral-200">
+      <div className="flex items-center gap-4 p-2 bg-[var(--stock)] text-[var(--ink)]">
         <div>{message}</div>
         <div className="flex items-center gap-2 px-3">
-          <label htmlFor="threshold" className="text-sm text-neutral-300">
+          <label htmlFor="threshold" className="text-sm text-[var(--ink)]">
             Threshold: {edgeThreshold}
           </label>
           <input
@@ -270,42 +270,44 @@ export const SingleLineDrawer = () => {
             value={edgeThreshold}
             onChange={(e) => setEdgeThreshold(Number(e.target.value))}
             className="w-32"
+            /* The native control paints browser-blue, a third hue. */
+            style={{ accentColor: "var(--spruce)" }}
           />
         </div>
       </div>
-      <div className="flex items-center gap-4 p-2 bg-neutral-800 text-neutral-200">
+      <div className="flex items-center gap-4 p-2 bg-[var(--stock)] text-[var(--ink)]">
         <button
           onClick={resetImage}
           disabled={!originalImageData}
-          className="bg-sky-800 px-3 py-1 rounded disabled:bg-neutral-500"
+          className="bg-[var(--spruce)] text-[var(--stock)] px-3 py-1 disabled:opacity-35"
         >
           Reset Image
         </button>
         <button
           onClick={removeBgStep}
           disabled={!originalImageData || step >= 1}
-          className="bg-red-600 px-3 py-1 rounded disabled:bg-neutral-500"
+          className="bg-[var(--ink)] text-[var(--stock)] px-3 py-1 disabled:opacity-35"
         >
           Remove BG
         </button>
         <button
           onClick={detectOutline}
           disabled={step < 1 || step >= 2}
-          className="bg-blue-600 px-3 py-1 rounded disabled:bg-neutral-500"
+          className="bg-[var(--spruce)] text-[var(--stock)] px-3 py-1 disabled:opacity-35"
         >
           Detect Outline
         </button>
         <button
           onClick={animateOutline}
           disabled={outlinePath == null}
-          className="bg-green-600 px-3 py-1 rounded disabled:bg-neutral-500"
+          className="bg-[var(--spruce)] text-[var(--stock)] px-3 py-1 disabled:opacity-35"
         >
           Animate
         </button>
         <button
           onClick={() => exportCanvasAsPNG(canvasRef.current)}
           disabled={!originalImageData}
-          className="bg-gray-700 px-3 py-1 rounded"
+          className="bg-[var(--ink)] text-[var(--stock)] px-3 py-1 disabled:opacity-35"
         >
           Export PNG
         </button>
@@ -313,11 +315,11 @@ export const SingleLineDrawer = () => {
 
       <div
         ref={containerRef}
-        className="flex-1 relative flex items-center justify-center bg-black overflow-hidden"
+        className="flex-1 relative flex items-center justify-center bg-[var(--ink)] overflow-hidden"
       >
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-20">
-            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-white" />
+          <div className="absolute inset-0 flex items-center justify-center bg-[var(--stock)] z-20">
+            <div className="animate-spin h-10 w-10 border-t-2 border-b-2 border-[var(--ink)]" />
           </div>
         )}
         <canvas ref={canvasRef} className="block" />

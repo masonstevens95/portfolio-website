@@ -1,16 +1,17 @@
 /*
-  FeaturedWorkBlock.tsx
+  FeaturedWorkBlock — Article II
+
+  A plate grid: cells share 4px ink rules, each carrying a caption, an image
+  and a title block.
+
+  The hover-to-expand grid this replaced used a soft corner radius, a drop
+  shadow, a bottom scrim and a text halo on every title — four prohibitions
+  in one component. Hover is now a spruce plate rule, not a colour wash.
 */
 
-import { ParallaxLayer } from "@react-spring/parallax";
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
-interface Props {
-  offset: number;
-  speed: number;
-  factor: number;
-}
+import { useState } from "react";
+import { PlateCaption, PlateImage, SectionHead, TitleBlock } from "../broadside";
 
 const featuredProjects = [
   {
@@ -57,21 +58,11 @@ const featuredProjects = [
   },
 ];
 
-const COLS = 3;
-const ROWS = 2;
+const PLATE_NUMERALS = ["I", "II", "III", "IV", "V", "VI"];
 
-const buildTracks = (count: number, hoveredTrack: number | null): string =>
-  Array.from({ length: count }, (_, i) =>
-    hoveredTrack === null ? "1fr" : i === hoveredTrack ? "2.5fr" : "0.75fr"
-  ).join(" ");
-
-export const FeaturedWorkBlock = ({ offset, speed, factor }: Props) => {
+export const FeaturedWorkBlock = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const navigate = useNavigate();
-
-  const hoveredCol = hoveredIndex !== null ? hoveredIndex % COLS : null;
-  const hoveredRow =
-    hoveredIndex !== null ? Math.floor(hoveredIndex / COLS) : null;
 
   const onCardClick = (link: string) => {
     if (!link || link === "#") return;
@@ -83,58 +74,79 @@ export const FeaturedWorkBlock = ({ offset, speed, factor }: Props) => {
   };
 
   return (
-    <ParallaxLayer
-      aria-description="Featured work section with hover-to-expand projects"
-      offset={offset}
-      speed={speed}
-      factor={factor}
-    >
-      <div className="w-full h-full flex items-center justify-center px-10 flex flex-col">
-        <h1 className="text-5xl font-bold mb-12">Featured Work</h1>
-        <div
-          className="grid w-full max-w-7xl h-3/4 overflow-hidden rounded-2xl shadow-lg transition-all duration-500 ease-in-out"
-          style={{
-            gridTemplateColumns: buildTracks(COLS, hoveredCol),
-            gridTemplateRows: buildTracks(ROWS, hoveredRow),
-          }}
-        >
-          {featuredProjects.map((project, index) => {
-            const isHovered = hoveredIndex === index;
+    <section className="mt-[52px]">
+      <SectionHead article="II" title="Selected Work" id="FEATURED_WORK" />
 
-            return (
-              <div
-                key={index}
-                onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() => setHoveredIndex(null)}
-                onClick={() => onCardClick(project.link)}
-                className="transition-all duration-500 ease-in-out cursor-pointer relative group overflow-hidden bg-black/30"
-              >
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="object-cover w-full h-full absolute inset-0 z-0 opacity-75 group-hover:opacity-95 transition-opacity"
-                />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/70 to-transparent p-4 z-10">
-                  <h3 className="text-xl text-white font-semibold [text-shadow:_0_2px_8px_rgba(0,0,0,0.9)]">
+      <div
+        /* Hairline plate grid: cells share 1px ink gutters, which is the ink
+           ground showing through a 1px gap. Not a filled box — the gutter IS
+           the rule. */
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ink-frame"
+        style={{
+          gap: "var(--rule-heavy)",
+          background: "var(--ink)",
+          gridAutoRows: "1fr",
+        }}
+      >
+        {featuredProjects.map((project, index) => {
+          const isHovered = hoveredIndex === index;
+
+          return (
+            <button
+              key={project.title}
+              type="button"
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              onFocus={() => setHoveredIndex(index)}
+              onBlur={() => setHoveredIndex(null)}
+              onClick={() => onCardClick(project.link)}
+              className="text-left flex flex-col cursor-pointer px-3 pt-3"
+              style={{ background: "var(--stock)" }}
+            >
+              <div className="flex-1 flex flex-col">
+                {/* Reserve two lines so a caption that wraps does not shift
+                    its plate relative to the rest of the row. */}
+                <div className="min-h-[2.6em]">
+                  <PlateCaption plate={PLATE_NUMERALS[index]}>
                     {project.title}
-                  </h3>
-                  {isHovered && (
-                    <p className="text-sm text-neutral-200 mt-2 transition-opacity duration-300 [text-shadow:_0_1px_4px_rgba(0,0,0,0.9)]">
-                      {project.description}
-                    </p>
-                  )}
+                  </PlateCaption>
+                </div>
+                {/* Fixed band rather than an aspect ratio: in a flex column
+                    aspect-ratio loses to flex sizing, and plates whose
+                    captions wrap to two lines end up shorter than their
+                    neighbours. A fixed height keeps every title block on the
+                    same line across a row. */}
+                <div
+                  className="w-full h-[140px] overflow-hidden ink-frame"
+                  style={{
+                    borderColor: isHovered ? "var(--spruce)" : "var(--ink)",
+                    transition: "border-color 200ms",
+                  }}
+                >
+                  <PlateImage src={project.image} title={project.title} />
                 </div>
               </div>
-            );
-          })}
-        </div>
-        <Link
-          to="/projects"
-          className="mt-6 text-neutral-300 hover:text-white text-base md:text-lg underline-offset-4 hover:underline transition-colors"
-        >
+
+              <div className="mt-auto pt-3">
+                <TitleBlock
+                  title={project.title}
+                  subtitle={isHovered ? "View project →" : undefined}
+                  reserveSubtitle
+                  // TitleBlock takes a `meta` figure (a year, right-aligned and
+                  // tabular). Left unset rather than inventing dates for real
+                  // projects — add them to featuredProjects when known.
+                />
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      <p className="m-0 mt-4">
+        <Link to="/projects" className="label no-underline hover:underline">
           View all projects →
         </Link>
-      </div>
-    </ParallaxLayer>
+      </p>
+    </section>
   );
 };
