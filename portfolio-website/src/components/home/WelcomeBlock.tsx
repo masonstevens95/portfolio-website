@@ -21,7 +21,7 @@ export const WelcomeBlock = () => (
     <Masthead
       overline="Software · Tools · Interfaces"
       wordmark="Mason Stevens"
-      motto="Build the thing, then show the work."
+      motto="Choose competence over convenience."
       estd="Hillsborough, N.C."
     />
   </section>
