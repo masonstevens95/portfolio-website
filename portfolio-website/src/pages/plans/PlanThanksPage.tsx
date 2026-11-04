@@ -79,28 +79,43 @@ export const PlanThanksPage = () => {
   /** The expiresAt of the link set that has lapsed; a fresh response clears it implicitly. */
   const [lapsedAt, setLapsedAt] = useState<number | null>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const inFlight = useRef<AbortController | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   // Strip the bearer token from the address bar once it has been read.
   useEffect(() => {
     if (sessionId) window.history.replaceState(window.history.state, "", window.location.pathname);
   }, [sessionId]);
 
+  // Each load supersedes the previous one, so a slow earlier response can
+  // never overwrite a newer one.
   const load = useCallback(async () => {
     if (!sessionId) return;
+    inFlight.current?.abort();
+    const controller = new AbortController();
+    inFlight.current = controller;
+
+    setRefreshing(true);
     setData((d) => (d.status === "eligible" ? d : { status: "loading" }));
     try {
       const response = await fetch(`/api/download?session_id=${encodeURIComponent(sessionId)}`, {
         cache: "no-store",
+        signal: AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]),
       });
       const body = (await response.json().catch(() => null)) as DownloadResponse | null;
+      if (controller.signal.aborted) return;
       setData(body && DOWNLOAD_STATUSES.includes(body.status) ? body : { status: "error" });
     } catch {
+      if (controller.signal.aborted) return;
       setData({ status: "error" });
+    } finally {
+      if (inFlight.current === controller) setRefreshing(false);
     }
   }, [sessionId]);
 
   useEffect(() => {
     load();
+    return () => inFlight.current?.abort();
   }, [load]);
 
   // Mark the list stale when the signed URLs lapse.
@@ -120,7 +135,13 @@ export const PlanThanksPage = () => {
   const outcome = data.status === "eligible" ? null : OUTCOMES[data.status];
 
   const actionButton = (label: string) => (
-    <button type="button" onClick={load} className="label underline self-start py-2">
+    <button
+      type="button"
+      onClick={load}
+      disabled={refreshing}
+      className="label underline self-start py-2"
+      style={{ opacity: refreshing ? 0.5 : 1 }}
+    >
       {label}
     </button>
   );

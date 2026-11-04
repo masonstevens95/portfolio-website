@@ -43,13 +43,26 @@ export const renderDownloadEmail = ({ planTitle, thanksUrl }: Pick<DownloadEmail
 
 let client: Resend | undefined;
 
+const SEND_TIMEOUT_MS = 8000;
+
+/** Rejects if the send hasn't settled in time, so the webhook returns 5xx and
+ *  Stripe retries (the idempotency key dedupes a send that did land). */
+const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> =>
+  Promise.race([
+    promise,
+    new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`Resend send timed out after ${ms}ms`)), ms)),
+  ]);
+
 export const sendDownloadEmail = async (config: EmailConfig, email: DownloadEmail): Promise<void> => {
   client ??= new Resend(config.apiKey);
   const { subject, text, html } = renderDownloadEmail(email);
 
-  const { error } = await client.emails.send(
-    { from: config.from, to: email.to, replyTo: CONTACT_EMAIL, subject, text, html },
-    { idempotencyKey: email.idempotencyKey }
+  const { error } = await withTimeout(
+    client.emails.send(
+      { from: config.from, to: email.to, replyTo: CONTACT_EMAIL, subject, text, html },
+      { idempotencyKey: email.idempotencyKey }
+    ),
+    SEND_TIMEOUT_MS
   );
 
   // The same key is already being sent by a concurrent delivery: that send

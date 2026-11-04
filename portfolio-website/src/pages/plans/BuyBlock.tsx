@@ -11,7 +11,7 @@
   leave it stuck. Cancelling at Stripe returns here with no banner.
 */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { formatPrice, type Plan } from "../../data/plans";
 import { startCheckout } from "../../data/checkoutClient";
 import { ComingSoonNote } from "./ComingSoonNote";
@@ -25,15 +25,24 @@ export const BuyBlock = ({ plan, buyable }: Props) => {
   const [state, setState] = useState<"idle" | "pending" | "failed">("idle");
   const pending = state === "pending";
 
+  const inFlight = useRef<AbortController | null>(null);
+
   useEffect(() => {
     const reset = () => setState("idle");
     window.addEventListener("pageshow", reset);
-    return () => window.removeEventListener("pageshow", reset);
+    return () => {
+      window.removeEventListener("pageshow", reset);
+      // Leaving the page mid-request must not yank the buyer to Stripe later.
+      inFlight.current?.abort();
+    };
   }, []);
 
   const buy = async () => {
+    const controller = new AbortController();
+    inFlight.current = controller;
     setState("pending");
-    const result = await startCheckout(plan.slug);
+    const result = await startCheckout(plan.slug, controller.signal);
+    if (controller.signal.aborted) return;
     if (result.ok) window.location.assign(result.url);
     else setState("failed");
   };

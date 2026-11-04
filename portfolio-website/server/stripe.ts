@@ -15,7 +15,9 @@ let clientKey: string | undefined;
 
 export const getStripe = (secretKey: string): Stripe => {
   if (!client || clientKey !== secretKey) {
-    client = new Stripe(secretKey, { apiVersion: STRIPE_API_VERSION });
+    // Bounded so a slow Stripe call fails fast inside the webhook's ~10s
+    // budget (Checkout waits on it) and Stripe's own retry takes over.
+    client = new Stripe(secretKey, { apiVersion: STRIPE_API_VERSION, timeout: 8000, maxNetworkRetries: 1 });
     clientKey = secretKey;
   }
   return client;

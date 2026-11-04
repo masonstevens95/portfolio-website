@@ -27,12 +27,17 @@ export const interpretCheckoutResponse = (status: number, body: unknown): Checko
   }
 };
 
-export const startCheckout = async (slug: string): Promise<CheckoutResult> => {
+const REQUEST_TIMEOUT_MS = 15000;
+
+/** Fails (rather than hanging) after REQUEST_TIMEOUT_MS or when `signal` aborts. */
+export const startCheckout = async (slug: string, signal?: AbortSignal): Promise<CheckoutResult> => {
+  const timeout = AbortSignal.timeout(REQUEST_TIMEOUT_MS);
   try {
     const response = await fetch("/api/checkout", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ slug }),
+      signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
     });
     const body = await response.json().catch(() => null);
     return interpretCheckoutResponse(response.status, body);
