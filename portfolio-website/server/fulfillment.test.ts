@@ -2,8 +2,11 @@ import { describe, it, expect } from "vitest";
 import type { Plan } from "../src/data/plans.js";
 import {
   evaluateEligibility,
+  fulfillSession,
+  isHandledEvent,
   isValidSessionId,
   ACCESS_WINDOW_MS,
+  type FulfillDeps,
   type SessionFacts,
 } from "./fulfillment.js";
 
@@ -172,5 +175,114 @@ describe("isValidSessionId", () => {
   it("accepts longer IDs than today's, since Stripe may lengthen them", () => {
     expect(isValidSessionId(`cs_test_${"a".repeat(200)}`, "test")).toBe(true);
     expect(isValidSessionId(`cs_test_${"a".repeat(400)}`, "test")).toBe(false);
+  });
+});
+
+describe("fulfillSession", () => {
+  const paidSession = (piMetadata: Record<string, string> = {}): SessionFacts => ({
+    ...session(),
+    customer_details: { email: "buyer@example.com" },
+    payment_intent: { id: "pi_1", metadata: piMetadata, latest_charge: charge() },
+  });
+
+  const harness = (s: SessionFacts, overrides: Partial<FulfillDeps> = {}) => {
+    const calls = { sent: [] as unknown[], marked: [] as string[] };
+    const deps: FulfillDeps = {
+      retrieve: async () => s,
+      sendEmail: async (email) => {
+        calls.sent.push(email);
+      },
+      markFulfilled: async (paymentIntentId) => {
+        calls.marked.push(paymentIntentId);
+      },
+      now: () => NOW,
+      mode: "test",
+      siteUrl: "https://masonstevens.dev",
+      catalog,
+      ...overrides,
+    };
+    return { deps, calls };
+  };
+
+  it("sends one email with an idempotency key and a thanks-page link, then marks it", async () => {
+    const { deps, calls } = harness(paidSession());
+    expect(await fulfillSession("cs_test_abc", deps)).toEqual({ kind: "sent" });
+    expect(calls.sent).toEqual([
+      {
+        to: "buyer@example.com",
+        planTitle: "shed",
+        thanksUrl: "https://masonstevens.dev/plans/thanks?session_id=cs_test_abc",
+        idempotencyKey: "plan-download/cs_test_abc",
+      },
+    ]);
+    expect(calls.marked).toEqual(["pi_1"]);
+  });
+
+  it("never puts a signed file URL in the email", async () => {
+    const { deps, calls } = harness(paidSession());
+    await fulfillSession("cs_test_abc", deps);
+    expect(JSON.stringify(calls.sent)).not.toMatch(/blob|presign|\.pdf/i);
+  });
+
+  it("does nothing for a session already marked fulfilled", async () => {
+    const { deps, calls } = harness(paidSession({ fulfilled_at: "2026-11-03T00:00:00Z" }));
+    expect(await fulfillSession("cs_test_abc", deps)).toEqual({ kind: "already_sent" });
+    expect(calls.sent).toEqual([]);
+  });
+
+  it("waits on an unpaid session without asking for a retry", async () => {
+    const { deps, calls } = harness({ ...paidSession(), payment_status: "unpaid" });
+    expect(await fulfillSession("cs_test_abc", deps)).toEqual({ kind: "skipped", reason: "processing" });
+    expect(calls.sent).toEqual([]);
+  });
+
+  it("sends nothing for refunded, disputed or unknown purchases", async () => {
+    const refunded = { ...paidSession(), payment_intent: { id: "pi_1", metadata: {}, latest_charge: charge({ refunded: true, amount_refunded: 2900 }) } };
+    const disputed = { ...paidSession(), payment_intent: { id: "pi_1", metadata: {}, latest_charge: charge({ disputed: true }) } };
+    const unknown = { ...paidSession(), line_items: { data: [{ price: { id: "price_other" } }] } };
+    for (const [s, reason] of [[refunded, "refunded"], [disputed, "disputed"], [unknown, "unknown_purchase"]] as const) {
+      const { deps, calls } = harness(s);
+      expect(await fulfillSession("cs_test_abc", deps)).toEqual({ kind: "skipped", reason });
+      expect(calls.sent).toEqual([]);
+    }
+  });
+
+  it("skips (and does not retry) a paid session with no email address", async () => {
+    const { deps } = harness({ ...paidSession(), customer_details: null });
+    expect(await fulfillSession("cs_test_abc", deps)).toEqual({ kind: "skipped", reason: "no_email" });
+  });
+
+  it("leaves the session unmarked and retryable when sending fails", async () => {
+    const { deps, calls } = harness(paidSession(), {
+      sendEmail: async () => {
+        throw new Error("resend down");
+      },
+    });
+    await expect(fulfillSession("cs_test_abc", deps)).rejects.toThrow("resend down");
+    expect(calls.marked).toEqual([]);
+  });
+
+  it("is retryable when marking fails after a send, and the retry reuses the same key", async () => {
+    let failMark = true;
+    const { deps, calls } = harness(paidSession(), {
+      markFulfilled: async (id) => {
+        if (failMark) throw new Error("stripe down");
+        calls.marked.push(id);
+      },
+    });
+    await expect(fulfillSession("cs_test_abc", deps)).rejects.toThrow("stripe down");
+    failMark = false;
+    await fulfillSession("cs_test_abc", deps);
+    const keys = calls.sent.map((e) => (e as { idempotencyKey: string }).idempotencyKey);
+    expect(keys).toEqual(["plan-download/cs_test_abc", "plan-download/cs_test_abc"]);
+  });
+});
+
+describe("isHandledEvent", () => {
+  it("handles only completed and async-succeeded checkout events", () => {
+    expect(isHandledEvent("checkout.session.completed")).toBe(true);
+    expect(isHandledEvent("checkout.session.async_payment_succeeded")).toBe(true);
+    expect(isHandledEvent("checkout.session.expired")).toBe(false);
+    expect(isHandledEvent("charge.refunded")).toBe(false);
   });
 });

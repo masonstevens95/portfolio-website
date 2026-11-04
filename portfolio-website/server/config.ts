@@ -81,3 +81,15 @@ export const loadStripeConfig = (env: Env = process.env): StripeConfig => {
     siteUrl: resolveSiteUrl(env),
   };
 };
+
+export interface EmailConfig {
+  apiKey: string;
+  from: string;
+}
+
+/** Validated only where email is used (the webhook), so checkout and
+ *  downloads keep working on a deployment without email configured. */
+export const loadEmailConfig = (env: Env = process.env): EmailConfig => {
+  requireVars(env, ["RESEND_API_KEY", "EMAIL_FROM"]);
+  return { apiKey: env.RESEND_API_KEY!, from: env.EMAIL_FROM! };
+};

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { loadStripeConfig, resolveSiteUrl, ConfigError } from "./config.js";
+import { loadStripeConfig, loadEmailConfig, resolveSiteUrl, ConfigError } from "./config.js";
 
 const base = {
   STRIPE_SECRET_KEY: "rk_test_abc",
@@ -51,5 +51,15 @@ describe("resolveSiteUrl", () => {
   it("uses SITE_URL or localhost in local development", () => {
     expect(resolveSiteUrl({})).toBe("http://localhost:3000");
     expect(resolveSiteUrl({ SITE_URL: "http://localhost:5173" })).toBe("http://localhost:5173");
+  });
+});
+
+describe("loadEmailConfig", () => {
+  it("names missing email variables without touching Stripe config", () => {
+    expect(() => loadEmailConfig({})).toThrow(/RESEND_API_KEY.*EMAIL_FROM/);
+    expect(loadEmailConfig({ RESEND_API_KEY: "re_x", EMAIL_FROM: "Plans <plans@masonstevens.dev>" })).toEqual({
+      apiKey: "re_x",
+      from: "Plans <plans@masonstevens.dev>",
+    });
   });
 });

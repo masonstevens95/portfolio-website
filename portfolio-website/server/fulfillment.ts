@@ -52,6 +52,7 @@ export interface SessionFacts {
   created: number;
   payment_status: string;
   metadata?: Record<string, string> | null;
+  customer_details?: { email?: string | null } | null;
   line_items?: { data: { price: { id: string } | null }[] } | null;
   payment_intent:
     | string
@@ -98,3 +99,72 @@ export const evaluateEligibility = (
  */
 export const isValidSessionId = (id: string | null | undefined, mode: StripeMode): id is string =>
   typeof id === "string" && new RegExp(`^cs_${mode}_[A-Za-z0-9_]{1,255}$`).test(id);
+
+/* --- Webhook orchestration ------------------------------------------------
+
+   eligibility → already marked? → send email → mark PaymentIntent
+
+   Duplicate protection without a database:
+     - Resend idempotency key per session covers concurrent and short-window
+       (24h) webhook retries.
+     - fulfilled_at on the PaymentIntent's metadata covers Stripe's retries
+       for up to 3 days.
+   Accepted residual: if marking keeps failing for over 24h after a
+   successful send, a late retry can send a second email.
+
+   Thrown errors mean "retry" (the webhook returns 5xx). Returned outcomes
+   mean "done, do not retry", including expected ineligibility.
+   ------------------------------------------------------------------------ */
+
+export const HANDLED_EVENTS = [
+  "checkout.session.completed",
+  "checkout.session.async_payment_succeeded",
+] as const;
+
+export const isHandledEvent = (type: string): boolean =>
+  (HANDLED_EVENTS as readonly string[]).includes(type);
+
+export interface DownloadEmail {
+  to: string;
+  planTitle: string;
+  /** Durable link to the thanks page. Never a raw signed file URL. */
+  thanksUrl: string;
+  idempotencyKey: string;
+}
+
+export interface FulfillDeps {
+  retrieve: (sessionId: string) => Promise<SessionFacts>;
+  sendEmail: (email: DownloadEmail) => Promise<void>;
+  markFulfilled: (paymentIntentId: string) => Promise<void>;
+  now: () => number;
+  mode: StripeMode;
+  siteUrl: string;
+  catalog?: Plan[];
+}
+
+export type FulfillOutcome =
+  | { kind: "sent" }
+  | { kind: "already_sent" }
+  | { kind: "skipped"; reason: IneligibleReason | "no_email" };
+
+export const fulfillSession = async (sessionId: string, deps: FulfillDeps): Promise<FulfillOutcome> => {
+  const session = await deps.retrieve(sessionId);
+  const result = evaluateEligibility(session, { now: deps.now(), mode: deps.mode, catalog: deps.catalog });
+  if (!result.eligible) return { kind: "skipped", reason: result.reason };
+
+  // Eligibility already guaranteed an expanded PaymentIntent.
+  const pi = session.payment_intent as Exclude<SessionFacts["payment_intent"], string | null>;
+  if (pi.metadata.fulfilled_at) return { kind: "already_sent" };
+
+  const to = session.customer_details?.email;
+  if (!to) return { kind: "skipped", reason: "no_email" };
+
+  await deps.sendEmail({
+    to,
+    planTitle: result.plan.title,
+    thanksUrl: `${deps.siteUrl}/plans/thanks?session_id=${encodeURIComponent(session.id)}`,
+    idempotencyKey: `plan-download/${session.id}`,
+  });
+  await deps.markFulfilled(pi.id);
+  return { kind: "sent" };
+};
