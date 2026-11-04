@@ -5,13 +5,13 @@
   a bordered ink block.
 
   NOTE: the previous version shipped a live `mailto:youremail@example.com`
-  placeholder. CONTACT_EMAIL below is the one line to change if a different
+  placeholder. CONTACT_EMAIL in src/data/site.ts is the one line to change if a different
   address should be public.
 */
 
 import { SectionHead } from "../broadside";
+import { CONTACT_EMAIL } from "../../data/site";
 
-const CONTACT_EMAIL = "mason.c.stevens@gmail.com";
 const GITHUB = "https://github.com/masonstevens95";
 const LINKEDIN = "https://www.linkedin.com/in/masonstevens95/";
 

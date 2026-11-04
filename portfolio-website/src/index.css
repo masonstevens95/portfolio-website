@@ -88,3 +88,10 @@ body::after {
   font-weight: 800;
   letter-spacing: 0.04em;
 }
+
+/* Keyboard focus is a printed hairline, not a glow. Ink outline, square
+   corners, offset so it never sits on top of a frame rule. */
+:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 3px;
+}

@@ -13,10 +13,19 @@ import { DoubleRule, Rule } from "../components/broadside";
 interface Props {
   title?: string;
   subtitle?: string;
+  /** Where the sticky back button goes. Defaults to the home page. */
+  backTo?: string;
+  backLabel?: string;
   children: React.ReactNode;
 }
 
-export const ProjectPageTemplate = ({ title, subtitle, children }: Props) => {
+export const ProjectPageTemplate = ({
+  title,
+  subtitle,
+  backTo = "/",
+  backLabel = "Back to Home",
+  children,
+}: Props) => {
   const navigate = useNavigate();
 
   return (
@@ -30,11 +39,11 @@ export const ProjectPageTemplate = ({ title, subtitle, children }: Props) => {
           style={{ maxWidth: "var(--maxw)" }}
         >
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate(backTo)}
             className="label flex items-center gap-2 hover:underline"
           >
             <FaArrowLeft className="w-3 h-3" aria-hidden="true" />
-            Back to Home
+            {backLabel}
           </button>
         </div>
         <Rule weight="heavy" />

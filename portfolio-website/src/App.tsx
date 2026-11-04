@@ -14,6 +14,8 @@ import { VoiceGardenPage } from "./pages/projectPages/VoiceGardenPage";
 import { VicSavePage } from "./pages/projectPages/VicSavePage";
 import { HortibasePage } from "./pages/projectPages/HortibasePage";
 import { SingleLineDrawerPage } from "./pages/projectPages/SingleLineDrawerPage";
+import { PlansIndexPage } from "./pages/plans/PlansIndexPage";
+import { PlanDetailPage } from "./pages/plans/PlanDetailPage";
 
 function App() {
   const location = useLocation();
@@ -24,6 +26,8 @@ function App() {
         <Routes location={location} key={location.pathname}>
         <Route path="/" element={<HomePage />} />
         <Route path="/projects" element={<ProjectsIndexPage />} />
+        <Route path="/plans" element={<PlansIndexPage />} />
+        <Route path="/plans/:slug" element={<PlanDetailPage />} />
         <Route path="/projects/yarden-diy" element={<YardenPage />} />
         <Route path="/projects/garibaldi" element={<GaribaldiPage />} />
         <Route
