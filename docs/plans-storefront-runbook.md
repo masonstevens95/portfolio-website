@@ -140,14 +140,14 @@ Run all of these on the preview branch alias in test mode before adding any live
 
 **A buyer lost their email.** Find the payment by email in the Stripe Dashboard and open its Checkout Session. Send them `https://masonstevens.dev/plans/thanks?session_id=<cs_live_…>`. Access lasts 30 days from purchase.
 
-**Refunds and disputes.** Refund in the Dashboard as usual. Fully refunded or disputed purchases stop issuing links automatically. Partial refunds keep access.
+**Refunds and disputes.** Refund in the Dashboard as usual. Fully refunded or disputed purchases stop issuing links automatically. Partial refunds keep access. A dispute ends access permanently, even one you win, because Stripe keeps the charge flagged as disputed. If you win and want to restore access, email the buyer the files directly.
 
 **Something's wrong at checkout.** Search the Vercel logs for `checkout.refused`:
 - `price_mismatch`: the Stripe Price's amount, currency, tax behavior or active flag doesn't match the catalog.
 - `mode_mismatch`: the plan has a Price ID only for the other mode.
 - `not_for_sale`: no current Price ID for this mode.
 
-**Webhook failures.** Stripe Dashboard → Webhooks shows failed deliveries, and Stripe retries for 3 days. Search the Vercel logs for `webhook.retryable_error`.
+**Webhook failures.** Stripe Dashboard → Webhooks shows failed deliveries, and Stripe retries for 3 days. Search the Vercel logs for `webhook.retryable_error`. A delivery that keeps failing with "matches no plan" means someone paid for a Price ID the deployed catalog doesn't accept, usually a deploy that dropped or changed it. Fix the catalog and Stripe's retry will send the email. Logs show only the last 6 characters of session IDs, which is enough to find the session in the Dashboard.
 
 **Rotating keys.**
 1. Create a new restricted key.

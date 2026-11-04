@@ -7,7 +7,9 @@
 
   The session id is a bearer token for 30 days, so it is read once and then
   stripped from the address bar, the page loads nothing third-party, and the
-  route is served with Referrer-Policy: no-referrer (vercel.json).
+  route is served with Referrer-Policy: no-referrer (vercel.json). It is kept
+  in sessionStorage (this tab only) so a reload or Back still finds the
+  purchase.
 
   Signed links last about 10 minutes. When they lapse the list is marked
   expired and Refresh fetches fresh ones; the buyer never lands on a raw
@@ -36,6 +38,11 @@ const OUTCOMES: Record<Exclude<Status, "eligible">, { heading: string; body: str
     heading: "Payment still settling",
     body: "Your payment hasn't cleared yet. This page and your email will have the files as soon as it does.",
     action: "refresh",
+  },
+  payment_failed: {
+    heading: "Payment didn't go through",
+    body: "Your bank declined or reversed the payment, so nothing was charged. You can try again from the plan page, or write to me.",
+    action: "contact",
   },
   expired: {
     heading: "This link has expired",
@@ -71,7 +78,18 @@ const OUTCOMES: Record<Exclude<Status, "eligible">, { heading: string; body: str
 
 type PageData = Omit<DownloadResponse, "status"> & { status: Status };
 
-const readSessionId = (): string | null => new URLSearchParams(window.location.search).get("session_id");
+const SESSION_KEY = "plans.session_id";
+
+/** From the URL on arrival; from this tab's sessionStorage after a reload. */
+const readSessionId = (): string | null => {
+  const fromUrl = new URLSearchParams(window.location.search).get("session_id");
+  try {
+    if (fromUrl) sessionStorage.setItem(SESSION_KEY, fromUrl);
+    return fromUrl ?? sessionStorage.getItem(SESSION_KEY);
+  } catch {
+    return fromUrl; // storage blocked: still works for this load
+  }
+};
 
 export const PlanThanksPage = () => {
   const [sessionId] = useState(readSessionId);

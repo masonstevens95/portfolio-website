@@ -21,7 +21,7 @@ import { loadEmailConfig, loadStripeConfig } from "../server/config.js";
 import { getStripe } from "../server/stripe.js";
 import { fulfillSession, isHandledEvent, SESSION_EXPAND } from "../server/fulfillment.js";
 import { sendDownloadEmail } from "../server/email.js";
-import { errorMessage, json, log } from "../server/http.js";
+import { errorMessage, json, log, redactId } from "../server/http.js";
 
 export async function POST(request: Request): Promise<Response> {
   let config;
@@ -66,12 +66,12 @@ export async function POST(request: Request): Promise<Response> {
       siteUrl: config.siteUrl,
     });
 
-    log("webhook.fulfilled", { eventId: event.id, type: event.type, sessionId, ...outcome });
+    log("webhook.fulfilled", { eventId: event.id, type: event.type, sessionId: redactId(sessionId), ...outcome });
     return json(200, { received: true });
   } catch (error) {
     log("webhook.retryable_error", {
       eventId: event.id,
-      sessionId,
+      sessionId: redactId(sessionId),
       message: errorMessage(error),
     });
     return json(500, { received: false });

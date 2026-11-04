@@ -65,9 +65,9 @@ export const sendDownloadEmail = async (config: EmailConfig, email: DownloadEmai
     SEND_TIMEOUT_MS
   );
 
-  // The same key is already being sent by a concurrent delivery: that send
-  // owns it, so this one counts as done.
-  if (error && error.name !== "concurrent_idempotent_requests") {
-    throw new Error(`Resend ${error.name}: ${error.message}`);
-  }
+  // Any error, including "concurrent_idempotent_requests" (another delivery
+  // holds this key and hasn't finished), means this delivery has NOT
+  // confirmed a send. Throw so the caller doesn't mark the session fulfilled;
+  // Stripe retries, and the idempotency key returns the original result.
+  if (error) throw new Error(`Resend ${error.name}: ${error.message}`);
 };

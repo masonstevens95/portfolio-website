@@ -11,6 +11,7 @@
 
 export const INELIGIBLE_REASONS = [
   "processing",
+  "payment_failed",
   "expired",
   "refunded",
   "disputed",

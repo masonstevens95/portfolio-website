@@ -49,9 +49,18 @@ export interface SessionFacts {
   line_items?: { data: { price: { id: string } | null }[] } | null;
   payment_intent:
     | string
-    | { id: string; metadata: Record<string, string>; latest_charge: string | ChargeFacts | null }
+    | {
+        id: string;
+        /** e.g. processing, succeeded, requires_payment_method (a delayed payment that failed). */
+        status?: string;
+        metadata: Record<string, string>;
+        latest_charge: string | ChargeFacts | null;
+      }
     | null;
 }
+
+/** PaymentIntent states that mean a delayed payment will not complete. */
+const FAILED_PAYMENT_STATUSES = new Set(["requires_payment_method", "canceled"]);
 
 const latestCharge = (session: SessionFacts): ChargeFacts | null => {
   const pi = session.payment_intent;
@@ -64,7 +73,11 @@ export const evaluateEligibility = (
   session: SessionFacts,
   { now, mode, catalog }: { now: number; mode: StripeMode; catalog?: Plan[] }
 ): Eligibility => {
-  if (session.payment_status === "unpaid") return { eligible: false, reason: "processing" };
+  if (session.payment_status === "unpaid") {
+    const pi = session.payment_intent;
+    const failed = typeof pi === "object" && pi !== null && FAILED_PAYMENT_STATUSES.has(pi.status ?? "");
+    return { eligible: false, reason: failed ? "payment_failed" : "processing" };
+  }
   if (session.payment_status !== "paid") return { eligible: false, reason: "unknown_purchase" };
 
   const items = session.line_items?.data ?? [];
@@ -145,10 +158,27 @@ export type FulfillOutcome =
   | { kind: "already_sent" }
   | { kind: "skipped"; reason: IneligibleReason | "no_email" };
 
+/** Thrown when a buyer has paid but we can't fulfil yet; the webhook turns it into a 5xx so Stripe retries. */
+export class RetryableFulfillmentError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "RetryableFulfillmentError";
+  }
+}
+
 export const fulfillSession = async (sessionId: string, deps: FulfillDeps): Promise<FulfillOutcome> => {
   const session = await deps.retrieve(sessionId);
   const result = evaluateEligibility(session, { now: deps.now(), mode: deps.mode, catalog: deps.catalog });
-  if (!result.eligible) return { kind: "skipped", reason: result.reason };
+  if (!result.eligible) {
+    // Someone paid and we can't match it (catalog/deploy skew, missing
+    // expansion). That's our fault, not theirs: retry for Stripe's 3-day
+    // window, which also surfaces as failed deliveries in the Dashboard,
+    // instead of silently dropping their only email.
+    if (result.reason === "unknown_purchase" && session.payment_status === "paid") {
+      throw new RetryableFulfillmentError(`Paid session ${sessionId.slice(-6)} matches no plan`);
+    }
+    return { kind: "skipped", reason: result.reason };
+  }
 
   // Eligibility already guaranteed an expanded PaymentIntent.
   const pi = session.payment_intent as Exclude<SessionFacts["payment_intent"], string | null>;

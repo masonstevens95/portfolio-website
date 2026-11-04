@@ -16,7 +16,7 @@ import { getStripe } from "../server/stripe.js";
 import { evaluateEligibility, isValidSessionId, SESSION_EXPAND, type SessionFacts } from "../server/fulfillment.js";
 import { signFiles } from "../server/blob.js";
 import type { DownloadResponse } from "../src/data/purchase.js";
-import { errorMessage, json, log } from "../server/http.js";
+import { errorMessage, json, log, redactId } from "../server/http.js";
 
 export async function GET(request: Request): Promise<Response> {
   const sessionId = new URL(request.url).searchParams.get("session_id");
@@ -40,15 +40,15 @@ export async function GET(request: Request): Promise<Response> {
     });
 
     if (!result.eligible) {
-      log("download.ineligible", { sessionId, reason: result.reason });
+      log("download.ineligible", { sessionId: redactId(sessionId), reason: result.reason });
       return json(200, { status: result.reason });
     }
 
     const { files, expiresAt } = await signFiles(result.files);
-    log("download.issued", { sessionId, slug: result.plan.slug, files: files.length });
+    log("download.issued", { sessionId: redactId(sessionId), slug: result.plan.slug, files: files.length });
     return json(200, { status: "eligible", plan: { title: result.plan.title }, files, expiresAt } satisfies DownloadResponse);
   } catch (error) {
-    log("download.error", { sessionId, message: errorMessage(error) });
+    log("download.error", { sessionId: redactId(sessionId), message: errorMessage(error) });
     return json(500, { status: "error" });
   }
 }

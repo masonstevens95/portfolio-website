@@ -11,6 +11,17 @@ export const json = (status: number, body: unknown, headers: Record<string, stri
     headers: { "content-type": "application/json", "cache-control": "no-store", ...headers },
   });
 
+/**
+ * Checkout Session ids are 30-day download credentials, so logs keep only
+ * the mode prefix and last 6 characters: enough to find the session in the
+ * Stripe Dashboard, useless as a token.
+ */
+export const redactId = (id: string | null | undefined): string | null => {
+  if (!id) return null;
+  const prefix = /^cs_(test|live)_/.exec(id)?.[0] ?? "";
+  return `${prefix}…${id.slice(-6)}`;
+};
+
 export const errorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
 

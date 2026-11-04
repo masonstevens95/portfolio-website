@@ -12,7 +12,7 @@
 import { loadStripeConfig } from "../server/config.js";
 import { getStripe } from "../server/stripe.js";
 import { buildSessionParams, resolveCheckoutPrice, verifyPrice } from "../server/checkout.js";
-import { errorMessage, json, log } from "../server/http.js";
+import { errorMessage, json, log, redactId } from "../server/http.js";
 
 const REFUSED = { error: "This plan can't be bought right now." };
 
@@ -58,7 +58,7 @@ export async function POST(request: Request): Promise<Response> {
     );
     if (!session.url) throw new Error("Stripe returned a session without a url");
 
-    log("checkout.created", { slug, sessionId: session.id });
+    log("checkout.created", { slug, sessionId: redactId(session.id) });
     return json(200, { url: session.url });
   } catch (error) {
     log("checkout.error", { slug, message: errorMessage(error) });

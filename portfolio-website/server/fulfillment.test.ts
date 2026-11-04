@@ -5,6 +5,7 @@ import {
   fulfillSession,
   isHandledEvent,
   isValidSessionId,
+  RetryableFulfillmentError,
   ACCESS_WINDOW_MS,
   type FulfillDeps,
   type SessionFacts,
@@ -86,6 +87,21 @@ describe("evaluateEligibility", () => {
 
   it("reports an unpaid (delayed method) session as processing", () => {
     expect(evaluate(session({ payment_status: "unpaid" }))).toEqual({ eligible: false, reason: "processing" });
+    const pending = { id: "pi_1", status: "processing", metadata: {}, latest_charge: null };
+    expect(evaluate(session({ payment_status: "unpaid", payment_intent: pending }))).toEqual({
+      eligible: false,
+      reason: "processing",
+    });
+  });
+
+  it("reports a delayed payment that failed, instead of settling forever", () => {
+    for (const status of ["requires_payment_method", "canceled"]) {
+      const pi = { id: "pi_1", status, metadata: {}, latest_charge: null };
+      expect(evaluate(session({ payment_status: "unpaid", payment_intent: pi }))).toEqual({
+        eligible: false,
+        reason: "payment_failed",
+      });
+    }
   });
 
   it("does not treat no_payment_required as paid", () => {
@@ -236,15 +252,33 @@ describe("fulfillSession", () => {
     expect(calls.sent).toEqual([]);
   });
 
-  it("sends nothing for refunded, disputed or unknown purchases", async () => {
+  it("sends nothing for refunded or disputed purchases, and does not retry", async () => {
     const refunded = { ...paidSession(), payment_intent: { id: "pi_1", metadata: {}, latest_charge: charge({ refunded: true, amount_refunded: 2900 }) } };
     const disputed = { ...paidSession(), payment_intent: { id: "pi_1", metadata: {}, latest_charge: charge({ disputed: true }) } };
-    const unknown = { ...paidSession(), line_items: { data: [{ price: { id: "price_other" } }] } };
-    for (const [s, reason] of [[refunded, "refunded"], [disputed, "disputed"], [unknown, "unknown_purchase"]] as const) {
+    for (const [s, reason] of [[refunded, "refunded"], [disputed, "disputed"]] as const) {
       const { deps, calls } = harness(s);
       expect(await fulfillSession("cs_test_abc", deps)).toEqual({ kind: "skipped", reason });
       expect(calls.sent).toEqual([]);
     }
+  });
+
+  it("retries (rather than dropping the email) when a paid session matches no plan", async () => {
+    const unknown = { ...paidSession(), line_items: { data: [{ price: { id: "price_other" } }] } };
+    const { deps, calls } = harness(unknown);
+    await expect(fulfillSession("cs_test_abc", deps)).rejects.toBeInstanceOf(RetryableFulfillmentError);
+    expect(calls.sent).toEqual([]);
+    expect(calls.marked).toEqual([]);
+  });
+
+  it("does not retry a failed delayed payment", async () => {
+    const failed = {
+      ...paidSession(),
+      payment_status: "unpaid",
+      payment_intent: { id: "pi_1", status: "requires_payment_method", metadata: {}, latest_charge: null },
+    };
+    const { deps, calls } = harness(failed);
+    expect(await fulfillSession("cs_test_abc", deps)).toEqual({ kind: "skipped", reason: "payment_failed" });
+    expect(calls.sent).toEqual([]);
   });
 
   it("skips (and does not retry) a paid session with no email address", async () => {
