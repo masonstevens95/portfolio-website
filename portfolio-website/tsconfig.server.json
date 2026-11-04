@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.server.tsbuildinfo",
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "types": ["node"],
+
+    /* Vercel runs api/*.ts as native ESM (package.json "type": "module"),
+       transpiled, not bundled. NodeNext makes tsc demand the explicit .js
+       extensions that Node needs at runtime, so a missing one fails here
+       instead of as ERR_MODULE_NOT_FOUND on the first deploy. */
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+    "noEmit": true,
+
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["api", "server"]
+}
