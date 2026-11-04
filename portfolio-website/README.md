@@ -4,9 +4,9 @@ Vite + React SPA on Vercel, with a small set of Vercel functions for the plans s
 
 ## Commands
 
-- `npm run dev`: the site only (no `/api`). Plans render, and Buy is hidden unless `VITE_STRIPE_MODE` is set.
+- `npm run dev`: the site only (no `/api`). Plans render, and Buy shows only when a `STRIPE_SECRET_KEY` is in the environment (its prefix sets the mode).
 - `npm test`: vitest (catalog, server logic, brand guardrail).
-- `npm run build`: typechecks `src/`, `vite.config.ts`, and `api/` + `server/`, then builds. Fails if `VITE_STRIPE_MODE` disagrees with the Stripe key.
+- `npm run build`: typechecks `src/`, `vite.config.ts`, and `api/` + `server/`, then builds. The SPA's Stripe mode is inlined from the key's prefix; the key itself is never bundled.
 
 ## Plans storefront
 

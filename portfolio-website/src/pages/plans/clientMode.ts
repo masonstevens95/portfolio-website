@@ -1,12 +1,13 @@
 /*
-  The Stripe mode this SPA build was made for. Decides only whether a Buy
-  action is shown; the server is authoritative and refuses anyway.
-
-  vite.config.ts fails the build when this disagrees with the Stripe key, so
-  in a deployed build it cannot silently drift. Unset (plain local dev) means
-  nothing is buyable.
+  The Stripe mode this SPA build was made for, inlined by vite.config.ts from
+  the same key the server uses, so the two cannot disagree. Decides only
+  whether a Buy action is shown; the server is authoritative and refuses
+  anyway. No key at build time (plain local dev) means nothing is buyable.
 */
 
-import { parseMode } from "../../data/stripeMode";
+import { isBuyable, type Plan, type StripeMode } from "../../data/plans";
 
-export const CLIENT_MODE = parseMode(import.meta.env.VITE_STRIPE_MODE);
+export const CLIENT_MODE: StripeMode | null = __STRIPE_MODE__;
+
+export const isBuyableHere = (plan: Plan): boolean =>
+  CLIENT_MODE !== null && isBuyable(plan, CLIENT_MODE);

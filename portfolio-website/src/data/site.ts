@@ -7,3 +7,6 @@
 
 /** Public contact address, and the support reply-to for plan buyers. */
 export const CONTACT_EMAIL = "mason.c.stevens@gmail.com";
+
+export const mailtoContact = (subject?: string): string =>
+  `mailto:${CONTACT_EMAIL}${subject ? `?subject=${encodeURIComponent(subject)}` : ""}`;

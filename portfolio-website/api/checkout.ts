@@ -12,7 +12,7 @@
 import { loadStripeConfig } from "../server/config.js";
 import { getStripe } from "../server/stripe.js";
 import { buildSessionParams, resolveCheckoutPrice, verifyPrice } from "../server/checkout.js";
-import { json, log } from "../server/http.js";
+import { errorMessage, json, log } from "../server/http.js";
 
 const REFUSED = { error: "This plan can't be bought right now." };
 
@@ -61,7 +61,7 @@ export async function POST(request: Request): Promise<Response> {
     log("checkout.created", { slug, sessionId: session.id });
     return json(200, { url: session.url });
   } catch (error) {
-    log("checkout.error", { slug, message: error instanceof Error ? error.message : String(error) });
+    log("checkout.error", { slug, message: errorMessage(error) });
     return json(500, { error: "Checkout is unavailable. Please try again." });
   }
 }

@@ -12,8 +12,7 @@
 
 import { issueSignedToken, presignUrl } from "@vercel/blob";
 import type { PlanFile } from "../src/data/plans.js";
-
-export const DOWNLOAD_URL_TTL_MS = 10 * 60 * 1000;
+import { DOWNLOAD_URL_TTL_MS } from "../src/data/purchase.js";
 
 export interface SignedFile {
   label: string;

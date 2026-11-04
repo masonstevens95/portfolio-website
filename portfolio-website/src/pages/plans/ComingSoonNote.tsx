@@ -3,7 +3,7 @@
   hear about it, rather than showing a storefront with nothing to do.
 */
 
-import { CONTACT_EMAIL } from "../../data/site";
+import { mailtoContact } from "../../data/site";
 
 interface Props {
   /** Plan-specific wording on a detail page; generic on the index. */
@@ -15,9 +15,7 @@ export const ComingSoonNote = ({ planTitle }: Props) => (
     {planTitle ? `The ${planTitle} plans are` : "Plans are"} being drawn alongside the
     build videos and aren&rsquo;t for sale yet.{" "}
     <a
-      href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
-        planTitle ? `Plans: ${planTitle}` : "Plans"
-      )}`}
+      href={mailtoContact(planTitle ? `Plans: ${planTitle}` : "Plans")}
       className="underline"
     >
       Write to me

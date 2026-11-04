@@ -20,19 +20,12 @@ import {
   type PlanFile,
   type StripeMode,
 } from "../src/data/plans.js";
+import { ACCESS_WINDOW_MS, thanksUrl, type IneligibleReason } from "../src/data/purchase.js";
 
-/** A paid session grants downloads for this long after it was created. */
-export const ACCESS_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
+export { ACCESS_WINDOW_MS, type IneligibleReason };
 
 /** Expansions every caller must request so eligibility can see refunds and disputes. */
 export const SESSION_EXPAND = ["line_items", "payment_intent.latest_charge"];
-
-export type IneligibleReason =
-  | "processing"
-  | "expired"
-  | "refunded"
-  | "disputed"
-  | "unknown_purchase";
 
 export type Eligibility =
   | { eligible: true; plan: Plan; files: PlanFile[] }
@@ -97,8 +90,13 @@ export const evaluateEligibility = (
  * mode; the body is checked for charset and a generous ceiling only, since
  * Stripe does not guarantee ID lengths.
  */
+const SESSION_ID_PATTERN: Record<StripeMode, RegExp> = {
+  test: /^cs_test_[A-Za-z0-9_]{1,255}$/,
+  live: /^cs_live_[A-Za-z0-9_]{1,255}$/,
+};
+
 export const isValidSessionId = (id: string | null | undefined, mode: StripeMode): id is string =>
-  typeof id === "string" && new RegExp(`^cs_${mode}_[A-Za-z0-9_]{1,255}$`).test(id);
+  typeof id === "string" && SESSION_ID_PATTERN[mode].test(id);
 
 /* --- Webhook orchestration ------------------------------------------------
 
@@ -162,7 +160,7 @@ export const fulfillSession = async (sessionId: string, deps: FulfillDeps): Prom
   await deps.sendEmail({
     to,
     planTitle: result.plan.title,
-    thanksUrl: `${deps.siteUrl}/plans/thanks?session_id=${encodeURIComponent(session.id)}`,
+    thanksUrl: thanksUrl(deps.siteUrl, session.id),
     idempotencyKey: `plan-download/${session.id}`,
   });
   await deps.markFulfilled(pi.id);

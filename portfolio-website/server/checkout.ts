@@ -15,6 +15,7 @@
 */
 
 import { findPlanBySlug, isBuyable, type Plan, type StripeMode } from "../src/data/plans.js";
+import { thanksUrl } from "../src/data/purchase.js";
 
 export type CheckoutRefusal = "unknown_plan" | "not_for_sale" | "mode_mismatch" | "price_mismatch";
 
@@ -63,7 +64,7 @@ export const buildSessionParams = (plan: Plan, priceId: string, siteUrl: string)
   // Built by concatenation so the {CHECKOUT_SESSION_ID} placeholder stays
   // literal — URL builders would percent-encode the braces and Stripe would
   // not substitute it.
-  success_url: `${siteUrl}/plans/thanks?session_id={CHECKOUT_SESSION_ID}`,
+  success_url: thanksUrl(siteUrl, "{CHECKOUT_SESSION_ID}"),
   cancel_url: `${siteUrl}/plans/${plan.slug}`,
   automatic_tax: { enabled: true },
   billing_address_collection: "required" as const,

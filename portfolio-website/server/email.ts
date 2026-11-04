@@ -8,6 +8,7 @@
 
 import { Resend } from "resend";
 import { CONTACT_EMAIL } from "../src/data/site.js";
+import { ACCESS_WINDOW_DAYS } from "../src/data/purchase.js";
 import type { EmailConfig } from "./config.js";
 import type { DownloadEmail } from "./fulfillment.js";
 
@@ -22,7 +23,7 @@ export const renderDownloadEmail = ({ planTitle, thanksUrl }: Pick<DownloadEmail
     `Download them here:`,
     thanksUrl,
     ``,
-    `That page issues fresh download links whenever you open it, for 30 days after purchase.`,
+    `That page issues fresh download links whenever you open it, for ${ACCESS_WINDOW_DAYS} days after purchase.`,
     `Reply to this email if anything goes wrong.`,
     ``,
     `Mason Stevens`,
@@ -33,7 +34,7 @@ export const renderDownloadEmail = ({ planTitle, thanksUrl }: Pick<DownloadEmail
 <h1 style="margin:0 0 16px;font-size:24px;text-transform:uppercase;letter-spacing:0.05em;">${escapeHtml(planTitle)}</h1>
 <p style="margin:0 0 16px;font-size:15px;line-height:1.5;">Thanks for buying these plans. Your download page:</p>
 <p style="margin:0 0 16px;"><a href="${escapeHtml(thanksUrl)}" style="color:#17140F;font-size:17px;">Download the ${escapeHtml(planTitle)} plans &rarr;</a></p>
-<p style="margin:0 0 16px;font-size:13px;line-height:1.5;">That page issues fresh download links whenever you open it, for 30 days after purchase. Reply to this email if anything goes wrong.</p>
+<p style="margin:0 0 16px;font-size:13px;line-height:1.5;">That page issues fresh download links whenever you open it, for ${ACCESS_WINDOW_DAYS} days after purchase. Reply to this email if anything goes wrong.</p>
 <p style="margin:0;font-size:13px;">Mason Stevens</p>
 </body></html>`;
 

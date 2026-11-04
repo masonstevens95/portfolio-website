@@ -68,12 +68,11 @@ Test and live modes are separate worlds. Products, Prices, webhooks and keys all
 
 ## 3. Vercel environment variables
 
-Set these **as pairs per environment**. The build fails if `VITE_STRIPE_MODE` disagrees with the key's mode.
+The site's Stripe mode (whether Buy buttons show for test or live prices) comes from `STRIPE_SECRET_KEY`'s prefix at build time, so there's no separate mode setting to keep in sync.
 
 | Variable | Production | Preview / Development |
 |---|---|---|
 | `STRIPE_SECRET_KEY` | `rk_live_…` | `rk_test_…` |
-| `VITE_STRIPE_MODE` | `live` | `test` |
 | `STRIPE_WEBHOOK_SECRET` | live endpoint's `whsec_…` | test endpoint's `whsec_…` |
 | `SITE_URL` | `https://masonstevens.dev` | *(unset: previews use their branch URL)* |
 | `RESEND_API_KEY` | Resend key | Resend key |

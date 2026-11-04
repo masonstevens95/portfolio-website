@@ -10,28 +10,25 @@
 
 import { Link } from "react-router-dom";
 import { ProjectPageTemplate } from "../ProjectPageTemplate";
-import { PlateCaption, PlateImage, Rule } from "../../components/broadside";
-import { formatPrice, isBuyable, listedPlans } from "../../data/plans";
-import { CLIENT_MODE } from "./clientMode";
+import { PlateCaption, PlateImage, Rule, toRoman } from "../../components/broadside";
+import { formatPrice, listedPlans } from "../../data/plans";
+import { isBuyableHere } from "./clientMode";
 import { ComingSoonNote } from "./ComingSoonNote";
 
-const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+// The catalog and build mode are both fixed at build time.
+const ENTRIES = listedPlans().map((plan) => ({ plan, buyable: isBuyableHere(plan) }));
+const ANY_BUYABLE = ENTRIES.some((e) => e.buyable);
 
-export const PlansIndexPage = () => {
-  const entries = listedPlans();
-  const anyBuyable = CLIENT_MODE !== null && entries.some((p) => isBuyable(p, CLIENT_MODE));
-
-  return (
+export const PlansIndexPage = () => (
     <ProjectPageTemplate
       title="Plans"
       subtitle="Build plans, drawn in SketchUp, for the projects in the videos"
     >
-      {!anyBuyable && <ComingSoonNote />}
+      {!ANY_BUYABLE && <ComingSoonNote />}
 
       <section className="w-full" aria-label="Plan index">
         <ul className="list-none p-0 m-0 ink-frame">
-          {entries.map((plan, index) => {
-            const buyable = CLIENT_MODE !== null && isBuyable(plan, CLIENT_MODE);
+          {ENTRIES.map(({ plan, buyable }, index) => {
             const lead = plan.plates[0];
 
             return (
@@ -47,7 +44,7 @@ export const PlansIndexPage = () => {
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <PlateCaption plate={ROMAN[index]}>{plan.format}</PlateCaption>
+                    <PlateCaption plate={toRoman(index + 1)}>{plan.format}</PlateCaption>
                     <h2
                       className="display m-0 mb-1"
                       style={{ fontSize: "clamp(18px, 2.4vw, 24px)" }}
@@ -68,5 +65,4 @@ export const PlansIndexPage = () => {
         </ul>
       </section>
     </ProjectPageTemplate>
-  );
-};
+);

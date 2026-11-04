@@ -18,25 +18,21 @@
 
 import { Link, useParams } from "react-router-dom";
 import { ProjectPageTemplate } from "../ProjectPageTemplate";
-import { PlateCaption, PlateImage, SectionHead } from "../../components/broadside";
-import { findPlanBySlug, isBuyable, type Plan } from "../../data/plans";
-import { CLIENT_MODE } from "./clientMode";
+import { PlateCaption, PlateImage, SectionHead, toRoman } from "../../components/broadside";
+import { findPlanBySlug, type Plan } from "../../data/plans";
+import { isBuyableHere } from "./clientMode";
 import { BuyBlock } from "./BuyBlock";
-
-const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
 
 const Plate = ({ plate, numeral }: { plate: Plan["plates"][number]; numeral: string }) => (
   <figure className="m-0">
     <PlateCaption plate={numeral}>{plate.caption}</PlateCaption>
     <div className="w-full aspect-[4/3] overflow-hidden ink-frame">
-      {plate.src ? (
-        <img src={plate.src} alt={plate.alt} className="w-full h-full object-cover" />
-      ) : (
-        <PlateImage title={plate.alt} />
-      )}
+      <PlateImage src={plate.src} title={plate.alt} />
     </div>
   </figure>
 );
+
+const CUT_LIST_COLUMNS = ["Qty", "Length", "Part", "Notes"];
 
 const CutList = ({ rows, title }: { rows: Plan["cutList"]; title: string }) => (
   <div
@@ -48,10 +44,11 @@ const CutList = ({ rows, title }: { rows: Plan["cutList"]; title: string }) => (
     <table className="w-full border-collapse" style={{ minWidth: "520px", fontSize: "14px" }}>
       <thead>
         <tr className="label text-left">
-          <th scope="col" className="px-3 py-2 font-normal border-b border-[var(--ink)]">Qty</th>
-          <th scope="col" className="px-3 py-2 font-normal border-b border-[var(--ink)]">Length</th>
-          <th scope="col" className="px-3 py-2 font-normal border-b border-[var(--ink)]">Part</th>
-          <th scope="col" className="px-3 py-2 font-normal border-b border-[var(--ink)]">Notes</th>
+          {CUT_LIST_COLUMNS.map((col) => (
+            <th key={col} scope="col" className="px-3 py-2 font-normal border-b border-[var(--ink)]">
+              {col}
+            </th>
+          ))}
         </tr>
       </thead>
       <tbody>
@@ -86,7 +83,7 @@ export const PlanDetailPage = () => {
     );
   }
 
-  const buyable = CLIENT_MODE !== null && isBuyable(plan, CLIENT_MODE);
+  const buyable = isBuyableHere(plan);
   const [lead, ...rest] = plan.plates;
 
   return (
@@ -111,7 +108,7 @@ export const PlanDetailPage = () => {
       {rest.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {rest.map((plate, i) => (
-            <Plate key={plate.caption} plate={plate} numeral={ROMAN[i + 1]} />
+            <Plate key={plate.caption} plate={plate} numeral={toRoman(i + 2)} />
           ))}
         </div>
       )}

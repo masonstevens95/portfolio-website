@@ -1,25 +1,19 @@
-import { defineConfig, loadEnv, type Plugin } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { federation } from "@module-federation/vite";
-import { checkModeAgreement } from "./src/data/stripeMode";
+import { modeFromKey } from "./src/data/stripeMode";
 
-// Fails `vite build` when VITE_STRIPE_MODE and the Stripe key disagree, so a
-// misconfigured Vercel environment fails its deploy instead of silently
-// hiding sales or showing Buy buttons the server will refuse.
-const stripeModeGuard = (): Plugin => ({
-  name: "stripe-mode-guard",
-  apply: "build",
-  config(_, { mode }) {
-    const env = { ...loadEnv(mode, process.cwd(), ""), ...process.env };
-    const error = checkModeAgreement(env.VITE_STRIPE_MODE, env.STRIPE_SECRET_KEY);
-    if (error) throw new Error(`[stripe-mode-guard] ${error}`);
+export default defineConfig(({ mode }) => ({
+  // The SPA's Stripe mode is derived from the same key the server uses, at
+  // build time, so the two cannot disagree. Only "test" | "live" | null is
+  // inlined into the bundle; the key itself never is.
+  define: {
+    __STRIPE_MODE__: JSON.stringify(
+      modeFromKey({ ...loadEnv(mode, process.cwd(), ""), ...process.env }.STRIPE_SECRET_KEY)
+    ),
   },
-});
-
-export default defineConfig({
   plugins: [
-    stripeModeGuard(),
     react(),
     tailwindcss(),
     {
@@ -66,4 +60,4 @@ export default defineConfig({
   build: {
     target: "esnext",
   },
-});
+}));

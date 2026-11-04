@@ -22,27 +22,20 @@ interface Props {
 }
 
 export const BuyBlock = ({ plan, buyable }: Props) => {
-  const [pending, setPending] = useState(false);
-  const [failed, setFailed] = useState(false);
+  const [state, setState] = useState<"idle" | "pending" | "failed">("idle");
+  const pending = state === "pending";
 
   useEffect(() => {
-    const reset = () => setPending(false);
+    const reset = () => setState("idle");
     window.addEventListener("pageshow", reset);
     return () => window.removeEventListener("pageshow", reset);
   }, []);
 
   const buy = async () => {
-    if (pending) return;
-    setPending(true);
-    setFailed(false);
-
+    setState("pending");
     const result = await startCheckout(plan.slug);
-    if (result.ok) {
-      window.location.assign(result.url);
-      return;
-    }
-    setPending(false);
-    setFailed(true);
+    if (result.ok) window.location.assign(result.url);
+    else setState("failed");
   };
 
   return (
@@ -78,7 +71,7 @@ export const BuyBlock = ({ plan, buyable }: Props) => {
           </button>
 
           <p role="status" aria-live="polite" className="m-0" style={{ fontSize: "14px", minHeight: "1em" }}>
-            {failed && "Checkout didn't open. Nothing was charged. Try again in a moment."}
+            {state === "failed" && "Checkout didn't open. Nothing was charged. Try again in a moment."}
           </p>
 
           <p className="m-0" style={{ fontSize: "13px", lineHeight: 1.5, opacity: 0.75 }}>
