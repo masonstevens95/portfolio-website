@@ -1,7 +1,7 @@
 ---
 title: "feat: Plans storefront with Stripe Checkout and secure PDF delivery"
 type: feat
-status: active
+status: completed
 date: 2026-11-04
 ---
 
