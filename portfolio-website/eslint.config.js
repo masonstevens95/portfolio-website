@@ -20,4 +20,15 @@ export default tseslint.config([
       globals: globals.browser,
     },
   },
+  {
+    // Vercel functions and their server-side logic run in Node, not the
+    // browser, and export no React components.
+    files: ['api/**/*.ts', 'server/**/*.ts'],
+    languageOptions: {
+      globals: globals.node,
+    },
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ])
